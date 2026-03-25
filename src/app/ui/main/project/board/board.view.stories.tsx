@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { unstable_createRemixStub as createRemixStub } from "@remix-run/testing";
 import { projectMock1, projectMock2 } from "@domain/project";
+import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { BoardView } from "./board.view";
 
 const meta: Meta<typeof BoardView> = {
@@ -10,43 +10,8 @@ const meta: Meta<typeof BoardView> = {
     layout: "fullscreen",
   },
   decorators: [
-    (Story, context) => {
-      // Check if this is a dark mode story via the story name
-      const isDark = context.name.toLowerCase().includes('dark');
-      
-      const RemixStub = createRemixStub([
-        {
-          path: "/",
-          element: <Story />,
-          action: async () => {
-            return { status: 200 };
-          },
-          loader: async () => {
-            return {};
-          },
-        },
-        {
-          path: "issue/new",
-          element: <div>New Issue Panel</div>,
-        },
-        {
-          path: "board/issue/issue-event",
-          element: null,
-          loader: async () => {
-            return new Response(null, { status: 200 });
-          },
-        },
-      ]);
-
-      return (
-        <div 
-          style={{ height: '100vh', width: '100%' }} 
-          className={`bg-elevation-surface ${isDark ? 'dark' : ''}`}
-        >
-          <RemixStub />
-        </div>
-      );
-    },
+    (Story) => withMainContext(Story),
+    (Story) => withRemixStub(<Story />),
   ],
 };
 
@@ -69,10 +34,20 @@ export const DefaultDark: Story = {
   args: {
     project: projectMock1,
   },
+  parameters: {
+    themes: {
+      themeOverride: "dark",
+    },
+  },
 };
 
 export const SecondProjectDark: Story = {
   args: {
     project: projectMock2,
+  },
+  parameters: {
+    themes: {
+      themeOverride: "dark",
+    },
   },
 };

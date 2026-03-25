@@ -17,10 +17,10 @@ import { EVENTS } from "@app/events";
 export const BoardView = ({ project }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
-      <div className="box-border flex h-full flex-col bg-elevation-surface">
-        <section className="flex items-center bg-elevation-surface ">
+      <div className="box-border flex h-full flex-col bg-elevation-surface px-6 py-4">
+        <section className="mb-6 flex items-center gap-4 bg-elevation-surface">
           <Search />
-          <div className="mx-4 my-0 inline">
+          <div className="inline">
             <UserAvatarList users={project.users} />
           </div>
           <div className="inline">
@@ -81,11 +81,11 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   }, [onKeyDown]);
 
   return (
-    <section className="mt-12 flex h-full flex-col bg-elevation-surface">
-      <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
+    <section className="flex h-full flex-col bg-elevation-surface px-6">
+      <span className="mb-4 block justify-self-end font-primary-light text-2xs text-font-subtlest">
         Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
       </span>
-      <div className="flex h-full gap-3">
+      <div className="flex h-full gap-6">
         {categories.map((category) => (
           <CategoryColumn
             key={category.id}
