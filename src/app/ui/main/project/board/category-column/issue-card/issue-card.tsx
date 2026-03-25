@@ -83,8 +83,8 @@ export const IssueCardContent = ({
     <Link to={link}>
       <>
         <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
-        <div className="flex items-center justify-between pt-4">
-          <span className="flex items-center gap-1.5 rounded px-2 py-1 bg-background-info-bold text-white">
+        <div className="flex items-center justify-between mt-2">
+          <span className="flex items-center gap-2 rounded px-2 py-1 bg-background-info-bold text-font-inverse">
             <TaskIcon size={16} />
             <span className="text-2xs font-primary-light">
               {idPrefix}

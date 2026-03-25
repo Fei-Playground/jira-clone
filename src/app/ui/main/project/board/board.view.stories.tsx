@@ -190,7 +190,7 @@ const IssueCardForStory = ({
       <div className="mt-auto flex items-center justify-between">
         <span className="flex gap-2">
           <PriorityIcon priority={issue.priority} />
-          <span className="rounded bg-background-info-bold px-1 py-0.5 text-3xs text-font-inverse">
+          <span className="rounded bg-background-info-bold px-1 py-0.5 text-2xs text-font-inverse">
             JC-{issue.id.slice(0, 4)}
           </span>
         </span>
@@ -370,7 +370,7 @@ const meta: Meta<typeof BoardViewForStory> = {
   },
   decorators: [
     (Story) => (
-      <div className="h-screen w-full p-4 bg-elevation-surface">
+      <div className="h-screen w-full p-4 bg-elevation-surface light">
         <Story />
       </div>
     ),
@@ -407,7 +407,7 @@ export const EmptyCategories: Story = {
 // Create a complete dark mode decorator that handles everything
 const withDarkModeWrapper = (Story: any): JSX.Element => {
   return (
-    <div className="min-h-screen h-screen w-full dark bg-elevation-surface p-6">
+    <div className="min-h-screen h-screen w-full dark bg-elevation-surface p-4">
       <Story />
     </div>
   );
