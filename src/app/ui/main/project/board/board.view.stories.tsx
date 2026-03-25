@@ -10,7 +10,10 @@ const meta: Meta<typeof BoardView> = {
     layout: "fullscreen",
   },
   decorators: [
-    (Story) => {
+    (Story, context) => {
+      // Check if this is a dark mode story via the story name
+      const isDark = context.name.toLowerCase().includes('dark');
+      
       const RemixStub = createRemixStub([
         {
           path: "/",
@@ -36,7 +39,10 @@ const meta: Meta<typeof BoardView> = {
       ]);
 
       return (
-        <div className="h-screen w-full bg-elevation-surface p-6">
+        <div 
+          style={{ height: '100vh', width: '100%' }} 
+          className={`bg-elevation-surface ${isDark ? 'dark' : ''}`}
+        >
           <RemixStub />
         </div>
       );
@@ -54,6 +60,18 @@ export const Default: Story = {
 };
 
 export const SecondProject: Story = {
+  args: {
+    project: projectMock2,
+  },
+};
+
+export const DefaultDark: Story = {
+  args: {
+    project: projectMock1,
+  },
+};
+
+export const SecondProjectDark: Story = {
   args: {
     project: projectMock2,
   },

@@ -17,8 +17,8 @@ import { EVENTS } from "@app/events";
 export const BoardView = ({ project }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
-      <div className="box-border flex h-full flex-col">
-        <section className="flex items-center">
+      <div className="box-border flex h-full flex-col bg-elevation-surface">
+        <section className="flex items-center bg-elevation-surface ">
           <Search />
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
@@ -81,7 +81,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   }, [onKeyDown]);
 
   return (
-    <section className="mt-12 flex h-full flex-col">
+    <section className="mt-12 flex h-full flex-col bg-elevation-surface">
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
         Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
       </span>

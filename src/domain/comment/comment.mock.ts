@@ -47,3 +47,48 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+export const commentMock6: Comment = {
+  id: "7d68f00a-g411-581b-9cf5-f755e0g36g5c",
+  user: usersMock[2], // Buzz Lightyear
+  message:
+    "This feature is particularly useful for tracking the progress of complex issues across multiple team members.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock7: Comment = {
+  id: "8e79g11b-h522-692c-ad6f-g866f1h47h6d",
+  user: usersMock[4], // Emperor Zurg
+  message:
+    "Great implementation! The UI is responsive and handles edge cases well.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock8: Comment = {
+  id: "9f8ah22c-i633-7a3d-be7g-h977g2i58i7e",
+  user: usersMock[9], // Andy Davis
+  message:
+    "The dark mode looks fantastic! Much easier on the eyes during late-night debugging sessions.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock9: Comment = {
+  id: "ag9bi33d-j744-8b4e-cf8h-i088h3j69j8f",
+  user: usersMock[3], // Jessie
+  message:
+    "I appreciate how the color scheme transitions smoothly between light and dark modes.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock10: Comment = {
+  id: "bhaaj44e-k855-9c5f-dg9i-j199i4k7ak9g",
+  user: usersMock[8], // T-Rex
+  message:
+    "Performance seems great even with a large number of issues. Scrolling is smooth!",
+  createdAt,
+  updatedAt,
+};
