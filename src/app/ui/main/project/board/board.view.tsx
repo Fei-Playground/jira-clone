@@ -17,7 +17,7 @@ import { EVENTS } from "@app/events";
 export const BoardView = ({ project }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
-      <div className="box-border flex h-full flex-col">
+      <div className="box-border flex h-full flex-col p-6">
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">

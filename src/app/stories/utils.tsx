@@ -52,9 +52,7 @@ export const withMainContextDark = (Story: Story): JSX.Element => {
   return (
     <UserContextProvider user={userMock1}>
       <StoryThemeProvider theme={Theme.DARK}>
-        <div className="w-full dark bg-elevation-surface">
-          <Story />
-        </div>
+        <Story />
       </StoryThemeProvider>
     </UserContextProvider>
   );

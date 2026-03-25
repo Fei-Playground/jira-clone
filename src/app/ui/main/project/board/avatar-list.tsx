@@ -32,7 +32,7 @@ const MoreUsers = ({ users }: MoreUsersProps): JSX.Element => (
   <div className="bg-elevation-surface">
     <DropdownMenu.Root>
       <DropdownMenu.Trigger
-        className="-ml-[5px] box-content flex cursor-pointer items-center justify-center rounded-full border-2 border-border bg-background-neutral text-lg text-font hover:underline"
+        className="-ml-[5px] box-content flex cursor-pointer items-center justify-center rounded-full border-2 border-border bg-background-brand-bold text-sm font-primary-bold text-font-inverse hover:bg-background-brand-bold-hovered active:bg-background-brand-bold-pressed transition-colors duration-200"
         style={{
           width: `${AVATAR_SIZE}px`,
           height: `${AVATAR_SIZE}px`,
