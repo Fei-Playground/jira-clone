@@ -25,6 +25,7 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { Tooltip } from "@app/components/tooltip";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { UserAvatar } from "@app/components/user-avatar";
+import { withMainContextDark } from "@app/stories/utils";
 
 // Create a context provider for project that can be used without Remix
 import { createContext, useContext, Dispatch, SetStateAction } from "react";
@@ -400,5 +401,41 @@ export const EmptyCategories: Story = {
         issues: [],
       })),
     },
+  },
+};
+
+export const DarkMode: Story = {
+  args: {
+    project: projectMock1,
+  },
+  decorators: [withMainContextDark],
+  parameters: {
+    layout: "fullscreen",
+  },
+};
+
+export const DarkModeSecondProject: Story = {
+  args: {
+    project: projectMock2,
+  },
+  decorators: [withMainContextDark],
+  parameters: {
+    layout: "fullscreen",
+  },
+};
+
+export const DarkModeEmptyCategories: Story = {
+  args: {
+    project: {
+      ...projectMock1,
+      categories: projectMock1.categories.map((cat) => ({
+        ...cat,
+        issues: [],
+      })),
+    },
+  },
+  decorators: [withMainContextDark],
+  parameters: {
+    layout: "fullscreen",
   },
 };
