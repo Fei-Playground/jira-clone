@@ -21,6 +21,7 @@ import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
+import { AttachmentUpload } from "./attachment-upload";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
@@ -32,6 +33,7 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -98,6 +100,17 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setComments(updatedComments);
   };
 
+  const addAttachments = (newAttachments: Attachment[]): void => {
+    setAttachments([...attachments, ...newAttachments]);
+  };
+
+  const removeAttachment = (attachmentId: string): void => {
+    const updatedAttachments = attachments.filter(
+      (attachment) => attachment.id !== attachmentId
+    );
+    setAttachments(updatedAttachments);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
 
@@ -158,6 +171,14 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       />
                     </div>
                     <div>
+                      <p className="font-primary-black text-font">Attachments</p>
+                      <div className="mb-8">
+                        <AttachmentUpload
+                          attachments={attachments}
+                          onAddAttachments={addAttachments}
+                          onRemoveAttachment={removeAttachment}
+                        />
+                      </div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
                         <CreateComment addComment={addComment} />
