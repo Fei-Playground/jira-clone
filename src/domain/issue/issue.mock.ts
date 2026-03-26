@@ -166,6 +166,74 @@ export const inProgressIssuesMock1: Issue[] = [
   },
 ];
 
+export const qaIssuesMock1: Issue[] = [
+  {
+    id: "57a51f2g-7a6d-8f1g-g68g-6e3c6a68fb6c",
+    name: "Test user registration flow",
+    description:
+      "Verify that new users can successfully register and receive a confirmation email. Test with various email formats and password requirements.",
+    reporter: usersMock[5],
+    asignee: usersMock[8],
+    comments: [],
+    priority: priorityHigh,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 14:30").valueOf(),
+  },
+  {
+    id: "68b62g3h-8b7e-9g2h-h79h-7f4d7b79gc7d",
+    name: "Verify dark mode across all pages",
+    description:
+      "Test dark mode functionality on all pages to ensure consistent styling, proper contrast, and correct color application.",
+    reporter: usersMock[6],
+    asignee: usersMock[9],
+    comments: [commentMock4],
+    priority: priorityMedium,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 13:00").valueOf(),
+  },
+  {
+    id: "79c73h4i-9c8f-ah3i-ia8i-8g5e8c8ahd8e",
+    name: "Test drag and drop functionality on board",
+    description:
+      "Verify that issues can be dragged between columns without issues and that the updates persist correctly.",
+    reporter: usersMock[7],
+    asignee: usersMock[0],
+    comments: [commentMock5],
+    priority: priorityHigh,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 10:45").valueOf(),
+  },
+  {
+    id: "8ad84i5j-ade9-bi4j-jb9j-9h6f9d9bhe9f",
+    name: "Cross-browser compatibility testing",
+    description:
+      "Test application in Chrome, Firefox, Safari, and Edge to ensure consistent behavior and rendering across browsers.",
+    reporter: usersMock[8],
+    asignee: usersMock[1],
+    comments: [commentMock6, commentMock7],
+    priority: priorityMedium,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 09:20").valueOf(),
+  },
+  {
+    id: "9be95j6k-bef0-cj5k-kc0k-ai7g0e0ciige",
+    name: "Validate form input validation",
+    description:
+      "Check that all form inputs properly validate data and display appropriate error messages for invalid inputs.",
+    reporter: usersMock[9],
+    asignee: usersMock[2],
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-24 16:15").valueOf(),
+  },
+];
+
 export const doneIssuesMock1: Issue[] = [
   {
     id: "cb3eb5e6-299d-4e1a-8521-a5541f8403e4",
@@ -302,6 +370,48 @@ export const inProgressIssuesMock2: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: new Date("2022-01-25 17:30").valueOf(),
+  },
+];
+
+export const qaIssuesMock2: Issue[] = [
+  {
+    id: "d67bcc77-7c9e-4d3c-b456-5gf19g73i284",
+    name: "Test payment processing workflow",
+    description:
+      "Verify payment gateway integration works correctly with various payment methods including credit cards and digital wallets.",
+    reporter: userMock1,
+    asignee: usersMock[3],
+    comments: [],
+    priority: priorityHigh,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 16:45").valueOf(),
+  },
+  {
+    id: "e78cdd88-8d0f-5e4d-c567-6hg20h84j395",
+    name: "Security audit and penetration testing",
+    description:
+      "Conduct comprehensive security testing to identify and verify fixes for potential vulnerabilities in the application.",
+    reporter: usersMock[2],
+    asignee: usersMock[4],
+    comments: [commentMock8],
+    priority: priorityHigh,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 15:20").valueOf(),
+  },
+  {
+    id: "f89deee99-9e1g-6f5e-d678-7ih31i95k4a6",
+    name: "Load testing under high traffic",
+    description:
+      "Simulate high user loads to ensure the application can handle peak traffic without performance degradation or crashes.",
+    reporter: usersMock[5],
+    asignee: usersMock[6],
+    comments: [commentMock9],
+    priority: priorityMedium,
+    categoryType: "QA",
+    createdAt,
+    updatedAt: new Date("2022-01-25 14:00").valueOf(),
   },
 ];
 
