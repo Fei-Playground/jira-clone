@@ -3,8 +3,11 @@ import { useFetcher } from "@remix-run/react";
 import cx from "classix";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
+import { MentionBadge } from "./mention-badge";
+import { parseMentions } from "./parse-mentions";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -12,6 +15,7 @@ export const ViewComment = ({
   removeComment,
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
+  const projectStore = useProjectStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const fetcher = useFetcher();
 
@@ -31,40 +35,57 @@ export const ViewComment = ({
     );
   };
 
-  const save = (commentText: string): void => {
+  const save = (commentText: string, mentions = []): void => {
     comment.message = commentText;
+    comment.mentions = mentions;
     setIsEditing(false);
   };
 
-  const IdleComment = (): JSX.Element => (
-    <div className="font-primary-light">
-      <p>{comment.message}</p>
-      <div
-        className={cx(
-          "mt-3 text-font-subtlest",
-          isNotSelfComment ? "hidden" : "visible"
-        )}
-      >
-        <button
-          onClick={edit}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Edit comment"
+  const IdleComment = (): JSX.Element => {
+    const segments = parseMentions(
+      comment.message,
+      comment.mentions,
+      projectStore.project.users
+    );
+
+    return (
+      <div className="font-primary-light">
+        <p>
+          {segments.map((segment, index) =>
+            segment.type === "mention" && segment.user ? (
+              <MentionBadge key={index} user={segment.user} />
+            ) : (
+              <span key={index}>{segment.content}</span>
+            )
+          )}
+        </p>
+        <div
+          className={cx(
+            "mt-3 text-font-subtlest",
+            isNotSelfComment ? "hidden" : "visible"
+          )}
         >
-          Edit
-        </button>
-        <span className="mx-2">{"·"}</span>
-        <button
-          onClick={remove}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Delete comment"
-        >
-          Delete
-        </button>
+          <button
+            onClick={edit}
+            disabled={isNotSelfComment}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Edit comment"
+          >
+            Edit
+          </button>
+          <span className="mx-2">{"·"}</span>
+          <button
+            onClick={remove}
+            disabled={isNotSelfComment}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Delete comment"
+          >
+            Delete
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex gap-6">

@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Comment } from "@domain/comment";
+import { Comment, Mention } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
@@ -9,11 +9,12 @@ export const CreateComment = ({
 }: CreateCommentProps): JSX.Element => {
   const { user } = useUserStore();
 
-  const save = (message: string) => {
+  const save = (message: string, mentions: Mention[] = []) => {
     addComment({
       id: "temp-" + uuid(),
       user,
       message,
+      mentions,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });

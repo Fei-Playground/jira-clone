@@ -1,7 +1,7 @@
-import { useLayoutEffect, useState, useRef } from "react";
+import { useLayoutEffect, useState, useRef, forwardRef } from "react";
 import cx from "classix";
 
-export const TextareaAutosize = (props: TitleProps): JSX.Element => {
+export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>((props, ref) => {
   const {
     name,
     value,
@@ -30,6 +30,12 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
     setValue(value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (props.onKeyDown) {
+      props.onKeyDown(e);
+    }
+  };
+
   const valueIsNotOnlySpaces = (): boolean => {
     return !/^( )\1*$/.test(value);
   };
@@ -43,6 +49,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
   return (
     <div className="relative">
       <textarea
+        ref={ref}
         name={name}
         className={cx(
           "box-border w-full resize-none overflow-y-hidden rounded-md border-none bg-background-input p-3 text-font outline-2 hover:bg-background-input-hovered focus-visible:bg-background-input-pressed",
@@ -54,6 +61,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
         readOnly={readOnly}
         onFocus={handleOnFocus}
         onBlur={onBlur}
+        onKeyDown={handleKeyDown}
         style={{ height: `${textareaHeight}px` }}
         autoFocus={autofocus}
       />
@@ -68,7 +76,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
       </p>
     </div>
   );
-};
+});
 
 interface TitleProps {
   name: string;
@@ -80,4 +88,7 @@ interface TitleProps {
   textareaClassName?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
+
+TextareaAutosize.displayName = "TextareaAutosize";
