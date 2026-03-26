@@ -10,6 +10,11 @@ const meta: Meta<typeof BoardView> = {
     layout: "fullscreen",
   },
   decorators: [
+    (Story) => (
+      <div style={{ height: "100vh", width: "100%" }}>
+        <Story />
+      </div>
+    ),
     (Story) => withMainContext(Story),
     (Story) => withRemixStub(<Story />),
   ],
@@ -34,20 +39,24 @@ export const DefaultDark: Story = {
   args: {
     project: projectMock1,
   },
-  parameters: {
-    themes: {
-      themeOverride: "dark",
-    },
-  },
+  decorators: [
+    (Story) => (
+      <div className="dark" style={{ height: "100vh", width: "100%" }}>
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export const SecondProjectDark: Story = {
   args: {
     project: projectMock2,
   },
-  parameters: {
-    themes: {
-      themeOverride: "dark",
-    },
-  },
+  decorators: [
+    (Story) => (
+      <div className="dark" style={{ height: "100vh", width: "100%" }}>
+        <Story />
+      </div>
+    ),
+  ],
 };
