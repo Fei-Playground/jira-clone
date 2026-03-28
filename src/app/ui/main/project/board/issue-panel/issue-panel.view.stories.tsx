@@ -6,7 +6,7 @@ import { UserContextProvider } from "@app/store/user.store";
 import { ThemeProvider, Theme, Preference } from "@app/store/theme.store";
 import { projectMock1 } from "@domain/project";
 import { userMock1 } from "@domain/user";
-import { todoIssuesMock1 } from "@domain/issue";
+import { todoIssuesMock1, inProgressIssuesMock1 } from "@domain/issue";
 
 const meta: Meta<typeof IssuePanel> = {
   title: "Project/Board/IssuePanel",
@@ -56,5 +56,12 @@ export const Default: Story = {
 export const Empty: Story = {
   args: {
     issue: undefined,
+  },
+};
+
+export const WithAttachments: Story = {
+  args: {
+    // inProgressIssuesMock1[1] has comments with attachments
+    issue: inProgressIssuesMock1[1],
   },
 };

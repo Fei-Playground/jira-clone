@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useFetcher } from "@remix-run/react";
 import cx from "classix";
-import { Comment, CommentId } from "@domain/comment";
+import { AiOutlinePaperClip } from "react-icons/ai";
+import { Comment, CommentId, Attachment } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
@@ -31,14 +32,48 @@ export const ViewComment = ({
     );
   };
 
-  const save = (commentText: string): void => {
+  const save = (commentText: string, attachments: Attachment[]): void => {
     comment.message = commentText;
+    comment.attachments = attachments;
     setIsEditing(false);
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   const IdleComment = (): JSX.Element => (
     <div className="font-primary-light">
       <p>{comment.message}</p>
+      {comment.attachments && comment.attachments.length > 0 && (
+        <div className="mt-3 rounded border border-border-brand bg-background-brand-subtlest p-2">
+          <p className="mb-2 text-xs font-primary-bold text-font">
+            Attachments ({comment.attachments.length})
+          </p>
+          <ul className="space-y-1">
+            {comment.attachments.map((attachment) => (
+              <li
+                key={attachment.id}
+                className="flex items-center gap-2 rounded bg-background-brand-subtlest-hovered p-2"
+              >
+                <AiOutlinePaperClip size={14} className="flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-primary-light text-font">
+                    {attachment.fileName}
+                  </p>
+                  <p className="text-2xs font-primary-light text-font-subtlest">
+                    {formatFileSize(attachment.fileSize)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div
         className={cx(
           "mt-3 text-font-subtlest",
@@ -93,6 +128,7 @@ export const ViewComment = ({
               save={save}
               cancel={cancel}
               autofocus
+              defaultAttachments={comment.attachments || []}
             />
           ) : (
             <IdleComment />
