@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Theme, Preference } from "@app/store/theme.store";
 import { ErrorBase } from "./error-base";
 
-const meta: Meta<typeof ErrorBase> = {
+const meta: Meta<typeof ErrorBase> =
+  {
   title: "Components/ErrorBase",
   component: ErrorBase,
   parameters: {

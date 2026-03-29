@@ -1,3 +1,4 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { SelctTheme } from "./select-theme";
@@ -29,9 +30,11 @@ export const Dark: Story = {
           {withRemixStub(
             withMainContext(
               () =>
-                React.createElement("div", {
-                  children: storyElement,
-                })
+                React.createElement(
+                  "div",
+                  {},
+                  storyElement
+                )
             )
           )}
         </div>

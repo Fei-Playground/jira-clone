@@ -2,6 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { TextareaAutosize } from "./textarea-autosize";
 
+interface TextareaWrapperProps {
+  name: string;
+  value: string;
+  placeholder: string;
+  readOnly?: boolean;
+}
+
 const meta: Meta<typeof TextareaAutosize> = {
   title: "Components/TextareaAutosize",
   component: TextareaAutosize,
@@ -35,7 +42,7 @@ const meta: Meta<typeof TextareaAutosize> = {
 export default meta;
 type Story = StoryObj<typeof TextareaAutosize>;
 
-const TextareaWrapper = (props: any) => {
+const TextareaWrapper = (props: TextareaWrapperProps) => {
   const [value, setValue] = useState<string>(props.value || "");
 
   return (
@@ -59,7 +66,9 @@ export const WithInitialValue: Story = {
   render: (args) => <TextareaWrapper {...args} />,
   args: {
     name: "description",
-    value: "This is a sample description that will automatically expand as you type.",
+    value:
+      "This is a sample description that will automatically " +
+      "expand as you type.",
     placeholder: "Enter your description here...",
     readOnly: false,
   },
@@ -69,7 +78,9 @@ export const ReadOnly: Story = {
   render: (args) => <TextareaWrapper {...args} />,
   args: {
     name: "description",
-    value: "This is a read-only description. You cannot edit this text.",
+    value:
+      "This is a read-only description. You cannot edit this " +
+      "text.",
     placeholder: "Enter your description here...",
     readOnly: true,
   },

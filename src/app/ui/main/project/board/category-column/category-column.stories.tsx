@@ -33,7 +33,9 @@ export const Default: Story = {
     category: category,
     isDragging: false,
     submittingIssues: [],
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     setSubmittingIssues: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     handleDragging: () => {},
   },
 };
@@ -43,7 +45,9 @@ export const WithIssues: Story = {
     category: category,
     isDragging: false,
     submittingIssues: [],
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     setSubmittingIssues: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     handleDragging: () => {},
   },
 };
@@ -53,7 +57,9 @@ export const Dragging: Story = {
     category: category,
     isDragging: true,
     submittingIssues: [],
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     setSubmittingIssues: () => {},
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     handleDragging: () => {},
   },
 };
