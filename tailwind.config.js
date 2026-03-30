@@ -3,7 +3,9 @@
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  content: ["./src/app/**/*.{js,ts,jsx,tsx}"],
+  content: ["./src/app/**/*.{js,ts,jsx,tsx}", "./src/**/*.stories.{js,ts,jsx,tsx}"],
+  important: true,
+  safelist: ["px-10", "py-8", "!px-10", "!py-8"],
   darkMode: "class",
   theme: {
     colors: {
