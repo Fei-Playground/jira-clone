@@ -1,42 +1,49 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
 import { todoIssuesMock1 } from "@domain/issue";
-import { ProjectContextProvider } from "@app/ui/main/project";
+import { ProjectContextProvider } from "../../project.store";
 import { IssuePanel } from "./issue-panel.view";
-import "react-toastify/dist/ReactToastify.css";
 
 const meta: Meta<typeof IssuePanel> = {
-  title: "Pages/Main/Project/Board/IssuePanel/IssuePanelView",
+  title: "Pages/Main/Project/Board/IssuePanel",
   component: IssuePanel,
   parameters: {
     layout: "fullscreen",
   },
-  decorators: [
-    (Story) => (
-      <ProjectContextProvider project={projectMock1}>
-        {withRemixStub(withMainContext(Story))}
-      </ProjectContextProvider>
-    ),
-  ],
 };
 
 export default meta;
 type Story = StoryObj<typeof IssuePanel>;
 
-const issue = todoIssuesMock1[0];
-
 export const Default: Story = {
   args: {
-    issue: issue,
+    issue: todoIssuesMock1[0],
   },
+  decorators: [
+    (Story, context) => {
+      const WrappedStory = () => (
+        <ProjectContextProvider project={projectMock1}>
+          <Story />
+        </ProjectContextProvider>
+      );
+      return withRemixStub(withMainContext(WrappedStory));
+    },
+  ],
 };
 
-export const WithComments: Story = {
+export const Empty: Story = {
   args: {
-    issue: {
-      ...issue,
-      comments: issue.comments,
-    },
+    issue: undefined,
   },
+  decorators: [
+    (Story, context) => {
+      const WrappedStory = () => (
+        <ProjectContextProvider project={projectMock1}>
+          <Story />
+        </ProjectContextProvider>
+      );
+      return withRemixStub(withMainContext(WrappedStory));
+    },
+  ],
 };
