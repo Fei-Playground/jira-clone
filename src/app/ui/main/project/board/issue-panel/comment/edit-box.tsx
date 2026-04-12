@@ -68,6 +68,10 @@ export const EditBox = ({
         <Button
           type="button"
           className="px-4 py-2.5"
+          style={{
+            background:
+              "linear-gradient(to bottom right, #1d7afc, #0055cc)",
+          }}
           onClick={onSave}
           aria-label="Save comment"
         >
