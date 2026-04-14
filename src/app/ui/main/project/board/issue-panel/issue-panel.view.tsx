@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import cx from "classix";
 import {
   Form,
   useActionData,
@@ -129,7 +130,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
             <Dialog.Content
               onEscapeKeyDown={handleProgrammaticClose}
               onPointerDownOutside={handleProgrammaticClose}
-              className={isOpen ? "" : "translate-y-[10px] opacity-0"}
+              className={cx(
+                "border-2 border-green-500",
+                isOpen ? "" : "translate-y-[10px] opacity-0"
+              )}
             >
               <PanelHeaderIssue
                 id={issue?.id || "Create new issue"}
