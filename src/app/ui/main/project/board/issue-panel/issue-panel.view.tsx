@@ -27,11 +27,14 @@ import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
+import { ActivityLog } from "./activity-log";
+import { UnsavedChangesIndicator } from "./unsaved-changes-indicator";
 import { Spinner } from "./spinner";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [hasChanges, setHasChanges] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -87,6 +90,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setIsOpen(false);
   };
 
+  const handleFormChange = useCallback(() => {
+    setHasChanges(true);
+  }, []);
+
   const addComment = (newComment: Comment): void => {
     setComments([...comments, newComment]);
   };
@@ -118,6 +125,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
 
     if (fetcher.type === "actionRedirect" && formAction === "create") {
       toast.success("Issue created successfully");
+      setHasChanges(false);
+    } else if (fetcher.type === "actionRedirect" && formAction === "update") {
+      toast.success("Issue updated successfully");
+      setHasChanges(false);
     }
   }, [fetcher.type, fetcher.formData]);
 
@@ -138,7 +149,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                   defaultIssuesIds.includes(issue?.id || "")
                 }
               />
-              <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
+              <Form
+                method="post"
+                onSubmit={handleFormSumbit}
+                ref={formRef}
+                onChange={handleFormChange}
+              >
                 <div className="grid grid-cols-5 gap-16">
                   <section className="col-span-3">
                     <div className="my-5 -ml-3 mb-6">
@@ -174,65 +190,73 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       </ul>
                     </div>
                   </section>
-                  <section className="col-span-2 space-y-10">
-                    <div>
-                      <p className="mb-1">Status</p>
-                      <SelectStatus
-                        initStatus={issue?.categoryType || initStatus}
-                      />
-                    </div>
-                    <div>
-                      <p className="mb-1">Priority</p>
-                      <SelectPriority
-                        initPriority={issue?.priority.id || "low"}
-                      />
-                    </div>
-                    <div>
-                      <p className="mb-1">Asignee</p>
-                      <SelectAsignee initAsignee={issue?.asignee || user} />
-                    </div>
-                    <div>
-                      <p className="mb-1">Reporter</p>
-                      <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
-                        <UserAvatar {...reporter} />
-                        <input
-                          type="hidden"
-                          name="reporter"
-                          value={reporter.id}
+                  <section className="col-span-2 space-y-6">
+                    <div className="space-y-6 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
+                      <div>
+                        <p className="mb-2 font-primary-bold text-font-subtle">Status</p>
+                        <SelectStatus
+                          initStatus={issue?.categoryType || initStatus}
                         />
-                        <p className="m-0">{reporter.name}</p>
+                      </div>
+                      <div>
+                        <p className="mb-2 font-primary-bold text-font-subtle">Priority</p>
+                        <SelectPriority
+                          initPriority={issue?.priority.id || "low"}
+                        />
                       </div>
                     </div>
-                    <div>
-                      <CreatedUpdatedAt issue={issue} />
+                    <div className="space-y-4 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
+                      <div>
+                        <p className="mb-2 font-primary-bold text-font-subtle">Asignee</p>
+                        <SelectAsignee initAsignee={issue?.asignee || user} />
+                      </div>
+                      <div className="border-t border-border-subtle pt-4">
+                        <p className="mb-2 font-primary-bold text-font-subtle">Reporter</p>
+                        <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
+                          <UserAvatar {...reporter} />
+                          <input
+                            type="hidden"
+                            name="reporter"
+                            value={reporter.id}
+                          />
+                          <p className="m-0 text-sm">{reporter.name}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
+                      <p className="font-primary-bold text-font-subtle">Activity</p>
+                      <ActivityLog issue={issue} />
                     </div>
                   </section>
                 </div>
-                <div className="mt-6 grid grid-cols-3 items-end">
-                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
-                  </span>
-                  <div className="flex justify-center">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-fit"
-                      disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
-                    >
-                      {transition.state !== "idle" ? (
-                        <>
-                          Submmiting
-                          <Spinner />
-                        </>
-                      ) : (
-                        "Accept"
-                      )}
-                    </Button>
+                <div className="mt-6 space-y-4">
+                  <UnsavedChangesIndicator show={hasChanges} />
+                  <div className="grid grid-cols-3 items-end">
+                    <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                      Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
+                    </span>
+                    <div className="flex justify-center">
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="w-fit"
+                        disabled={transition.state !== "idle"}
+                        aria-label="Accept changes"
+                      >
+                        {transition.state !== "idle" ? (
+                          <>
+                            Submmiting
+                            <Spinner />
+                          </>
+                        ) : (
+                          "Accept"
+                        )}
+                      </Button>
+                    </div>
+                    <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                      Press <Kbd>Esc</Kbd> to close
+                    </span>
                   </div>
-                  <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Esc</Kbd> to close
-                  </span>
                 </div>
               </Form>
             </Dialog.Content>
@@ -248,6 +272,6 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   );
 };
 
-interface Props {
+export interface Props {
   issue?: Issue;
 }

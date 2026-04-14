@@ -5,6 +5,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 import { IssueId } from "@domain/issue";
 import { TaskIcon } from "@app/components/icons";
+import { CopyIssueIdButton } from "./copy-issue-id-button";
 
 export const PanelHeaderIssue = ({
   id,
@@ -21,6 +22,7 @@ export const PanelHeaderIssue = ({
         </span>
         <span className="ml-1 text-font-subtlest text-opacity-80">{id}</span>
       </span>
+      <CopyIssueIdButton issueId={id} />
       <DeleteIssueModalDialog disabled={deleteDisabled} />
       <Link
         to={previousUrl}
@@ -33,7 +35,7 @@ export const PanelHeaderIssue = ({
   );
 };
 
-interface PanelHeaderIssueProps {
+export interface PanelHeaderIssueProps {
   id: IssueId;
   deleteDisabled?: boolean;
 }
