@@ -4,6 +4,7 @@ import { MdEdit, MdCheck } from "react-icons/md";
 import cx from "classix";
 
 export const ActivityLog = ({ issue }: Props): JSX.Element => {
+  // Display empty state when no issue is provided (e.g., creating a new issue)
   if (!issue) {
     return <div className="text-xs text-font-subtlest">No activity yet</div>;
   }
@@ -15,6 +16,7 @@ export const ActivityLog = ({ issue }: Props): JSX.Element => {
       timestamp: issue.createdAt,
       user: issue.reporter.name,
     },
+    // Only show "Updated" entry if the issue was actually modified after creation
     ...(issue.updatedAt > issue.createdAt
       ? [
           {
@@ -49,7 +51,7 @@ export const ActivityLog = ({ issue }: Props): JSX.Element => {
             )}
           </div>
           <div className="flex-1">
-            <p className="text-xs font-primary-bold text-font">
+            <p className="font-primary-bold text-xs text-font">
               {activity.label} by {activity.user}
             </p>
             <p className="text-2xs text-font-subtlest">

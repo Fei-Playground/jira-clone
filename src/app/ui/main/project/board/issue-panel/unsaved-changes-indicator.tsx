@@ -4,6 +4,7 @@ import cx from "classix";
 export const UnsavedChangesIndicator = ({
   show,
 }: Props): JSX.Element | null => {
+  // Only render when there are unsaved changes to avoid layout shift
   if (!show) {
     return null;
   }
@@ -11,7 +12,7 @@ export const UnsavedChangesIndicator = ({
   return (
     <div
       className={cx(
-        "flex items-center gap-2 rounded bg-background-warning-subtler px-3 py-2",
+        "bg-background-warning-subtler flex items-center gap-2 rounded px-3 py-2",
         "text-warning text-xs"
       )}
       role="alert"

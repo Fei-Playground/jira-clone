@@ -19,27 +19,34 @@ const meta: Meta<typeof IssuePanel> = {
 export default meta;
 type Story = StoryObj<typeof IssuePanel>;
 
+/**
+ * Wrapper component that provides all required context providers for stories
+ */
+const StoryWrapper = ({ children }: { children: JSX.Element }): JSX.Element => (
+  <UserContextProvider user={userMock1}>
+    <ThemeProvider
+      specifiedTheme={Theme.LIGHT}
+      specifiedPreference={Preference.SELECTED}
+    >
+      <ProjectContextProvider project={projectMock1}>
+        {children}
+      </ProjectContextProvider>
+    </ThemeProvider>
+  </UserContextProvider>
+);
+
 export const Default: Story = {
   render: () => {
     const issue = todoIssuesMock1[0];
-    
-    const StoryContent = () => (
-      <UserContextProvider user={userMock1}>
-        <ThemeProvider
-          specifiedTheme={Theme.LIGHT}
-          specifiedPreference={Preference.SELECTED}
-        >
-          <ProjectContextProvider project={projectMock1}>
-            <IssuePanel issue={issue} />
-          </ProjectContextProvider>
-        </ThemeProvider>
-      </UserContextProvider>
-    );
 
     const RemixStub = createRemixStub([
       {
         path: "/",
-        element: <StoryContent />,
+        element: (
+          <StoryWrapper>
+            <IssuePanel issue={issue} />
+          </StoryWrapper>
+        ),
         action: async () => {
           return {
             status: 200,
@@ -54,23 +61,14 @@ export const Default: Story = {
 
 export const Empty: Story = {
   render: () => {
-    const StoryContent = () => (
-      <UserContextProvider user={userMock1}>
-        <ThemeProvider
-          specifiedTheme={Theme.LIGHT}
-          specifiedPreference={Preference.SELECTED}
-        >
-          <ProjectContextProvider project={projectMock1}>
-            <IssuePanel />
-          </ProjectContextProvider>
-        </ThemeProvider>
-      </UserContextProvider>
-    );
-
     const RemixStub = createRemixStub([
       {
         path: "/",
-        element: <StoryContent />,
+        element: (
+          <StoryWrapper>
+            <IssuePanel />
+          </StoryWrapper>
+        ),
         action: async () => {
           return {
             status: 200,

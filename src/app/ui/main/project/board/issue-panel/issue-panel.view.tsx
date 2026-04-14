@@ -26,7 +26,6 @@ import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
-import { CreatedUpdatedAt } from "./created-updated-at";
 import { ActivityLog } from "./activity-log";
 import { UnsavedChangesIndicator } from "./unsaved-changes-indicator";
 import { Spinner } from "./spinner";
@@ -34,6 +33,7 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  // Track whether the form has unsaved changes to show the indicator
   const [hasChanges, setHasChanges] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
@@ -71,6 +71,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [postData]);
 
+  // Handle keyboard shortcut: Shift+S to submit the form
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.shiftKey && e.key.toLowerCase() === "s") {
@@ -90,6 +91,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setIsOpen(false);
   };
 
+  // Mark form as having changes whenever any input is modified
   const handleFormChange = useCallback(() => {
     setHasChanges(true);
   }, []);
@@ -105,12 +107,14 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setComments(updatedComments);
   };
 
+  // Register global keyboard event listener for form submission shortcut
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
 
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onKeyDown]);
 
+  // Navigate back after dialog closes (with delay for animation)
   useEffect(() => {
     if (!isOpen) {
       setTimeout(() => {
@@ -120,6 +124,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [isOpen, navigate, location.pathname]);
 
+  // Reset the unsaved changes indicator after successful form submission
   useEffect(() => {
     const formAction = fetcher.formData?.get("_action");
 
@@ -191,27 +196,35 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     </div>
                   </section>
                   <section className="col-span-2 space-y-6">
-                    <div className="space-y-6 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
+                    <div className="border-border-subtle space-y-6 rounded-md border bg-elevation-surface-raised p-4">
                       <div>
-                        <p className="mb-2 font-primary-bold text-font-subtle">Status</p>
+                        <p className="mb-2 font-primary-bold text-font-subtle">
+                          Status
+                        </p>
                         <SelectStatus
                           initStatus={issue?.categoryType || initStatus}
                         />
                       </div>
                       <div>
-                        <p className="mb-2 font-primary-bold text-font-subtle">Priority</p>
+                        <p className="mb-2 font-primary-bold text-font-subtle">
+                          Priority
+                        </p>
                         <SelectPriority
                           initPriority={issue?.priority.id || "low"}
                         />
                       </div>
                     </div>
-                    <div className="space-y-4 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
+                    <div className="border-border-subtle space-y-4 rounded-md border bg-elevation-surface-raised p-4">
                       <div>
-                        <p className="mb-2 font-primary-bold text-font-subtle">Asignee</p>
+                        <p className="mb-2 font-primary-bold text-font-subtle">
+                          Asignee
+                        </p>
                         <SelectAsignee initAsignee={issue?.asignee || user} />
                       </div>
-                      <div className="border-t border-border-subtle pt-4">
-                        <p className="mb-2 font-primary-bold text-font-subtle">Reporter</p>
+                      <div className="border-border-subtle border-t pt-4">
+                        <p className="mb-2 font-primary-bold text-font-subtle">
+                          Reporter
+                        </p>
                         <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
                           <UserAvatar {...reporter} />
                           <input
@@ -223,8 +236,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-3 rounded-md border border-border-subtle bg-elevation-surface-raised p-4">
-                      <p className="font-primary-bold text-font-subtle">Activity</p>
+                    <div className="border-border-subtle space-y-3 rounded-md border bg-elevation-surface-raised p-4">
+                      <p className="font-primary-bold text-font-subtle">
+                        Activity
+                      </p>
                       <ActivityLog issue={issue} />
                     </div>
                   </section>
