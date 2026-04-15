@@ -4,6 +4,7 @@ import { User, UserId, userMock1 } from "@domain/user";
 import { Button } from "@app/components/button";
 import { UserAvatar } from "@app/components/user-avatar";
 import * as Select from "@app/components/select";
+import { SSOProviders } from "./sso-providers";
 
 export const LoginView = ({ users }: Props) => {
   const [selectedValue, setSelectedValue] = useState<User>(userMock1);
@@ -68,6 +69,7 @@ export const LoginView = ({ users }: Props) => {
           Login
         </Button>
       </Form>
+      <SSOProviders />
     </div>
   );
 };
