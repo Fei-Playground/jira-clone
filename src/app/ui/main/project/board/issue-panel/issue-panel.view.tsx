@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
+import { Attachment, AttachmentId } from "@domain/attachment";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
@@ -23,6 +24,8 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
+import { Attachments } from "./attachment";
+
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
@@ -32,6 +35,9 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [attachments, setAttachments] = useState<Attachment[]>(
+    issue?.attachments || []
+  );
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -98,6 +104,17 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setComments(updatedComments);
   };
 
+  const addAttachment = (newAttachment: Attachment): void => {
+    setAttachments([...attachments, newAttachment]);
+  };
+
+  const removeAttachment = (attachmentId: AttachmentId): void => {
+    const updatedAttachments = attachments.filter(
+      (attachment) => attachment.id !== attachmentId
+    );
+    setAttachments(updatedAttachments);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
 
@@ -154,6 +171,15 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div className="-ml-3 mb-6">
                       <Description
                         initDescription={issue?.description || ""}
+                        readOnly={userIsNotReporter}
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <p className="font-primary-black text-font">Attachments</p>
+                      <Attachments
+                        attachments={attachments}
+                        addAttachment={addAttachment}
+                        removeAttachment={removeAttachment}
                         readOnly={userIsNotReporter}
                       />
                     </div>

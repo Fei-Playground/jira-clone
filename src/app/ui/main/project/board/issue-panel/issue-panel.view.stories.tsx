@@ -4,6 +4,7 @@ import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { ProjectContextProvider } from "../../project.store";
 import { projectMock1 } from "@domain/project";
 import { todoIssuesMock1 } from "@domain/issue";
+import { attachmentsMock } from "@domain/attachment";
 
 const meta: Meta<typeof IssuePanel> = {
   title: "UI/Project/Board/IssuePanel",
@@ -23,9 +24,15 @@ const WrappedStory = ({ issue }: { issue?: typeof todoIssuesMock1[0] }) => (
 );
 
 export const Default: Story = {
-  render: () => (
-    <WrappedStory issue={todoIssuesMock1[0]} />
-  ),
+  render: () => {
+    const issueWithAttachments = {
+      ...todoIssuesMock1[0],
+      attachments: attachmentsMock,
+    };
+    return (
+      <WrappedStory issue={issueWithAttachments} />
+    );
+  },
   decorators: [
     (Story) => {
       return withRemixStub(withMainContext(Story));
@@ -36,6 +43,17 @@ export const Default: Story = {
 export const Empty: Story = {
   render: () => (
     <WrappedStory issue={undefined} />
+  ),
+  decorators: [
+    (Story) => {
+      return withRemixStub(withMainContext(Story));
+    },
+  ],
+};
+
+export const WithoutAttachments: Story = {
+  render: () => (
+    <WrappedStory issue={todoIssuesMock1[0]} />
   ),
   decorators: [
     (Story) => {
