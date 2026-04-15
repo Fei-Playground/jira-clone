@@ -4,6 +4,7 @@ import { User, UserId, userMock1 } from "@domain/user";
 import { Button } from "@app/components/button";
 import { UserAvatar } from "@app/components/user-avatar";
 import * as Select from "@app/components/select";
+import { SsoProviders } from "./sso-providers";
 
 export const LoginView = ({ users }: Props) => {
   const [selectedValue, setSelectedValue] = useState<User>(userMock1);
@@ -27,6 +28,9 @@ export const LoginView = ({ users }: Props) => {
         of. Try to create issues and comments with different users to see how it
         reflects in the UI and database. You can logout on the user avatar.
       </h2>
+      <div className="mx-auto mb-8 w-[300px]">
+        <SsoProviders />
+      </div>
       <Form method="post" className="mx-auto w-[300px]">
         <Select.Root
           name="user"
@@ -75,3 +79,4 @@ export const LoginView = ({ users }: Props) => {
 interface Props {
   users: User[];
 }
+
