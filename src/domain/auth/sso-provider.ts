@@ -17,13 +17,13 @@ export const ssoProviders: SSOProvider[] = [
   {
     id: "google",
     name: "Google",
-    color: "primary",
+    color: "neutral",
     href: "/auth/google",
   },
   {
     id: "microsoft",
     name: "Microsoft",
-    color: "primary",
+    color: "neutral",
     href: "/auth/microsoft",
   },
   {

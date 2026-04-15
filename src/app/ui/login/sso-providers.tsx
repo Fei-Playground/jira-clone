@@ -38,7 +38,7 @@ export const SSOProviders = (): JSX.Element => {
               type="button"
             >
               <span>{getIconForProvider(provider)}</span>
-              <span>Continue with {provider.name}</span>
+              <span className="text-sm">Continue with {provider.name}</span>
             </Button>
           </a>
         ))}
