@@ -4,6 +4,25 @@ import { Comment } from "./comment";
 const createdAt = Date.now();
 const updatedAt = Date.now();
 
+// Mock replies
+const replyMock1: Comment = {
+  id: "e1234567-1234-1234-1234-123456789ab1",
+  user: usersMock[2],
+  message: "Great point! This is exactly what we need.",
+  createdAt: createdAt + 60000,
+  updatedAt: createdAt + 60000,
+  replies: [],
+};
+
+const replyMock2: Comment = {
+  id: "e1234567-1234-1234-1234-123456789ab2",
+  user: userMock1,
+  message: "Thanks for the feedback!",
+  createdAt: createdAt + 120000,
+  updatedAt: createdAt + 120000,
+  replies: [],
+};
+
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
   user: usersMock[3], // Jessie
@@ -11,14 +30,16 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [replyMock1, replyMock2],
 };
 
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
   message: "And only the original poster of a comment can edit or delete it!",
-  createdAt,
-  updatedAt,
+  createdAt: createdAt + 30000,
+  updatedAt: createdAt + 30000,
+  replies: [replyMock1],
 };
 
 export const commentMock3: Comment = {
@@ -28,6 +49,7 @@ export const commentMock3: Comment = {
     "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard.",
   createdAt,
   updatedAt,
+  replies: [],
 };
 
 export const commentMock4: Comment = {
@@ -37,6 +59,7 @@ export const commentMock4: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [],
 };
 
 export const commentMock5: Comment = {
@@ -46,4 +69,5 @@ export const commentMock5: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [],
 };
