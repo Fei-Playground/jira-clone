@@ -22,7 +22,7 @@ export const SsoProviderButton = ({
       className="flex w-full items-center justify-center gap-2 rounded p-2 text-font hover:opacity-90 active:opacity-75 transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
       aria-label={`Sign in with ${provider.name}`}
       style={{
-        backgroundColor: "#0959e5",
+        backgroundColor: "#33312b",
         color: "white",
       }}
     >
