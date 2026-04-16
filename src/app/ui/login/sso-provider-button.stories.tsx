@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { Meta, StoryObj } from "@storybook/react";
 import { SsoProviderButton } from "./sso-provider-button";
 import { SSO_PROVIDERS } from "./sso-config";
 
@@ -16,7 +16,7 @@ const meta: Meta<typeof SsoProviderButton> = {
     },
   },
   decorators: [
-    (Story) => (
+    (Story: React.ComponentType) => (
       <div style={{ width: "320px" }}>
         <Story />
       </div>

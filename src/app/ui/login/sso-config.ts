@@ -7,7 +7,7 @@ export interface SsoProvider {
   id: string;
   name: string;
   iconName: string;
-  iconLibrary: "ai" | "fa" | "si" | "hi";
+  iconLibrary: "ai" | "fa" | "si" | "hi" | "fc";
 }
 
 export const SSO_PROVIDERS: SsoProvider[] = [
@@ -15,7 +15,7 @@ export const SSO_PROVIDERS: SsoProvider[] = [
     id: "google",
     name: "Google",
     iconName: "FcGoogle",
-    iconLibrary: "fc",
+    iconLibrary: "fc" as const,
   },
   {
     id: "github",
