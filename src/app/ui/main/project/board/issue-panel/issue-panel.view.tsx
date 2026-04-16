@@ -158,7 +158,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       />
                     </div>
                     <div>
-                      <p className="font-primary-black text-font">Comments</p>
+                      <p className="font-sans text-font">Comments</p>
                       <div>
                         <CreateComment addComment={addComment} />
                       </div>
