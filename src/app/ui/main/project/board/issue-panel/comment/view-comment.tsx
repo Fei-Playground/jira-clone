@@ -5,6 +5,8 @@ import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
+import { CreateReply } from "./create-reply";
+import { ReplyComment } from "./reply-comment";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -13,6 +15,8 @@ export const ViewComment = ({
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isReplyOpen, setIsReplyOpen] = useState<boolean>(false);
+  const [replies, setReplies] = useState<Comment[]>(comment.replies || []);
   const fetcher = useFetcher();
 
   const isNotSelfComment = comment.user.id !== user.id;
@@ -34,6 +38,16 @@ export const ViewComment = ({
   const save = (commentText: string): void => {
     comment.message = commentText;
     setIsEditing(false);
+  };
+
+  const addReply = (newReply: Comment): void => {
+    setReplies([...replies, newReply]);
+    setIsReplyOpen(false);
+  };
+
+  const removeReply = (replyId: CommentId): void => {
+    const updatedReplies = replies.filter((reply) => reply.id !== replyId);
+    setReplies(updatedReplies);
   };
 
   const IdleComment = (): JSX.Element => (
@@ -95,9 +109,34 @@ export const ViewComment = ({
               autofocus
             />
           ) : (
-            <IdleComment />
+            <>
+              <IdleComment />
+              <button
+                onClick={() => setIsReplyOpen(!isReplyOpen)}
+                className="mt-2 font-primary-light text-xs hover:underline"
+                aria-label="Reply to comment"
+              >
+                {isReplyOpen ? "Cancel" : "Reply"}
+              </button>
+            </>
           )}
         </div>
+        {isReplyOpen && (
+          <div className="mt-4 border-l-2 border-border-subtle pl-6">
+            <CreateReply addReply={addReply} />
+          </div>
+        )}
+        {replies.length > 0 && (
+          <div className="mt-6 space-y-4 border-l-2 border-border-subtle pl-6">
+            {replies.map((reply) => (
+              <ReplyComment
+                key={reply.id}
+                reply={reply}
+                removeReply={removeReply}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
