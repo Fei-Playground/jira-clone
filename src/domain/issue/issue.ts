@@ -2,6 +2,10 @@ import { User, UserId } from "../user";
 import { CategoryType } from "@domain/category";
 import { Comment } from "../comment";
 import { Priority } from "../priority";
+import { IssueLink } from "../issue-link";
+import { Label } from "../label";
+import { Watcher } from "../watcher";
+import { Activity } from "../activity";
 
 export type IssueId = string;
 export interface Issue {
@@ -15,4 +19,9 @@ export interface Issue {
   priority: Priority;
   createdAt: number;
   updatedAt: number;
+  links?: IssueLink[];
+  labels?: Label[];
+  watchers?: Watcher[];
+  activities?: Activity[];
+  dueDate?: number;
 }

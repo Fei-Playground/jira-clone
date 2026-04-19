@@ -28,10 +28,21 @@ import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
+import { IssueLinks } from "./issue-links";
+import { IssueLabels } from "./issue-labels";
+import { ActivityTimeline } from "./activity-timeline";
+import { IssueWatchers } from "./issue-watchers";
+import { SelectDueDate } from "./select-due-date";
+import { HiChevronDown } from "react-icons/hi";
+import cx from "classix";
 
-export const IssuePanel = ({ issue }: Props): JSX.Element => {
+export const IssuePanel = ({ issue, allIssues, allUsers }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    links: false,
+    activity: false,
+  });
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -46,6 +57,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
   const userIsNotReporter = user.id !== reporter.id;
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   const postData = useCallback(
     (formTarget: HTMLFormElement) => {
@@ -174,25 +192,33 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       </ul>
                     </div>
                   </section>
-                  <section className="col-span-2 space-y-10">
+                  <section className="col-span-2 space-y-6 max-h-[calc(100vh-400px)] overflow-y-auto pr-2">
                     <div>
-                      <p className="mb-1">Status</p>
+                      <p className="mb-1 font-primary-bold text-font">Status</p>
                       <SelectStatus
                         initStatus={issue?.categoryType || initStatus}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Priority</p>
+                      <p className="mb-1 font-primary-bold text-font">Priority</p>
                       <SelectPriority
                         initPriority={issue?.priority.id || "low"}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Asignee</p>
+                      <p className="mb-1 font-primary-bold text-font">Assignee</p>
                       <SelectAsignee initAsignee={issue?.asignee || user} />
                     </div>
                     <div>
-                      <p className="mb-1">Reporter</p>
+                      <p className="mb-1 font-primary-bold text-font">Due Date</p>
+                      <SelectDueDate initDueDate={issue?.dueDate} />
+                    </div>
+                    <div>
+                      <p className="mb-2 font-primary-bold text-font">Labels</p>
+                      <IssueLabels labels={issue?.labels} />
+                    </div>
+                    <div>
+                      <p className="mb-1 font-primary-bold text-font">Reporter</p>
                       <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
                         <UserAvatar {...reporter} />
                         <input
@@ -204,7 +230,61 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       </div>
                     </div>
                     <div>
+                      <p className="mb-2 font-primary-bold text-font">Watchers</p>
+                      <IssueWatchers
+                        watchers={issue?.watchers}
+                        users={allUsers || []}
+                        currentUserId={user.id}
+                      />
+                    </div>
+                    <div>
                       <CreatedUpdatedAt issue={issue} />
+                    </div>
+                    <div className="border-t border-border-brand pt-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("links")}
+                        className="flex w-full items-center justify-between rounded-md hover:bg-background-neutral-subtlest px-2 py-2 transition-colors"
+                      >
+                        <p className="font-primary-bold text-font">Linked Issues</p>
+                        <HiChevronDown
+                          className={cx(
+                            "w-4 h-4 transition-transform",
+                            expandedSections.links && "rotate-180"
+                          )}
+                        />
+                      </button>
+                      {expandedSections.links && (
+                        <div className="mt-2">
+                          <IssueLinks
+                            links={issue?.links}
+                            allIssues={allIssues || []}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="border-t border-border-brand pt-4">
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("activity")}
+                        className="flex w-full items-center justify-between rounded-md hover:bg-background-neutral-subtlest px-2 py-2 transition-colors"
+                      >
+                        <p className="font-primary-bold text-font">Activity</p>
+                        <HiChevronDown
+                          className={cx(
+                            "w-4 h-4 transition-transform",
+                            expandedSections.activity && "rotate-180"
+                          )}
+                        />
+                      </button>
+                      {expandedSections.activity && (
+                        <div className="mt-3 max-h-64 overflow-y-auto">
+                          <ActivityTimeline
+                            activities={issue?.activities}
+                            users={allUsers || []}
+                          />
+                        </div>
+                      )}
                     </div>
                   </section>
                 </div>
@@ -250,4 +330,6 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
 
 interface Props {
   issue?: Issue;
+  allIssues?: Issue[];
+  allUsers?: any[];
 }

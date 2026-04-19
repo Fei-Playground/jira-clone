@@ -7,6 +7,10 @@ import {
   commentMock5,
 } from "@domain/comment";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
+import { issueLinksMock } from "@domain/issue-link";
+import { labelsMockProject1 } from "@domain/label";
+import { watchersMock } from "@domain/watcher";
+import { activitiesMock } from "@domain/activity";
 import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();
@@ -34,21 +38,28 @@ export const inProgressIssuesMock1: Issue[] = [
     name: "HINT: Open two tabs to see events in real time.",
     description:
       "With the same project open in two different tabs, try making some changes on one of them. The result will be reflected instantly on the other. This will happen with every other user with the app open.",
-    reporter: userMock1, // Daniel Serrano
-    asignee: userMock2, // Woody
+    reporter: userMock1,
+    asignee: userMock2,
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    links: issueLinksMock.filter(
+      (link) => link.sourceIssueId === "ea07f7ca-13e9-4143-b623-f5713adef81a"
+    ),
+    labels: [labelsMockProject1[0], labelsMockProject1[1]],
+    watchers: watchersMock,
+    activities: activitiesMock,
+    dueDate: new Date("2022-02-15 17:00").valueOf(),
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
     name: "HINT: Try to login and interact with different users. ",
     description:
       "This will be reflected on the UI (e. g. which user created and issue or wrote a comment). A user can only see the projects they are assigned to. You can try this by creating a new project at the /projects page. To logout, go to the avatar dropdown (top right).",
-    reporter: userMock2, // Woody
-    asignee: usersMock[2], // Buzz Lightyear
+    reporter: userMock2,
+    asignee: usersMock[2],
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
