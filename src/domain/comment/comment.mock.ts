@@ -11,6 +11,22 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-1-1",
+      user: usersMock[5], // Mr. Potato
+      message: "That's a great point! This ensures proper access control.",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "reply-1-2",
+      user: usersMock[3], // Jessie
+      message: "Exactly! It prevents accidental modifications by other users.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +35,15 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-2-1",
+      user: userMock1, // Daniel Serrano
+      message: "This is important for data integrity.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock3: Comment = {
@@ -28,6 +53,7 @@ export const commentMock3: Comment = {
     "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard.",
   createdAt,
   updatedAt,
+  replies: [],
 };
 
 export const commentMock4: Comment = {
@@ -37,6 +63,7 @@ export const commentMock4: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [],
 };
 
 export const commentMock5: Comment = {
@@ -46,4 +73,5 @@ export const commentMock5: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [],
 };
