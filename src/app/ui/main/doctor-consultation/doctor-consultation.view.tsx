@@ -45,7 +45,7 @@ export const DoctorConsultationView = ({
       {/* Header with branding */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-primary-bold text-lg text-font">CareLoop</h1>
+          <h1 className="font-primary-bold text-lg text-font-danger">CareLoop</h1>
           <p className="font-primary text-xs text-font-subtle">
             CareLoop.com
           </p>
@@ -72,14 +72,14 @@ export const DoctorConsultationView = ({
 
         {/* Hero heading */}
         <div className="text-center">
-          <h2 className="font-primary-bold text-xl text-font leading-relaxed">
+          <h2 className="font-primary-bold text-xl text-font-danger leading-relaxed">
             Finding Your perfect Doctor
           </h2>
         </div>
 
         {/* Highlighted consultation text section */}
         <div className="rounded-lg bg-background-neutral-subtle p-4">
-          <p className="font-primary text-sm leading-relaxed">
+          <p className="font-primary text-sm leading-relaxed text-font-danger">
             <HighlightedText
               text="You need a doctor who offers virtual consultations."
               highlights={["offers virtual consultations"]}

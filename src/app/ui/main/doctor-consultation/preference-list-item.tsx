@@ -25,7 +25,7 @@ export const PreferenceListItem = forwardRef<
 
       {/* Text content */}
       <div className="flex-1">
-        <p className="font-primary text-sm text-font leading-relaxed">
+        <p className="font-primary text-sm text-font-danger leading-relaxed">
           {text}
         </p>
       </div>
