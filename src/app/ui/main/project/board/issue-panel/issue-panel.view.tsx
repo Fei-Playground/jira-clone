@@ -28,6 +28,11 @@ import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
+import { SelectDueDate } from "./select-due-date";
+import { SelectLabels } from "./select-labels";
+import { LinkedIssues } from "./linked-issues";
+import { ActivityTimeline } from "./activity-timeline";
+import { WatchersList } from "./watchers-list";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
@@ -192,6 +197,18 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <SelectAsignee initAsignee={issue?.asignee || user} />
                     </div>
                     <div>
+                      <p className="mb-1">Due Date</p>
+                      <SelectDueDate initDueDate={issue?.dueDate} />
+                    </div>
+                    <div>
+                      <p className="mb-1">Labels</p>
+                      <SelectLabels initLabels={issue?.labels} />
+                    </div>
+                    <div>
+                      <p className="mb-1">Watchers</p>
+                      <WatchersList initialWatchers={issue?.watchers || []} />
+                    </div>
+                    <div>
                       <p className="mb-1">Reporter</p>
                       <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
                         <UserAvatar {...reporter} />
@@ -206,6 +223,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <CreatedUpdatedAt issue={issue} />
                     </div>
+                  </section>
+                  <section className="col-span-5 mt-6 space-y-4 border-t border-border-neutral pt-6">
+                    <LinkedIssues linkedIssues={issue?.linkedIssues || []} />
+                    <ActivityTimeline
+                      activityHistory={issue?.activityHistory || []}
+                    />
                   </section>
                 </div>
                 <div className="mt-6 grid grid-cols-3 items-end">
