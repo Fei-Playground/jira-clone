@@ -1,4 +1,4 @@
-import { Form, Link, useLocation } from "@remix-run/react";
+import { Form, Link, useLocation } from "react-router";
 import * as AlertDialog from "@app/components/alert-dialog";
 import cx from "classix";
 import { MdDeleteOutline } from "react-icons/md";

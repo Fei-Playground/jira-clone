@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { User, UserId, usersMock } from "@domain/user";
 import * as Select from "@app/components/select";
 import { UserAvatar } from "@app/components/user-avatar";

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
-import { Link, useFetcher } from "@remix-run/react";
+import { Link, useFetcher } from "react-router";
 import { AiOutlinePlus } from "react-icons/ai";
 import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
@@ -20,7 +20,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     handleDragging,
   } = props;
   const [columnHeight, setColumnHeight] = useState<number>(0);
-  const columnRef = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
   const { search } = useProjectStore();
@@ -81,7 +81,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
 
   return (
     <div
-      ref={dropRef}
+      ref={dropRef as unknown as React.Ref<HTMLDivElement>}
       className="relative flex h-full w-[260px] max-w-[260px] flex-col rounded-md bg-elevation-surface-sunken"
     >
       {/* Column drop area */}

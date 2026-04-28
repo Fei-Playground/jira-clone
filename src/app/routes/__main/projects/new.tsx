@@ -1,10 +1,10 @@
 import type {
   LoaderFunction,
   ActionFunction,
-  V2_MetaFunction,
-} from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+  MetaFunction,
+} from "react-router";
+import { data as json, redirect } from "react-router";
+import { useLoaderData } from "react-router";
 import { User, UserId } from "@domain/user";
 import { Category, categoryTypes, categoryTypeDict } from "@domain/category";
 import { getUsers } from "@infrastructure/db/user";
@@ -14,7 +14,7 @@ import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { getRandomProjectImage } from "@utils/random-project-image";
 import { formatTags, formatProperties } from "@utils/meta";
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   const title = "Jira clone - Create project";
   const description = "Create new project and assigne team members.";
   const image =

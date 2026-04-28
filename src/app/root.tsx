@@ -1,16 +1,17 @@
 import { CSSProperties, useEffect } from "react";
-import type { LoaderFunction, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LoaderFunction, MetaFunction } from "react-router";
 import {
+  data as json,
+  isRouteErrorResponse,
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useFetcher,
   useLoaderData,
-} from "@remix-run/react";
+  useRouteError,
+} from "react-router";
 import cx from "classix";
 import {
   Theme,
@@ -23,9 +24,9 @@ import { getThemeSession } from "./session-storage/theme-storage.server";
 import { Toast } from "./components/toast";
 import { Error404 } from "./components/error-404";
 import { Error500 } from "./components/error-500";
-import styles from "./styles/app-compiled.css";
-import fonts from "./styles/fonts.css";
-import fuck from "react-toastify/dist/ReactToastify.css";
+import styles from "./styles/app-compiled.css?url";
+import fonts from "./styles/fonts.css?url";
+import fuck from "react-toastify/dist/ReactToastify.css?url";
 
 export const links = () => {
   return [
@@ -36,7 +37,7 @@ export const links = () => {
   ];
 };
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   const title = "Jira clone";
   const description =
     "Task manager application inspired in Jira. Side project made with Remix, React, Tailwind, TypeScript and more.";
@@ -128,7 +129,6 @@ const App = (): JSX.Element => {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
         <Toast theme={theme || Theme.LIGHT} />
         <script
           dangerouslySetInnerHTML={{
@@ -166,34 +166,46 @@ const errorComponentStyle: CSSProperties = {
   fontWeight: "bold",
 };
 
-export function ErrorBoundary({ error }: { error: Error }) {
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return (
+      <html>
+        <head>
+          <title>Ooops! Not found</title>
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <div style={errorComponentStyle}>
+            <Error404
+              message="It seems that you have lost! Go to the main page"
+              href="/"
+            />
+          </div>
+          <Scripts />
+        </body>
+      </html>
+    );
+  }
+
   console.error(error);
   const errorMessage =
     "It seems there is a critical error! Please try again or contact me at: danielserrano.contacto@gmail.com";
 
   return (
-    // Inline styles because tailwind is not loaded at this point
-    <div style={errorComponentStyle}>
-      <Error500 message={errorMessage} href="/" />
-    </div>
-  );
-}
-
-export function CatchBoundary() {
-  return (
     <html>
       <head>
-        <title>Ooops! Not found</title>
+        <title>Error</title>
         <Meta />
         <Links />
       </head>
       <body>
         <div style={errorComponentStyle}>
-          <Error404
-            message="It seems that you have lost! Go to the main page"
-            href="/"
-          />
+          <Error500 message={errorMessage} href="/" />
         </div>
+        <Scripts />
       </body>
     </html>
   );

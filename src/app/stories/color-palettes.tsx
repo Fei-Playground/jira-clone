@@ -187,7 +187,7 @@ const CopyButton = ({ colorValue }: CopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
   const [buttonWidth, setButtonWidth] = useState(0);
 
-  const columnRef = useRef() as React.MutableRefObject<HTMLButtonElement>;
+  const columnRef = useRef<HTMLButtonElement>(null);
 
   const copyTextToClipboard = async (text: string) => {
     if ("clipboard" in navigator) {

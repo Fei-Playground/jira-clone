@@ -1,4 +1,4 @@
-import { Outlet } from "@remix-run/react";
+import { Outlet } from "react-router";
 import { User } from "@domain/user";
 import { UserContextProvider } from "@app/store/user.store";
 import { Header } from "./header";

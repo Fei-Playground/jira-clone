@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { projectMock1 } from "@domain/project";
 import { usersMock } from "@domain/user";
 import { withRemixStub, withMainContext } from "@app/stories/utils";

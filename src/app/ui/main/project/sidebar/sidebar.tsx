@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "@remix-run/react";
+import { NavLink } from "react-router";
 import { HiOutlineViewBoards } from "react-icons/hi";
 import cx from "classix";
 import { RiArrowDropLeftLine } from "react-icons/ri";

@@ -1,10 +1,10 @@
 import type {
   LoaderFunction,
   ActionFunction,
-  V2_MetaFunction,
-} from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+  MetaFunction,
+} from "react-router";
+import { data as json, redirect } from "react-router";
+import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Project, ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
@@ -17,11 +17,13 @@ import {
 } from "@infrastructure/db/issue";
 import { Error500 } from "@app/components/error-500";
 import { BoardView } from "@app/ui/main/project/board";
-import { emitter, EVENTS } from "@app/events";
+import { EVENTS } from "@app/events";
+import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  const { project } = data as LoaderData;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
+  const { project } = data as unknown as LoaderData;
   const title = "Jira clone - Board";
   const description =
     "Manage your project. Create, edit, delete new issues and assigne them.";

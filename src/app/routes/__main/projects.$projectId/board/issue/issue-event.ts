@@ -1,8 +1,9 @@
-import type { LoaderArgs } from "@remix-run/node";
-import { eventStream } from "remix-utils";
-import { emitter, EVENTS } from "@app/events";
+import type { LoaderFunctionArgs } from "react-router";
+import { eventStream } from "remix-utils/sse/server";
+import { EVENTS } from "@app/events";
+import { emitter } from "@app/events/emitter.server";
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return eventStream(request.signal, (send) => {
     const handleIssueCreated = (message: string) => {
       send({ event: EVENTS.ISSUE_CREATED, data: message });

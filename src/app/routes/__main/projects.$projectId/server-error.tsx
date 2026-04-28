@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "react-router";
 import { toast } from "react-toastify";
 import { Error500 } from "@app/components/error-500";
 import { formatTags } from "@utils/meta";
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   const title = "Jira clone - Error";
   const description =
     "Manage your project. Create, edit, delete new issues and assigne them.";

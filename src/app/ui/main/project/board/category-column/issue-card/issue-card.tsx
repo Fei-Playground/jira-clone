@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
@@ -47,7 +47,7 @@ export const IssueCard = ({
   }, [isDragging, handleDragging]);
 
   return (
-    <div ref={isSubmitting ? undefined : dragRef}>
+    <div ref={isSubmitting ? undefined : (dragRef as unknown as React.Ref<HTMLDivElement>)}>
       <IssueCardContent
         link={issueLink}
         name={issue.name}

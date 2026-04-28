@@ -1,6 +1,6 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction } from "react-router";
 import { useEffect } from "react";
-import { useParams } from "@remix-run/react";
+import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import { ProjectId } from "@domain/project";
 import { Error404 } from "@app/components/error-404";

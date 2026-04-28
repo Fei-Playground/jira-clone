@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "@remix-run/react";
+import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {

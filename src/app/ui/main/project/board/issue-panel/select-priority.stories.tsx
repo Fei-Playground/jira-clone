@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { priorityLow, priorityMedium, priorityHigh, PriorityId } from "@domain/priority";
 import { SelectPriority } from "./select-priority";
 

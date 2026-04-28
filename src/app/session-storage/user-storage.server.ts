@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookieSessionStorage } from "react-router";
 import { UserId } from "@domain/user";
 import { SESSION_SECRET } from "./shared";
 

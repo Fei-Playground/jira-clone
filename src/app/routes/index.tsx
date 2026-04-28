@@ -1,4 +1,4 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
+import { LoaderFunction, redirect } from "react-router";
 import { Error404 } from "@app/components/error-404";
 
 export const loader: LoaderFunction = async ({ request }) => {

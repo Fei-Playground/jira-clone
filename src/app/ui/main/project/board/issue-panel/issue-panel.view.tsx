@@ -3,11 +3,11 @@ import {
   Form,
   useActionData,
   useSearchParams,
-  useTransition,
+  useNavigation,
   useFetcher,
   useLocation,
   useNavigate,
-} from "@remix-run/react";
+} from "react-router";
 import * as Dialog from "@app/components/dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
@@ -41,7 +41,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const actionData = useActionData() as IssueActionData;
   const fetcher = useFetcher();
   const params = useSearchParams();
-  const transition = useTransition();
+  const transition = useNavigation();
   const location = useLocation();
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
@@ -113,13 +113,23 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [isOpen, navigate, location.pathname]);
 
+  const wasSubmitting = useRef(false);
   useEffect(() => {
-    const formAction = fetcher.formData?.get("_action");
-
-    if (fetcher.type === "actionRedirect" && formAction === "create") {
-      toast.success("Issue created successfully");
+    const submitting = fetcher.state !== "idle";
+    if (submitting) {
+      wasSubmitting.current = true;
+      return;
     }
-  }, [fetcher.type, fetcher.formData]);
+    if (wasSubmitting.current && fetcher.data) {
+      const formAction = (fetcher.formData as FormData | undefined)?.get(
+        "_action"
+      );
+      if (formAction === "create") {
+        toast.success("Issue created successfully");
+      }
+      wasSubmitting.current = false;
+    }
+  }, [fetcher.state, fetcher.data, fetcher.formData]);
 
   return (
     <>

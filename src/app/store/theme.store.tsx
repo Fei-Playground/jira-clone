@@ -6,7 +6,7 @@ import {
   useRef,
   useCallback,
 } from "react";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 
 export enum Theme {
   LIGHT = "light",

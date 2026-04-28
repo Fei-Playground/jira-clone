@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ErrorBase } from "./error-base";
 
 const meta: Meta<typeof ErrorBase> =

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-import { Outlet, useNavigate, useRevalidator } from "@remix-run/react";
-import { useEventSource } from "remix-utils";
+import { Outlet, useNavigate, useRevalidator } from "react-router";
+import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Project } from "@domain/project";

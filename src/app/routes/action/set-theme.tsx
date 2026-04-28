@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
+import { data as json, redirect } from "react-router";
 import { Theme, Preference } from "@app/store/theme.store";
 import { getThemeSession } from "@app/session-storage/theme-storage.server";
 

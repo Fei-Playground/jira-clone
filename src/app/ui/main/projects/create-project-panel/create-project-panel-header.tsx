@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { IoCloseOutline } from "react-icons/io5";
 import { IssueId } from "@domain/issue";
 

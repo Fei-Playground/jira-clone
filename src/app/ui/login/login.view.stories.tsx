@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { unstable_createRemixStub as createRemixStub } from "@remix-run/testing";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { createRoutesStub } from "react-router";
 import { usersMock } from "@domain/user";
 import { LoginView } from "./login.view";
 
@@ -19,10 +19,10 @@ const meta: Meta<typeof LoginView> = {
   },
   decorators: [
     (Story) => {
-      const RemixStub = createRemixStub([
+      const RemixStub = createRoutesStub([
         {
           path: "/",
-          element: <Story />,
+          Component: () => <Story />,
           action: async () => {
             return {
               status: 200,

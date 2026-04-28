@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { usersMock } from "@domain/user";
 import { UserAvatar } from "./user-avatar";
 

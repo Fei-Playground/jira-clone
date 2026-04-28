@@ -1,5 +1,4 @@
 import {
-  PrismaClient,
   Project as ProjectDB,
   User as UserDB,
   Category as CategoryDB,
@@ -11,8 +10,7 @@ import { Project, ProjectId, projectsMock } from "@domain/project";
 import { Category, CategoryId } from "@domain/category";
 import { Issue } from "@domain/issue";
 import { Priority, prioritiesMock } from "@domain/priority";
-
-const db = new PrismaClient();
+import { db } from "./db.server";
 
 // Leaving the update empty will not update the record if it already exists
 const createUserIfNotExists = async (user: User): Promise<UserDB> => {

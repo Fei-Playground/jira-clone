@@ -1,24 +1,31 @@
-/* eslint-disable @typescript-eslint/no-namespace */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+
+const databaseUrl =
+  process.env.DATABASE_URL ?? "file:./data.db?connection_limit=1";
+
+const createClient = () => {
+  const url = databaseUrl
+    .replace(/^file:/, "")
+    .replace(/\?.*$/, "");
+  const adapter = new PrismaBetterSqlite3({ url });
+  return new PrismaClient({ adapter });
+};
 
 let db: PrismaClient;
 
 declare global {
   // eslint-disable-next-line no-var
-  var __db: PrismaClient;
+  var __db: PrismaClient | undefined;
 }
 
-// this is needed because in development we don't want to restart
-// the server with every change, but we want to make sure we don't
-// create a new connection to the DB with every change either.
 if (process.env.NODE_ENV === "production") {
-  db = new PrismaClient();
+  db = createClient();
 } else {
   if (!globalThis.__db) {
-    global.__db = new PrismaClient();
+    globalThis.__db = createClient();
   }
-  db = global.__db;
+  db = globalThis.__db;
 }
 
 export { db };

@@ -1,6 +1,6 @@
-import type { LoaderFunction, V2_MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunction, MetaFunction } from "react-router";
+import { data as json, redirect } from "react-router";
+import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { ProjectSummary, ProjectId } from "@domain/project";
 import { getProjectSummary } from "@infrastructure/db/project";
@@ -9,8 +9,9 @@ import { Error500 } from "@app/components/error-500";
 import { ProjectView } from "@app/ui/main/project";
 import { formatTags, formatProperties } from "@utils/meta";
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
-  const { projectSummary } = data as LoaderData;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
+  const { projectSummary } = data as unknown as LoaderData;
   const title = `Jira clone - ${projectSummary.name || "Project"}`;
   const description =
     "See all your projects in one place. Create new ones and assigne team members.";

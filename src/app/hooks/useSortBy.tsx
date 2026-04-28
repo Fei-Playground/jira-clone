@@ -1,4 +1,4 @@
-import { useSearchParams } from "@remix-run/react";
+import { useSearchParams } from "react-router";
 import { isValidSort } from "@domain/filter";
 
 export const useSortBy = (): string | null => {

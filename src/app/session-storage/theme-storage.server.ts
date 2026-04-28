@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookieSessionStorage } from "react-router";
 import { Theme, Preference, isValidTheme, isValidPreference } from "@app/store/theme.store";
 import { SESSION_SECRET } from "./shared";
 
