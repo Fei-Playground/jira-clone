@@ -4,6 +4,7 @@
   "type": "module",
   "homepage": "http://daniserrano7.github.io/jira-clone/",
   "scripts": {
+    "postinstall": "npx prisma generate",
     "build": "npm run build:css && react-router build",
     "build:css": "tailwindcss -m -i ./src/app/styles/app.css -o ./src/app/styles/app-compiled.css",
     "dev": "concurrently \"pnpm run dev:css\" \"react-router dev\"",
