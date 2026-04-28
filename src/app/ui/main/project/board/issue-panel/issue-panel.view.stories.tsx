@@ -27,11 +27,11 @@ const meta: Meta<typeof IssuePanel> = {
 export default meta;
 type Story = StoryObj<typeof IssuePanel>;
 
-// Sample labels for demonstration
+// Sample labels for demonstration - use IDs matching availableLabels in SelectLabels component
 const sampleLabels: Label[] = [
-  { id: "label-1", name: "Bug", color: "#ef4444" },
-  { id: "label-2", name: "Feature", color: "#3b82f6" },
-  { id: "label-3", name: "Enhancement", color: "#22c55e" },
+  { id: "bug", name: "Bug", color: "#ef4444" },
+  { id: "feature", name: "Feature", color: "#3b82f6" },
+  { id: "enhancement", name: "Enhancement", color: "#8b5cf6" },
 ];
 
 // Sample linked issues for demonstration

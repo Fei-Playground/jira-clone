@@ -66,9 +66,10 @@ export const SelectLabels = ({ initLabels = [] }: Props): JSX.Element => {
                 "rounded-md border-2 px-3 py-2 text-left transition-all",
                 "font-primary text-sm",
                 isSelected
-                  ? "border-border-brand bg-background-brand-subtlest text-font"
-                  : "border-border-neutral bg-background-neutral text-font hover:bg-background-neutral-hovered"
+                  ? "bg-background-brand-subtlest text-font"
+                  : "bg-background-neutral text-font hover:bg-background-neutral-hovered"
               )}
+              style={{ borderColor: label.color }}
             >
               <span
                 className="mr-2 inline-block h-2 w-2 rounded-full"
