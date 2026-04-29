@@ -3,9 +3,12 @@ import { useFetcher } from "@remix-run/react";
 import cx from "classix";
 import { v4 as uuid } from "uuid";
 import { Comment, CommentId } from "@domain/comment";
+import { User } from "@domain/user";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
+import { MentionList } from "./mention-list";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -13,6 +16,8 @@ export const ViewComment = ({
   removeComment,
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
+  const projectStore = useProjectStore();
+  const users = projectStore.project.users;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplyingTo, setIsReplyingTo] = useState<boolean>(false);
   const [replies, setReplies] = useState<Comment[]>(
@@ -38,19 +43,21 @@ export const ViewComment = ({
     );
   };
 
-  const save = (commentText: string): void => {
+  const save = (commentText: string, mentions?: User[]): void => {
     comment.message = commentText;
+    comment.mentions = mentions?.map((u) => u.id);
     setIsEditing(false);
   };
 
   const startReply = () => setIsReplyingTo(true);
   const cancelReply = () => setIsReplyingTo(false);
 
-  const saveReply = (replyText: string): void => {
+  const saveReply = (replyText: string, mentions?: User[]): void => {
     const newReply: Comment = {
       id: `temp-${uuid()}`,
       user,
       message: replyText,
+      mentions: mentions?.map((u) => u.id),
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -65,9 +72,17 @@ export const ViewComment = ({
     setReplies(updatedReplies);
   };
 
+  const getMentionedUsers = (): User[] => {
+    if (!comment.mentions) return [];
+    return comment.mentions
+      .map((mentionId) => users.find((u) => u.id === mentionId))
+      .filter((u) => u !== undefined) as User[];
+  };
+
   const IdleComment = (): JSX.Element => (
     <div className="font-primary-light">
       <p>{comment.message}</p>
+      <MentionList mentionedUsers={getMentionedUsers()} />
       <div
         className={cx(
           "mt-3 text-font-subtlest",
@@ -131,6 +146,7 @@ export const ViewComment = ({
                 save={save}
                 cancel={cancel}
                 autofocus
+                users={users}
               />
             ) : (
               <IdleComment />
@@ -144,6 +160,7 @@ export const ViewComment = ({
                 save={saveReply}
                 cancel={cancelReply}
                 autofocus
+                users={users}
               />
             </div>
           )}

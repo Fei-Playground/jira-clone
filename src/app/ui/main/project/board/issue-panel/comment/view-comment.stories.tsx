@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { unstable_createRemixStub as createRemixStub } from "@remix-run/testing";
 import { ViewComment } from "./view-comment";
 import { UserContextProvider } from "@app/store/user.store";
+import { ProjectContextProvider } from "@app/ui/main/project";
 import { commentMock1, commentMock2 } from "@domain/comment";
-import { userMock1 } from "@domain/user";
+import { userMock1, usersMock } from "@domain/user";
+import { projectMock1 } from "@domain/project";
 import { Comment } from "@domain/comment";
 
 const meta: Meta<typeof ViewComment> = {
@@ -19,7 +21,9 @@ const meta: Meta<typeof ViewComment> = {
           path: "/*",
           element: (
             <UserContextProvider user={userMock1}>
-              <Story />
+              <ProjectContextProvider project={projectMock1}>
+                <Story />
+              </ProjectContextProvider>
             </UserContextProvider>
           ),
           action: () => ({}),
@@ -77,6 +81,60 @@ const editedComment: Comment = {
 export const EditedComment: Story = {
   args: {
     comment: editedComment,
+    removeComment: () => {},
+  },
+};
+
+// Comment with mentions - displays mentioned users as avatar chips below the comment text
+const commentWithMentions: Comment = {
+  id: "comment-with-mentions",
+  user: usersMock[3], // Jessie
+  message: "Great work @Buzz Lightyear and @Woody on the implementation! Let's sync with @Mr Potato as well.",
+  mentions: [
+    usersMock[2].id, // Buzz Lightyear
+    usersMock[1].id, // Woody
+    usersMock[5].id, // Mr Potato
+  ],
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+};
+
+export const WithMentions: Story = {
+  args: {
+    comment: commentWithMentions,
+    removeComment: () => {},
+  },
+};
+
+// Comment with mentions and replies - showing full mention functionality
+const replyWithMention: Comment = {
+  id: "reply-with-mention",
+  user: usersMock[2], // Buzz Lightyear
+  message: "Thanks @Jessie! I'll follow up with @Andy Davis on the details.",
+  mentions: [
+    usersMock[3].id, // Jessie
+    usersMock[9].id, // Andy Davis
+  ],
+  createdAt: Date.now() + 1000,
+  updatedAt: Date.now() + 1000,
+};
+
+const commentWithMentionsAndReplies: Comment = {
+  id: "comment-mentions-replies",
+  user: usersMock[1], // Woody
+  message: "Hey @Emperor Zurg can you review this? Cc @Ms Potato",
+  mentions: [
+    usersMock[4].id, // Emperor Zurg
+    usersMock[6].id, // Ms Potato
+  ],
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
+  replies: [replyWithMention],
+};
+
+export const WithMentionsAndReplies: Story = {
+  args: {
+    comment: commentWithMentionsAndReplies,
     removeComment: () => {},
   },
 };

@@ -1,7 +1,8 @@
-import { useLayoutEffect, useState, useRef } from "react";
+import { useLayoutEffect, useState, useRef, forwardRef } from "react";
 import cx from "classix";
 
-export const TextareaAutosize = (props: TitleProps): JSX.Element => {
+export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>(
+  (props, ref): JSX.Element => {
   const {
     name,
     value,
@@ -43,6 +44,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
   return (
     <div className="relative">
       <textarea
+        ref={ref}
         name={name}
         className={cx(
           "box-border w-full resize-none overflow-y-hidden rounded-md border-none bg-background-input p-3 text-font outline-2 hover:bg-background-input-hovered focus-visible:bg-background-input-pressed",
@@ -68,7 +70,10 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
       </p>
     </div>
   );
-};
+}
+);
+
+TextareaAutosize.displayName = "TextareaAutosize";
 
 interface TitleProps {
   name: string;
