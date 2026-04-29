@@ -4,6 +4,22 @@ import { Comment } from "./comment";
 const createdAt = Date.now();
 const updatedAt = Date.now();
 
+const replyMock1: Comment = {
+  id: "temp-reply-1",
+  user: usersMock[7], // Little Green Men
+  message: "That's a great point! This applies to comments as well.",
+  createdAt: createdAt + 1000,
+  updatedAt: createdAt + 1000,
+};
+
+const replyMock2: Comment = {
+  id: "temp-reply-2",
+  user: userMock1, // Daniel Serrano
+  message: "Exactly, we want to maintain consistency across the app.",
+  createdAt: createdAt + 2000,
+  updatedAt: createdAt + 2000,
+};
+
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
   user: usersMock[3], // Jessie
@@ -11,6 +27,7 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [replyMock1, replyMock2],
 };
 
 export const commentMock2: Comment = {
