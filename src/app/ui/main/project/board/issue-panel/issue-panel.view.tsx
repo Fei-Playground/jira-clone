@@ -168,6 +168,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              addComment={addComment}
                             />
                           </li>
                         ))}
