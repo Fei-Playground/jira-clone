@@ -6,7 +6,8 @@ export const UserAvatar = ({
   name,
   image,
   color,
-  size = 36,
+  size = 32,
+  variant = "default",
   tooltip = false,
 }: UserAvatarProps): JSX.Element => {
   const imageMinName = image?.replace(".webp", "-min.webp");
@@ -33,7 +34,11 @@ export const UserAvatar = ({
         />
         <Avatar.Fallback
           delayMs={0}
-          className="flex items-center justify-center rounded-full text-[var(--Neutral1000)]"
+          className={`flex items-center justify-center rounded-full ${
+            variant === "dark"
+              ? "border border-border-bold text-[var(--Neutral0)]"
+              : "text-[var(--Neutral1000)]"
+          }`}
           style={{
             ...imageSize,
             backgroundColor: color || getRandomPastelColor(),
@@ -49,5 +54,6 @@ export const UserAvatar = ({
 
 interface UserAvatarProps extends Omit<User, "id"> {
   size?: number;
+  variant?: "default" | "dark";
   tooltip?: boolean;
 }

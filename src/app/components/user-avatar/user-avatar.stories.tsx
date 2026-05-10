@@ -4,8 +4,12 @@ import { UserAvatar } from "./user-avatar";
 
 const meta: Meta<typeof UserAvatar> = {
   title: "Components/UserAvatar",
+  component: UserAvatar,
   parameters: {
     layout: "centered",
+  },
+  args: {
+    name: "Woody",
   },
   argTypes: {
     name: {
@@ -29,6 +33,12 @@ const meta: Meta<typeof UserAvatar> = {
         type: "number",
       },
     },
+    variant: {
+      control: {
+        type: "radio",
+      },
+      options: ["default", "dark"],
+    },
     tooltip: {
       control: {
         type: "boolean",
@@ -45,12 +55,27 @@ const userName = usersMock[1].name;
 
 export const Default: Story = {
   render: (_) => (
-    <div className="grid grid-cols-6 gap-4 p-4">
-      {[Image, Fallback, Tooltip, MediumSize, LargeSize].map(
-        (UserAvatarStory, index) => (
-          <UserAvatar name={userName} {...UserAvatarStory.args} key={index} />
-        )
-      )}
+    <div className="flex flex-col gap-6 p-6">
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-gray-700">Standard Variants</h3>
+        <div className="flex items-end gap-4">
+          {[Image, Fallback, Tooltip, MediumSize, LargeSize].map(
+            (UserAvatarStory, index) => (
+              <UserAvatar name={userName} {...UserAvatarStory.args} key={index} />
+            )
+          )}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-gray-700">Dark Variants</h3>
+        <div className="flex items-end gap-4">
+          {[DarkVariant, DarkVariantWithImage, DarkVariantLargeSize].map(
+            (UserAvatarStory, index) => (
+              <UserAvatar name={userName} {...UserAvatarStory.args} key={`dark-${index}`} />
+            )
+          )}
+        </div>
+      </div>
     </div>
   ),
 };
@@ -86,5 +111,28 @@ export const LargeSize: Story = {
   args: {
     image: userImage,
     size: 82,
+  },
+};
+
+export const DarkVariant: Story = {
+  args: {
+    image: undefined,
+    color: "#2c3e5d",
+    variant: "dark",
+  },
+};
+
+export const DarkVariantWithImage: Story = {
+  args: {
+    image: userImage,
+    variant: "dark",
+  },
+};
+
+export const DarkVariantLargeSize: Story = {
+  args: {
+    image: userImage,
+    size: 64,
+    variant: "dark",
   },
 };
