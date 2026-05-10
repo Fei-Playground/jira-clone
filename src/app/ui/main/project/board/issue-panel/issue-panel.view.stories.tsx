@@ -40,3 +40,30 @@ export const WithComments: Story = {
     },
   },
 };
+
+export const DarkVariant: Story = {
+  args: {
+    issue: issue,
+    variant: "dark",
+  },
+  parameters: {
+    themes: {
+      themeOverride: "dark",
+    },
+  },
+};
+
+export const DarkVariantWithComments: Story = {
+  args: {
+    issue: {
+      ...issue,
+      comments: issue.comments,
+    },
+    variant: "dark",
+  },
+  parameters: {
+    themes: {
+      themeOverride: "dark",
+    },
+  },
+};

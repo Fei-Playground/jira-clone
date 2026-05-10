@@ -53,31 +53,29 @@ type Story = StoryObj<typeof UserAvatar>;
 const userImage = usersMock[1].image;
 const userName = usersMock[1].name;
 
-export const Default: Story = {
-  render: (_) => (
-    <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h3 className="text-sm font-semibold mb-3 text-gray-700">Standard Variants</h3>
-        <div className="flex items-end gap-4">
-          {[Image, Fallback, Tooltip, MediumSize, LargeSize].map(
-            (UserAvatarStory, index) => (
-              <UserAvatar name={userName} {...UserAvatarStory.args} key={index} />
-            )
-          )}
-        </div>
-      </div>
-      <div>
-        <h3 className="text-sm font-semibold mb-3 text-gray-700">Dark Variants</h3>
-        <div className="flex items-end gap-4">
-          {[DarkVariant, DarkVariantWithImage, DarkVariantLargeSize].map(
-            (UserAvatarStory, index) => (
-              <UserAvatar name={userName} {...UserAvatarStory.args} key={`dark-${index}`} />
-            )
-          )}
-        </div>
-      </div>
+// Helper to render a group of story variants with consistent styling
+const StoryGroup = ({ title, stories }: { title: string; stories: Story[] }) => (
+  <div>
+    <h3 className="text-sm font-semibold mb-3 text-gray-700">{title}</h3>
+    <div className="flex items-end gap-4">
+      {stories.map((story, index) => (
+        <UserAvatar key={`${title}-${index}`} name={userName} {...story.args} />
+      ))}
     </div>
-  ),
+  </div>
+);
+
+export const Default: Story = {
+  render: () => {
+    const standardVariants = [Image, Fallback, Tooltip, MediumSize, LargeSize];
+    const darkVariants = [DarkVariant, DarkVariantWithImage, DarkVariantLargeSize];
+    return (
+      <div className="flex flex-col gap-6 p-6">
+        <StoryGroup title="Standard Variants" stories={standardVariants} />
+        <StoryGroup title="Dark Variants" stories={darkVariants} />
+      </div>
+    );
+  },
 };
 
 export const Image: Story = {

@@ -17,11 +17,19 @@ export const UserAvatar = ({
     minWidth: `${size}px`,
     height: `${size}px`,
   };
+
+  // Extract initials from name, supporting up to 2 words
   const acronym = name
     .split(" ")
     .slice(0, 2)
     .map((word) => word[0].toUpperCase())
     .join("");
+
+  // Dark variant uses a border and light text for contrast on dark backgrounds
+  const isDarkVariant = variant === "dark";
+  const fallbackClassName = isDarkVariant
+    ? "border border-border-bold text-[var(--Neutral0)]"
+    : "text-[var(--Neutral1000)]";
 
   return (
     <Tooltip title={name} show={tooltip}>
@@ -34,11 +42,7 @@ export const UserAvatar = ({
         />
         <Avatar.Fallback
           delayMs={0}
-          className={`flex items-center justify-center rounded-full ${
-            variant === "dark"
-              ? "border border-border-bold text-[var(--Neutral0)]"
-              : "text-[var(--Neutral1000)]"
-          }`}
+          className={`flex items-center justify-center rounded-full ${fallbackClassName}`}
           style={{
             ...imageSize,
             backgroundColor: color || getRandomPastelColor(),
