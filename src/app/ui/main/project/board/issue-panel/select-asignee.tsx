@@ -28,7 +28,7 @@ export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
     >
       <Select.Trigger aria-label="Open asignee select">
         <div className="mr-2">
-          <UserAvatar {...selectedValue} size={32} />
+          <UserAvatar {...selectedValue} size={29} />
         </div>
         <Select.Value />
         <Select.TriggerIcon />
