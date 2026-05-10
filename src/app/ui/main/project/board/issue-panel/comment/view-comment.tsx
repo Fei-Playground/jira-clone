@@ -7,6 +7,46 @@ import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
 import { formatDateTime } from "@utils/formatDateTime";
 
+const IdleComment = ({
+  comment,
+  isNotSelfComment,
+  edit,
+  remove,
+}: {
+  comment: Comment;
+  isNotSelfComment: boolean;
+  edit: () => void;
+  remove: () => void;
+}): JSX.Element => (
+  <div className="font-primary-light">
+    <p>{comment.message}</p>
+    <div
+      className={cx(
+        "mt-3 text-font-subtlest",
+        isNotSelfComment ? "hidden" : "visible"
+      )}
+    >
+      <button
+        onClick={edit}
+        disabled={isNotSelfComment}
+        className="font-primary-light text-xs hover:underline"
+        aria-label="Edit comment"
+      >
+        Edit
+      </button>
+      <span className="mx-2">{"·"}</span>
+      <button
+        onClick={remove}
+        disabled={isNotSelfComment}
+        className="font-primary-light text-xs hover:underline"
+        aria-label="Delete comment"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+);
+
 export const ViewComment = ({
   comment,
   removeComment,
@@ -31,40 +71,12 @@ export const ViewComment = ({
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const save = (commentText: string): void => {
-    comment.message = commentText;
+    // TODO: Implement comment update via parent callback or state management
+    // For now, just close the edit mode
     setIsEditing(false);
   };
-
-  const IdleComment = (): JSX.Element => (
-    <div className="font-primary-light">
-      <p>{comment.message}</p>
-      <div
-        className={cx(
-          "mt-3 text-font-subtlest",
-          isNotSelfComment ? "hidden" : "visible"
-        )}
-      >
-        <button
-          onClick={edit}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Edit comment"
-        >
-          Edit
-        </button>
-        <span className="mx-2">{"·"}</span>
-        <button
-          onClick={remove}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Delete comment"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex gap-6">
@@ -95,7 +107,12 @@ export const ViewComment = ({
               autofocus
             />
           ) : (
-            <IdleComment />
+            <IdleComment
+              comment={comment}
+              isNotSelfComment={isNotSelfComment}
+              edit={edit}
+              remove={remove}
+            />
           )}
         </div>
       </div>

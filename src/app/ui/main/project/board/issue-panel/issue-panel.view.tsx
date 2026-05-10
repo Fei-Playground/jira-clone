@@ -29,7 +29,10 @@ import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
-export const IssuePanel = ({ issue }: Props): JSX.Element => {
+export const IssuePanel = ({
+  issue,
+  variant = "default",
+}: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
@@ -204,7 +207,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="mb-1">Reporter</p>
                       <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
-                        <UserAvatar {...reporter} />
+                        {/* Pass variant to UserAvatar for consistent dark/light theming */}
+                        <UserAvatar {...reporter} variant={variant} />
                         <input
                           type="hidden"
                           name="reporter"
@@ -260,4 +264,5 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
 
 interface Props {
   issue?: Issue;
+  variant?: "default" | "dark";
 }
