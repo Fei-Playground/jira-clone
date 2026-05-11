@@ -57,7 +57,11 @@ export const loader: LoaderFunction = async () => {
   return json<LoaderData>({ users });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({
+  request,
+}: {
+  request: Request;
+}) => {
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
 
@@ -70,7 +74,6 @@ export const action: ActionFunction = async ({ request }) => {
       headers: { "Set-Cookie": await userSession.commit() },
     });
   }
-  console.error("Unknown action", _action);
 };
 
 export default function LoginRoute() {
