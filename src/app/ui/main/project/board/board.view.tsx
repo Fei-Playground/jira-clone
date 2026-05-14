@@ -11,10 +11,56 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
+import { GanttView } from "./gantt-view";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
+import { Button } from "@app/components/button";
+import { MdViewKanban } from "react-icons/md";
+import { AiOutlineBarChart } from "react-icons/ai";
+
+type ViewMode = "board" | "gantt";
+
+interface ViewModeToggleProps {
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
+}
+
+/**
+ * Toggle buttons for switching between Board and Gantt views
+ */
+const ViewModeToggle = ({
+  viewMode,
+  onViewModeChange,
+}: ViewModeToggleProps): JSX.Element => {
+  return (
+    <div className="ml-auto flex gap-2">
+      <Button
+        variant={viewMode === "board" ? "contained" : "subtlest"}
+        color="primary"
+        size="md"
+        onClick={() => onViewModeChange("board")}
+        className="flex items-center gap-2 px-3 py-1.5"
+      >
+        <MdViewKanban size={16} />
+        <span className="font-primary text-xs">Board</span>
+      </Button>
+      <Button
+        variant={viewMode === "gantt" ? "contained" : "subtlest"}
+        color="primary"
+        size="md"
+        onClick={() => onViewModeChange("gantt")}
+        className="flex items-center gap-2 px-3 py-1.5"
+      >
+        <AiOutlineBarChart size={16} />
+        <span className="font-primary text-xs">Gantt</span>
+      </Button>
+    </div>
+  );
+};
 
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [viewMode, setViewMode] = useState<ViewMode>("board");
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,10 +72,17 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode} />
         </section>
-        <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
-        </DndProvider>
+        {viewMode === "board" ? (
+          <DndProvider backend={HTML5Backend}>
+            <Categories categories={project.categories} />
+          </DndProvider>
+        ) : (
+          <div className="mt-12 flex h-full flex-col">
+            <GanttView categories={project.categories} />
+          </div>
+        )}
         <Outlet />
       </div>
     </ProjectContextProvider>
