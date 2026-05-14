@@ -12,14 +12,14 @@ import {
 } from "@app/store/theme.store";
 import { Tooltip } from "@app/components/tooltip";
 
-export const SelctTheme = (): JSX.Element => {
+export const SelectTheme = (): JSX.Element => {
   const { theme, setTheme, preference } = useTheme();
 
-  const themeOptions: {
+  const themeOptions: Array<{
     value: Theme | Preference.SYSTEM;
     label: string;
     image: string;
-  }[] = [
+  }> = [
     {
       value: Theme.LIGHT,
       label: "Light",
@@ -46,6 +46,11 @@ export const SelctTheme = (): JSX.Element => {
       image: "/images/theme/barbie.png",
     },
     {
+      value: Theme.RETRO,
+      label: "Retro",
+      image: "/images/theme/retro.png",
+    },
+    {
       value: Preference.SYSTEM,
       label: "System",
       image: "/images/theme/system.png",
@@ -55,10 +60,13 @@ export const SelctTheme = (): JSX.Element => {
   const triggerIconClass = cx("fill-icon group-hover:fill-icon-brand");
 
   const selectTheme = (value: string): void => {
+    // Apply system theme preference (follows OS setting)
     if (isValidPreference(value)) {
       setTheme(getSystemTheme(), value as Preference);
+      return;
     }
 
+    // Apply specific theme choice
     if (isValidTheme(value)) {
       setTheme(value as Theme, Preference.SELECTED);
     }
@@ -90,6 +98,7 @@ export const SelctTheme = (): JSX.Element => {
           <DropdownMenu.RadioGroup
             value={currentValue || DEFAULT_THEME}
             onValueChange={selectTheme}
+            // Responsive grid: 3 columns for 7+ themes, 2 columns for 4-6 themes, 1 column for 1-3 themes
             className={cx(
               "grid gap-2",
               themeOptions.length > 6

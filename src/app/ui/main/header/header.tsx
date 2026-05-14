@@ -1,9 +1,9 @@
 import { Link } from "@remix-run/react";
 import cx from "classix";
-import { HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
+import { HiQuestionMarkCircle } from "react-icons/hi";
 import { Tooltip } from "@app/components/tooltip";
-import { SelctTheme } from "./select-theme";
+import { SelectTheme } from "./select-theme";
 import { UserProfile } from "./user-profile";
 
 export const Header = (): JSX.Element => {
@@ -40,7 +40,7 @@ export const Header = (): JSX.Element => {
             <AiFillGithub size={24} />
           </a>
         </Tooltip>
-        <SelctTheme />
+        <SelectTheme />
         <UserProfile />
       </section>
     </header>
