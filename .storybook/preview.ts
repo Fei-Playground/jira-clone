@@ -36,6 +36,8 @@ const preview: Preview = {
         dark: "dark",
         lava: "lava",
         lime: "lime",
+        barbie: "barbie",
+        retro: "retro",
       },
       defaultTheme: "light",
     }),
