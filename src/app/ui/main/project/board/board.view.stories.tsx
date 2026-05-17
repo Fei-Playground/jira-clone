@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
 import { BoardView } from "./board.view";
@@ -24,5 +24,18 @@ type Story = StoryObj<typeof BoardView>;
 export const Default: Story = {
   args: {
     project: projectMock1,
+  },
+};
+
+/**
+ * Shows the Gantt view mode with timeline x-axis by date.
+ * Each task is displayed as a row with bars sized by start/end dates (createdAt/updatedAt).
+ * Bars are status-colored: blue for TO_DO/IN_PROGRESS, green for DONE.
+ * The ViewToggle shows Gantt as the active view mode.
+ */
+export const GanttMode: Story = {
+  args: {
+    project: projectMock1,
+    initialViewMode: "gantt",
   },
 };
