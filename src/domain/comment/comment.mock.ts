@@ -11,6 +11,15 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-1-1",
+      user: usersMock[5], // Mr. Potato
+      message: "That makes sense for security and data integrity!",
+      createdAt: createdAt + 1000 * 60 * 5, // 5 minutes later
+      updatedAt: createdAt + 1000 * 60 * 5,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +28,22 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-2-1",
+      user: userMock1, // Daniel Serrano
+      message: "Exactly! This helps maintain accountability.",
+      createdAt: createdAt + 1000 * 60 * 10, // 10 minutes later
+      updatedAt: createdAt + 1000 * 60 * 10,
+    },
+    {
+      id: "reply-2-2",
+      user: usersMock[6], // Ms. Potato
+      message: "Can we reply to comments though?",
+      createdAt: createdAt + 1000 * 60 * 15, // 15 minutes later
+      updatedAt: createdAt + 1000 * 60 * 15,
+    },
+  ],
 };
 
 export const commentMock3: Comment = {
