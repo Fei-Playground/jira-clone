@@ -16,14 +16,15 @@ export const Tooltip = ({
   if (!show) return children;
 
   return (
-    // Don't know why h-fit (and other h-*) doesn't work here
+    // Using inline style for height because Tailwind's h-fit doesn't apply properly in this context
     <div className="relative w-fit" style={{ height: "fit-content" }}>
       <div onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
         {children}
       </div>
+      {/* z-index 100 ensures tooltip appears above page content and dropdowns */}
       <div
         className={cx(
-          "absolute left-1/2 top-full z-50 mt-1.5 -translate-x-1/2 transform justify-center break-words",
+          "absolute left-1/2 top-full z-[100] mt-1.5 -translate-x-1/2 transform justify-center break-words",
           isVisible ? "flex" : "hidden"
         )}
       >

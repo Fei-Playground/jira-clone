@@ -26,9 +26,11 @@ export const TriggerIcon = (): JSX.Element => (
   </Select.Icon>
 );
 
+// z-index 100 ensures the dropdown appears above page content and lower-level overlays
+// while staying below modals (z-index 50 for overlay + content layering)
 export const Content = twix(
   Select.Content,
-  "bg-elevation-surface-overlay py-1 shadow-md"
+  "z-[100] bg-elevation-surface-overlay py-1 shadow-md"
 );
 
 export const Item = twix(

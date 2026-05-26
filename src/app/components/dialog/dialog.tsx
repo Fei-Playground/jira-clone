@@ -8,6 +8,8 @@ export const Portal = Dialog.Portal;
 export const Description = Dialog.Description;
 export const Close = Dialog.Close;
 
+// z-index 50 for overlay ensures it's above page content but creates a lower base layer
+// z-index 100 for content ensures it's above the overlay backdrop
 export const Overlay = twix(
   Dialog.Overlay,
   cx(
@@ -18,7 +20,7 @@ export const Overlay = twix(
 export const Content = twix(
   Dialog.Content,
   cx(
-    "relative z-50 text-font w-4/5 max-w-[1000px] rounded-md bg-elevation-surface py-6 px-8 shadow-lg",
+    "relative z-[100] text-font w-4/5 max-w-[1000px] rounded-md bg-elevation-surface py-6 px-8 shadow-lg",
     "duration-300 radix-state-open:animate-slide-up"
   )
 );
