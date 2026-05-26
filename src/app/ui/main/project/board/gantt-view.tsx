@@ -1,27 +1,43 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion -- Issues are pre-filtered to have both start_date and end_date */
 import { useMemo } from "react";
-import cx from "classix";
 import { Project } from "@domain/project";
-import { CategoryType } from "@domain/category";
-import { Issue } from "@domain/issue";
 import { Tooltip } from "@app/components/tooltip";
+import { useProjectStore } from "@app/ui/main/project";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DAY_WIDTH = 24; // pixels per day
 
+// Color mapping for category status
+const CATEGORY_COLORS = {
+  TODO: "var(--color-background-accent-grey-bolder)",
+  IN_PROGRESS: "var(--color-background-accent-blue-bolder)",
+  DONE: "var(--color-background-accent-green-bolder)",
+} as const;
+
 export const GanttView = ({ project }: Props): JSX.Element => {
-  // Flatten all issues from categories
+  // Flatten all issues from all categories to get a single list with category context
   const allIssues = useMemo(() => {
     return project.categories.flatMap((cat) =>
       cat.issues.map((issue) => ({ ...issue, categoryType: cat.type }))
     );
   }, [project.categories]);
 
-  // Filter issues that have both start_date and end_date
+  // Filter issues that have both start_date and end_date — only these can be displayed on the Gantt chart
   const issuesWithDates = useMemo(() => {
     return allIssues.filter((issue) => issue.start_date && issue.end_date);
   }, [allIssues]);
 
-  // Calculate date range
+  // Apply priority filter from the project store — respects user selections from PriorityFilter component
+  const { priorityFilter } = useProjectStore();
+  const visibleIssues = useMemo(() => {
+    if (priorityFilter.length === 0) return issuesWithDates;
+    return issuesWithDates.filter((issue) =>
+      priorityFilter.includes(issue.priority.id)
+    );
+  }, [issuesWithDates, priorityFilter]);
+
+  // Calculate the overall date range across all issues with dates
+  // This defines the horizontal span of the Gantt chart
   const dateRange = useMemo(() => {
     if (issuesWithDates.length === 0) {
       return null;
@@ -40,34 +56,23 @@ export const GanttView = ({ project }: Props): JSX.Element => {
     return { minDate, maxDate };
   }, [issuesWithDates]);
 
-  if (issuesWithDates.length === 0 || !dateRange) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <p className="text-font-subtlest">
-            No issues with scheduled dates yet.
-          </p>
-          <p className="mt-2 text-sm text-font-subtler">
-            Add start_date and end_date to issues to see them in Gantt view.
-          </p>
-        </div>
-      </div>
+  // Generate all days in the date range and group them by month
+  // Used for rendering the calendar header and calculating bar positions
+  const { days, monthGroups } = useMemo(() => {
+    if (visibleIssues.length === 0 || !dateRange) {
+      return { days: [], monthGroups: {} };
+    }
+
+    const dayCount = Math.ceil(
+      (dateRange.maxDate - dateRange.minDate) / DAY_MS
     );
-  }
+    const generatedDays = Array.from({ length: dayCount + 1 }, (_, i) => {
+      const date = new Date(dateRange.minDate + i * DAY_MS);
+      return date;
+    });
 
-  // Generate all days in the range
-  const dayCount = Math.ceil(
-    (dateRange.maxDate - dateRange.minDate) / DAY_MS
-  );
-  const days = Array.from({ length: dayCount + 1 }, (_, i) => {
-    const date = new Date(dateRange.minDate + i * DAY_MS);
-    return date;
-  });
-
-  // Group days by month
-  const monthGroups = useMemo(() => {
     const groups: Record<string, Date[]> = {};
-    days.forEach((date) => {
+    generatedDays.forEach((date) => {
       const monthKey = date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -77,15 +82,31 @@ export const GanttView = ({ project }: Props): JSX.Element => {
       }
       groups[monthKey].push(date);
     });
-    return groups;
-  }, [days]);
+
+    return { days: generatedDays, monthGroups: groups };
+  }, [visibleIssues.length, dateRange]);
+
+  if (visibleIssues.length === 0 || !dateRange) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-center">
+          <p className="text-font-subtlest">
+            No issues with scheduled dates yet.
+          </p>
+          <p className="text-font-subtler mt-2 text-sm">
+            Add start_date and end_date to issues to see them in Gantt view.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const totalWidth = days.length * DAY_WIDTH;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Gantt Chart Container */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header with sticky positioning */}
         <div className="flex flex-shrink-0 border-b border-border">
           {/* Task column header */}
@@ -99,8 +120,10 @@ export const GanttView = ({ project }: Props): JSX.Element => {
                 {Object.entries(monthGroups).map(([month, monthDays]) => (
                   <div
                     key={month}
-                    className="border-r border-border bg-elevation-surface-raised px-1 text-center text-xs font-primary-bold text-font-subtlest"
-                    style={{ width: `${monthDays.length * DAY_WIDTH}px` }}
+                    className="border-r border-border bg-elevation-surface-raised px-1 text-center font-primary-bold text-xs text-font-subtlest"
+                    style={{
+                      width: `${monthDays.length * DAY_WIDTH}px`,
+                    }}
                   >
                     {month}
                   </div>
@@ -112,8 +135,11 @@ export const GanttView = ({ project }: Props): JSX.Element => {
                 {days.map((date, idx) => (
                   <div
                     key={idx}
-                    className="border-r border-border px-1 text-center text-xs text-font-subtler"
-                    style={{ width: `${DAY_WIDTH}px`, height: "32px" }}
+                    className="text-font-subtler border-r border-border px-1 text-center text-xs"
+                    style={{
+                      width: `${DAY_WIDTH}px`,
+                      height: "32px",
+                    }}
                   >
                     {date.getDate()}
                   </div>
@@ -127,7 +153,7 @@ export const GanttView = ({ project }: Props): JSX.Element => {
         <div className="flex flex-1 overflow-hidden">
           {/* Task names column */}
           <div className="w-[220px] flex-shrink-0 overflow-y-auto border-r border-border bg-elevation-surface">
-            {issuesWithDates.map((issue) => (
+            {visibleIssues.map((issue) => (
               <div
                 key={issue.id}
                 className="flex items-center border-b border-border px-2 py-1 text-sm"
@@ -143,7 +169,7 @@ export const GanttView = ({ project }: Props): JSX.Element => {
           {/* Timeline grid */}
           <div className="flex-1 overflow-auto">
             <div style={{ width: `${totalWidth}px` }}>
-              {issuesWithDates.map((issue) => {
+              {visibleIssues.map((issue) => {
                 const barStartDays = Math.floor(
                   (issue.start_date! - dateRange.minDate) / DAY_MS
                 );
@@ -182,7 +208,7 @@ export const GanttView = ({ project }: Props): JSX.Element => {
                       show={true}
                     >
                       <div
-                        className="absolute top-1/2 -translate-y-1/2 rounded py-1 px-2 text-xs font-primary text-white cursor-default"
+                        className="absolute top-1/2 -translate-y-1/2 cursor-default rounded px-2 py-1 font-primary text-xs text-white"
                         style={{
                           left: `${barLeft}px`,
                           width: `${barWidth}px`,
@@ -239,16 +265,10 @@ interface Props {
 }
 
 function getBarColor(categoryType?: string): string {
-  switch (categoryType) {
-    case "TODO":
-      return "var(--color-background-accent-grey-bolder)";
-    case "IN_PROGRESS":
-      return "var(--color-background-accent-blue-bolder)";
-    case "DONE":
-      return "var(--color-background-accent-green-bolder)";
-    default:
-      return "var(--color-background-accent-grey-bolder)";
-  }
+  return (
+    CATEGORY_COLORS[categoryType as keyof typeof CATEGORY_COLORS] ||
+    CATEGORY_COLORS.TODO
+  );
 }
 
 function formatDateRange(startMs: number, endMs: number): string {
