@@ -5,9 +5,12 @@ import { Button, Props as ButtonProps } from "../button";
 export const Root = AlertDialog.Root;
 export const Trigger = AlertDialog.Trigger;
 export const Portal = AlertDialog.Portal;
+
+// z-index 100 for overlay ensures alert dialog appears above all other content including dropdowns
+// z-index 50 for content creates proper layering above the overlay
 export const Overlay = twix(
   AlertDialog.Overlay,
-  "fixed top-0 left-0 z-50 h-full w-full backdrop-blur-sm"
+  "fixed top-0 left-0 z-[100] h-full w-full backdrop-blur-sm"
 );
 export const Content = twix(
   AlertDialog.Content,
