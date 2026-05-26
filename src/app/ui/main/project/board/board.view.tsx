@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useRevalidator } from "@remix-run/react";
 import { useEventSource } from "remix-utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import cx from "classix";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
@@ -11,10 +12,13 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
+import { GanttView } from "./gantt-view";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [view, setView] = useState<"kanban" | "gantt">("kanban");
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,10 +30,40 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-auto flex rounded border border-border overflow-hidden">
+            <button
+              onClick={() => setView("kanban")}
+              className={cx(
+                "px-3 py-1.5 text-xs font-primary",
+                view === "kanban"
+                  ? "bg-background-brand-bold text-font-inverse"
+                  : "bg-transparent text-font-subtlest hover:bg-background-neutral"
+              )}
+              aria-label="Kanban view"
+            >
+              Kanban
+            </button>
+            <button
+              onClick={() => setView("gantt")}
+              className={cx(
+                "px-3 py-1.5 text-xs font-primary",
+                view === "gantt"
+                  ? "bg-background-brand-bold text-font-inverse"
+                  : "bg-transparent text-font-subtlest hover:bg-background-neutral"
+              )}
+              aria-label="Gantt view"
+            >
+              Gantt
+            </button>
+          </div>
         </section>
-        <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
-        </DndProvider>
+        {view === "kanban" ? (
+          <DndProvider backend={HTML5Backend}>
+            <Categories categories={project.categories} />
+          </DndProvider>
+        ) : (
+          <GanttView project={project} />
+        )}
         <Outlet />
       </div>
     </ProjectContextProvider>
@@ -38,6 +72,10 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+}
+
+interface CategoriesProps {
+  categories: Category[];
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {
@@ -100,7 +138,3 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
     </section>
   );
 };
-
-interface CategoriesProps {
-  categories: Category[];
-}
