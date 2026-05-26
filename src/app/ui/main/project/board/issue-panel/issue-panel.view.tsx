@@ -98,6 +98,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setComments(updatedComments);
   };
 
+  const onCommentReplyAdded = (updatedComment: Comment): void => {
+    const updatedComments = comments.map((comment) =>
+      comment.id === updatedComment.id ? updatedComment : comment
+    );
+    setComments(updatedComments);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
 
@@ -168,6 +175,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              onReplyAdded={onCommentReplyAdded}
                             />
                           </li>
                         ))}
