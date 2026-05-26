@@ -7,4 +7,7 @@ export interface Comment {
   message: string;
   createdAt: number;
   updatedAt: number;
+  like_count?: number;
+  dislike_count?: number;
+  replies?: Comment[];
 }
