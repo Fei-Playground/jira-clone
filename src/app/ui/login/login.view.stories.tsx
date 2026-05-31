@@ -7,7 +7,7 @@ const meta: Meta<typeof LoginView> = {
   title: "Pages/Login",
   component: LoginView,
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
   },
   argTypes: {
     users: {
@@ -43,4 +43,9 @@ export const Default: Story = {
   args: {
     users: usersMock,
   },
+  render: (args) => <StoryComponent {...args} />,
 };
+
+function StoryComponent(args: typeof Default.args = { users: usersMock }) {
+  return <LoginView users={args.users ?? usersMock} />;
+}
