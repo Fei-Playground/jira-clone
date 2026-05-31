@@ -27,7 +27,7 @@ export const Default: Story = {
 };
 
 export const Sentence: Story = {
-  render: (_) => (
+  render: () => (
     <p className="text-xs text-font-subtlest">
       Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to save
     </p>

@@ -97,18 +97,22 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
 const seedUsers = async () => {
   for (const user of usersMock) {
     const userDb = await createUserIfNotExists(user);
-    recordAlreadyExists(userDb)
-      ? console.info(`User already exists: ${user.name}. Skipping...`)
-      : console.info(`Created USER: ${user.name}`);
+    if (recordAlreadyExists(userDb)) {
+      console.info(`User already exists: ${user.name}. Skipping...`);
+    } else {
+      console.info(`Created USER: ${user.name}`);
+    }
   }
 };
 
 const seedPriorities = async () => {
   for (const priority of prioritiesMock) {
     const priorityDb = await createPriorityIfNotExists(priority);
-    recordAlreadyExists(priorityDb)
-      ? console.info(`Priority already exists: ${priority.name}. Skipping...`)
-      : console.info(`Created PRIORITY: ${priority.name}`);
+    if (recordAlreadyExists(priorityDb)) {
+      console.info(`Priority already exists: ${priority.name}. Skipping...`);
+    } else {
+      console.info(`Created PRIORITY: ${priority.name}`);
+    }
   }
 };
 

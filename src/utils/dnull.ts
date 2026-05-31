@@ -14,10 +14,10 @@ const isPlainObject = (value: unknown): value is PlainObj => {
 export type DNull<T> = T extends null
   ? undefined
   : T extends PlainObj
-  ? { [K in keyof T]: DNull<T[K]> }
-  : T extends Array<infer U>
-  ? DNull<U>[]
-  : T;
+    ? { [K in keyof T]: DNull<T[K]> }
+    : T extends Array<infer U>
+      ? DNull<U>[]
+      : T;
 
 export const dnull = <T>(src: T): DNull<T> => {
   if (src === null) return void 0 as DNull<T>;

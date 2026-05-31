@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { priorityLow, priorityMedium, priorityHigh, PriorityId } from "@domain/priority";
+import {
+  priorityLow,
+  priorityMedium,
+  priorityHigh,
+  PriorityId,
+} from "@domain/priority";
 import { SelectPriority } from "./select-priority";
 
 const meta: Meta<typeof SelectPriority> = {

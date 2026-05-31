@@ -95,8 +95,8 @@ export const SelctTheme = (): JSX.Element => {
               themeOptions.length > 6
                 ? "grid-cols-3"
                 : themeOptions.length > 3
-                ? "grid-cols-2"
-                : "grid-cols-1"
+                  ? "grid-cols-2"
+                  : "grid-cols-1"
             )}
           >
             {themeOptions.map(({ value, label, image }) => (

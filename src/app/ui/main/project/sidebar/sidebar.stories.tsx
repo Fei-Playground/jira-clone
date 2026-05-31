@@ -35,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof Sidebar>;
 
 export const Default: Story = {
-  render: (_) => (
+  render: () => (
     <div>
       <Sidebar
         projectName={projectMock1.name}

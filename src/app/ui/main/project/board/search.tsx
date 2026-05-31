@@ -44,7 +44,7 @@ export const Search = (): JSX.Element => {
 };
 
 const iconBaseClass = cx(
-  "flex border-none justify-center items-center font-icon z-10"
+  "font-icon z-10 flex items-center justify-center border-none"
 );
 
 const SearchIcon = (): JSX.Element => (

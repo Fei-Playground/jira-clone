@@ -29,7 +29,7 @@ type Story = StoryObj<typeof ScrollArea>;
 const height = 250;
 
 export const Default: Story = {
-  render: (_) => (
+  render: () => (
     <>
       <p className="mb-1 text-font">Height: {height}px</p>
       <div

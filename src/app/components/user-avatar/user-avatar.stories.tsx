@@ -44,7 +44,7 @@ const userImage = usersMock[1].image;
 const userName = usersMock[1].name;
 
 export const Default: Story = {
-  render: (_) => (
+  render: () => (
     <div className="grid grid-cols-6 gap-4 p-4">
       {[Image, Fallback, Tooltip, MediumSize, LargeSize].map(
         (UserAvatarStory, index) => (

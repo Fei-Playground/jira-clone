@@ -78,9 +78,7 @@ export const ReadOnly: Story = {
   render: (args) => <TextareaWrapper {...args} />,
   args: {
     name: "description",
-    value:
-      "This is a read-only description. You cannot edit this " +
-      "text.",
+    value: "This is a read-only description. You cannot edit this " + "text.",
     placeholder: "Enter your description here...",
     readOnly: true,
   },

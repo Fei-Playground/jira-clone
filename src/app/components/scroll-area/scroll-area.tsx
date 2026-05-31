@@ -16,13 +16,13 @@ export const ScrollArea = ({
     <ScrollAreaPrimitive.Scrollbar
       orientation="vertical"
       className={cx(
-        "flex w-2 touch-none select-none rounded-full bg-grey-400 duration-150 ease-out hover:bg-grey-600"
+        "bg-grey-400 hover:bg-grey-600 flex w-2 touch-none select-none rounded-full duration-150 ease-out"
       )}
     >
       <ScrollAreaPrimitive.Thumb
         className={cx(
-          "relative h-full flex-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-font-grey",
-          "before:absolute before:top-1/2 before:left-1/2"
+          "bg-font-grey relative h-full flex-1 -translate-x-1/2 -translate-y-1/2 rounded-full",
+          "before:absolute before:left-1/2 before:top-1/2"
         )}
       />
     </ScrollAreaPrimitive.Scrollbar>

@@ -28,14 +28,7 @@ export const Dark: Story = {
       return (
         <div className="dark">
           {withRemixStub(
-            withMainContext(
-              () =>
-                React.createElement(
-                  "div",
-                  {},
-                  storyElement
-                )
-            )
+            withMainContext(() => React.createElement("div", {}, storyElement))
           )}
         </div>
       );

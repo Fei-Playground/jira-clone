@@ -1,9 +1,4 @@
-import {
-  type RouteConfig,
-  index,
-  layout,
-  route,
-} from "@react-router/dev/routes";
+import { type RouteConfig, index, layout, route } from "@react-router/dev/routes";
 
 export default [
   index("routes/index.tsx"),
@@ -18,19 +13,10 @@ export default [
     route("projects/:projectId", "routes/__main/projects.$projectId.tsx", [
       route("analytics", "routes/__main/projects.$projectId/analytics.tsx"),
       route("board", "routes/__main/projects.$projectId/board.tsx", [
-        route(
-          "issue/new",
-          "routes/__main/projects.$projectId/board/issue/new.tsx"
-        ),
-        route(
-          "issue/:issueId",
-          "routes/__main/projects.$projectId/board/issue/$issueId.tsx"
-        ),
+        route("issue/new", "routes/__main/projects.$projectId/board/issue/new.tsx"),
+        route("issue/:issueId", "routes/__main/projects.$projectId/board/issue/$issueId.tsx"),
       ]),
-      route(
-        "server-error",
-        "routes/__main/projects.$projectId/server-error.tsx"
-      ),
+      route("server-error", "routes/__main/projects.$projectId/server-error.tsx"),
       route("*", "routes/__main/projects.$projectId/$.tsx"),
     ]),
   ]),

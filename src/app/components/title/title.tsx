@@ -44,7 +44,7 @@ export const Title = ({
         textareaClassName={cx(
           "font-primary-black text-2xl",
           requireError &&
-            "focus-visible:outline-border-danger outline outline-2 outline-border-danger"
+            "outline outline-2 outline-border-danger focus-visible:outline-border-danger"
         )}
         autofocus
       />

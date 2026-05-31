@@ -82,7 +82,6 @@ export const ThemeProvider = ({
     };
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preference]);
 
   const setTheme = useCallback(

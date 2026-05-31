@@ -26,7 +26,7 @@ export default meta;
 type Story = StoryObj<typeof Description>;
 
 export const Default: Story = {
-  render: (_) => (
+  render: () => (
     <div className="grid grid-cols-1 gap-6">
       {[DefaultDescription, InitDescription, ReadOnly].map(
         (DescriptionStory, index) => (

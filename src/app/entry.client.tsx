@@ -13,6 +13,8 @@ function hydrate() {
   });
 }
 
-window.requestIdleCallback
-  ? window.requestIdleCallback(hydrate)
-  : window.setTimeout(hydrate, 1);
+if (window.requestIdleCallback) {
+  window.requestIdleCallback(hydrate);
+} else {
+  window.setTimeout(hydrate, 1);
+}

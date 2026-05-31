@@ -11,9 +11,7 @@ const meta: Meta<typeof BoardView> = {
   },
   decorators: [
     (Story) => (
-      <div className="h-screen">
-        {withRemixStub(withMainContext(Story))}
-      </div>
+      <div className="h-screen">{withRemixStub(withMainContext(Story))}</div>
     ),
   ],
 };

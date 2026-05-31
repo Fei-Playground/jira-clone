@@ -47,7 +47,13 @@ export const IssueCard = ({
   }, [isDragging, handleDragging]);
 
   return (
-    <div ref={isSubmitting ? undefined : (dragRef as unknown as React.Ref<HTMLDivElement>)}>
+    <div
+      ref={
+        isSubmitting
+          ? undefined
+          : (dragRef as unknown as React.Ref<HTMLDivElement>)
+      }
+    >
       <IssueCardContent
         link={issueLink}
         name={issue.name}

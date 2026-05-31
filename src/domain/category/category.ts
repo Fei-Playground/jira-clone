@@ -1,7 +1,7 @@
 import { Issue } from "@domain/issue";
 
 export type CategoryId = string;
-export type CategoryType = typeof categoryTypes[number];
+export type CategoryType = (typeof categoryTypes)[number];
 export const categoryTypes = ["TODO", "IN_PROGRESS", "DONE"] as const;
 
 export const categoryTypeDict: Record<CategoryType, string> = {

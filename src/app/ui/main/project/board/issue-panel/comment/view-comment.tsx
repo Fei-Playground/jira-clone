@@ -13,6 +13,7 @@ export const ViewComment = ({
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>(comment.message);
   const fetcher = useFetcher();
 
   const isNotSelfComment = comment.user.id !== user.id;
@@ -32,13 +33,13 @@ export const ViewComment = ({
   };
 
   const save = (commentText: string): void => {
-    comment.message = commentText;
+    setMessage(commentText);
     setIsEditing(false);
   };
 
-  const IdleComment = (): JSX.Element => (
+  const idleComment = (
     <div className="font-primary-light">
-      <p>{comment.message}</p>
+      <p>{message}</p>
       <div
         className={cx(
           "mt-3 text-font-subtlest",
@@ -89,13 +90,13 @@ export const ViewComment = ({
         <div className="mt-3">
           {isEditing ? (
             <EditBox
-              defaultMessage={comment.message}
+              defaultMessage={message}
               save={save}
               cancel={cancel}
               autofocus
             />
           ) : (
-            <IdleComment />
+            idleComment
           )}
         </div>
       </div>

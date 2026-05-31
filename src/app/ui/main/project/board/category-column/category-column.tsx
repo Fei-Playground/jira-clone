@@ -29,17 +29,6 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
     : `issue/new?category=${category.type}`;
 
-  const [{ isOver }, dropRef] = useDrop(
-    () => ({
-      accept: DRAG_ISSUE_CARD,
-      drop: (item: DropItem) => updateIssueOnCardDrop(item),
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-      }),
-    }),
-    [category.id]
-  );
-
   const updateIssueOnCardDrop = (item: DropItem) => {
     if (item.categoryId === category.id) {
       return;
@@ -60,6 +49,17 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       setSubmittingIssues((prev) => [...prev, item.issueId]);
     }
   };
+
+  const [{ isOver }, dropRef] = useDrop(
+    () => ({
+      accept: DRAG_ISSUE_CARD,
+      drop: (item: DropItem) => updateIssueOnCardDrop(item),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    [category.id]
+  );
 
   const filteredIssues = (): Issue[] =>
     category.issues.filter((issue) => {

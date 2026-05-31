@@ -54,9 +54,9 @@ export const EditBox = ({
         onFocus={onFocus}
         autofocus={autofocus}
         textareaClassName={cx(
-          "min-h-[80px] leading-6 font-primary-light outline outline-2 outline-border-input focus:outline-border-brand bg-background-input",
+          "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
           isError &&
-            "placeholder:text-font-danger placeholder:text-opacity-70 !outline-border-danger !outline-2"
+            "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
         )}
       />
       <div

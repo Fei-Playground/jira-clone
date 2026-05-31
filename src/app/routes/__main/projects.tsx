@@ -72,9 +72,11 @@ export const action: ActionFunction = async ({ request }) => {
   if (_action === "delete") {
     const projectId = formData.get("projectId") as ProjectId;
 
-    projectId
-      ? await deleteProject(projectId)
-      : console.error("Project id not found: ", projectId);
+    if (projectId) {
+      await deleteProject(projectId);
+    } else {
+      console.error("Project id not found: ", projectId);
+    }
   }
   return redirect("/projects");
 };
