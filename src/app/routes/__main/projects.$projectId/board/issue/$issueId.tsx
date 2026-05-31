@@ -113,7 +113,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const description = formData.get("description") as string;
     const categoryId = formData.get("status") as CategoryId;
     const priority = formData.get("priority") as PriorityId;
-    const asigneeId = formData.get("asignee") as UserId;
+    const assigneeId = formData.get("assignee") as UserId;
     const reporterId = formData.get("reporter") as UserId;
     const comments = JSON.parse(
       formData.get("comments") as string
@@ -124,7 +124,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       description,
       categoryId,
       priority,
-      asigneeId,
+      assigneeId,
       reporterId,
       comments,
     };

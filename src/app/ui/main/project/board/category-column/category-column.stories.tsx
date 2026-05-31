@@ -28,14 +28,27 @@ type Story = StoryObj<typeof CategoryColumn>;
 
 const category = projectMock1.categories[0];
 
+const emptyCategory = {
+  ...category,
+  issues: [],
+};
+
+export const Empty: Story = {
+  args: {
+    category: emptyCategory,
+    isDragging: false,
+    submittingIssues: [],
+    setSubmittingIssues: () => {},
+    handleDragging: () => {},
+  },
+};
+
 export const Default: Story = {
   args: {
     category: category,
     isDragging: false,
     submittingIssues: [],
-
     setSubmittingIssues: () => {},
-
     handleDragging: () => {},
   },
 };
@@ -45,9 +58,7 @@ export const WithIssues: Story = {
     category: category,
     isDragging: false,
     submittingIssues: [],
-
     setSubmittingIssues: () => {},
-
     handleDragging: () => {},
   },
 };
@@ -57,9 +68,7 @@ export const Dragging: Story = {
     category: category,
     isDragging: true,
     submittingIssues: [],
-
     setSubmittingIssues: () => {},
-
     handleDragging: () => {},
   },
 };

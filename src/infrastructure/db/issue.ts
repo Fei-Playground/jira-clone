@@ -38,7 +38,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     description: issueDb.description || undefined,
     categoryType: issueDb.category.type as CategoryType,
     priority: issueDb.priority as Priority,
-    asignee: dnull(issueDb.asignee),
+    assignee: dnull(issueDb.asignee),
     reporter: dnull(issueDb.reporter),
     comments: issueDb.comments.map((comment) => ({
       ...comment,
@@ -62,7 +62,7 @@ export type CreateIssueInputData = {
   description: string;
   categoryId: CategoryId;
   priority: PriorityId;
-  asigneeId: UserId;
+  assigneeId: UserId;
   reporterId: UserId;
   comments: Comment[];
 };
@@ -70,6 +70,7 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
   const newIssue = await db.issue.create({
     data: {
       ...issue,
+      asigneeId: issue.assigneeId,
       priority: undefined,
       priorityId: issue.priority,
       comments: {
