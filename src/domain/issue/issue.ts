@@ -10,7 +10,7 @@ export interface Issue {
   description?: string;
   categoryType?: CategoryType;
   reporter: User;
-  asignee: User;
+  assignee: User;
   comments: Comment[];
   priority: Priority;
   createdAt: number;

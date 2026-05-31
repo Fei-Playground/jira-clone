@@ -25,7 +25,7 @@ import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
-import { SelectAsignee } from "./select-asignee";
+import { SelectAssignee } from "./select-assignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
@@ -184,33 +184,35 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       </ul>
                     </div>
                   </section>
-                  <section className="col-span-2 space-y-10">
-                    <div>
-                      <p className="mb-1">Status</p>
+                  <section className="col-span-2 space-y-8">
+                    <div className="border-l-icon-accent-blue border-l-4 pl-3">
+                      <p className="mb-2 font-primary-bold text-sm">Status</p>
                       <SelectStatus
                         initStatus={issue?.categoryType || initStatus}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Priority</p>
+                      <p className="mb-2 font-primary-bold text-sm">Priority</p>
                       <SelectPriority
                         initPriority={issue?.priority.id || "low"}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Asignee</p>
-                      <SelectAsignee initAsignee={issue?.asignee || user} />
+                      <p className="mb-2 font-primary-bold text-sm">Assignee</p>
+                      <SelectAssignee initAssignee={issue?.assignee || user} />
                     </div>
                     <div>
-                      <p className="mb-1">Reporter</p>
-                      <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
+                      <p className="mb-2 font-primary-bold text-sm">Reporter</p>
+                      <div className="mt-2 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1.5 pb-1.5 pl-1 pr-3.5">
                         <UserAvatar {...reporter} />
                         <input
                           type="hidden"
                           name="reporter"
                           value={reporter.id}
                         />
-                        <p className="m-0">{reporter.name}</p>
+                        <p className="m-0 font-primary-light text-sm">
+                          {reporter.name}
+                        </p>
                       </div>
                     </div>
                     <div>

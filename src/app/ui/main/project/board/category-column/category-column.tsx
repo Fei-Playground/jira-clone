@@ -156,8 +156,12 @@ interface CategoryColumnProps {
 }
 
 const EmptyCategory = (): JSX.Element => (
-  <li className="mt-4 flex flex-col items-center text-font-subtlest">
-    <RxValueNone size={36} />
-    <p className="mt-4 font-primary-light text-xs uppercase">No issues found</p>
+  <li className="mt-4 flex h-32 items-center justify-center rounded-md border-2 border-dashed border-border-brand border-opacity-50">
+    <div className="flex flex-col items-center text-font-subtlest">
+      <RxValueNone size={32} />
+      <p className="mt-3 font-primary-light text-xs uppercase text-opacity-60">
+        No issues yet
+      </p>
+    </div>
   </li>
 );
