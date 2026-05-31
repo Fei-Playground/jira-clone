@@ -8,6 +8,9 @@ const meta: Meta<typeof LoginView> = {
   component: LoginView,
   parameters: {
     layout: "fullscreen",
+    viewport: {
+      defaultViewport: "desktop",
+    },
   },
   argTypes: {
     users: {

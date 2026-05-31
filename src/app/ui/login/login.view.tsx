@@ -66,7 +66,7 @@ export const LoginView = ({ users }: Props) => {
       <div className="flex w-full items-center justify-center bg-elevation-surface px-4 py-8 lg:w-1/2 lg:px-0">
         <div className="w-full max-w-sm rounded-lg bg-elevation-surface-raised p-8 shadow-md lg:max-w-sm">
           {/* Heading */}
-          <h2 className="text-red-500 mb-2 font-primary-black text-3xl">
+          <h2 className="mb-2 font-primary-black text-3xl text-red-500">
             Welcome back
           </h2>
           {/* Subheading */}
