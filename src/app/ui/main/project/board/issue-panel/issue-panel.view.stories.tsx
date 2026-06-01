@@ -46,3 +46,9 @@ export const WithReplies: Story = {
     issue: inProgressIssuesMock1[1],
   },
 };
+
+export const WithAttachments: Story = {
+  args: {
+    issue: issue,
+  },
+};
