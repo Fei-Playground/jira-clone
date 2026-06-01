@@ -21,6 +21,20 @@ const preview: Preview = {
         { name: "sunken", value: "var(--color-elevation-surface-sunken)" },
       ],
     },
+    viewport: {
+      viewports: {
+        mobile1: {
+          name: "Mobile 1",
+          styles: { width: "375px", height: "667px" },
+          type: "mobile",
+        },
+        desktop: {
+          name: "Desktop",
+          styles: { width: "1440px", height: "900px" },
+          type: "desktop",
+        },
+      },
+    },
   },
 
   decorators: [

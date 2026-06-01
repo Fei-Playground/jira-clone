@@ -4,7 +4,13 @@ import { projectMock1 } from "@domain/project";
 import { todoIssuesMock1 } from "@domain/issue";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
-import "react-toastify/dist/ReactToastify.css";
+import {
+  commentMock1,
+  commentMock2,
+  commentMock3,
+  commentMock4,
+  commentMock5,
+} from "@domain/comment";
 
 const meta: Meta<typeof IssuePanel> = {
   title: "Pages/Main/Project/Board/IssuePanel/IssuePanelView",
@@ -14,9 +20,11 @@ const meta: Meta<typeof IssuePanel> = {
   },
   decorators: [
     (Story) => (
-      <ProjectContextProvider project={projectMock1}>
-        {withRemixStub(withMainContext(Story))}
-      </ProjectContextProvider>
+      <div className="h-screen w-screen overflow-hidden">
+        <ProjectContextProvider project={projectMock1}>
+          {withRemixStub(withMainContext(Story))}
+        </ProjectContextProvider>
+      </div>
     ),
   ],
 };
@@ -36,7 +44,13 @@ export const WithComments: Story = {
   args: {
     issue: {
       ...issue,
-      comments: issue.comments,
+      comments: [
+        commentMock1,
+        commentMock2,
+        commentMock3,
+        commentMock4,
+        commentMock5,
+      ],
     },
   },
 };
