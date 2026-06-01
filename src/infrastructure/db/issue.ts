@@ -3,7 +3,7 @@ import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
 import { Priority, PriorityId } from "@domain/priority";
-import { Comment } from "@domain/comment";
+import { Comment, CommentId } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
 import { db } from "./db.server";
 
@@ -32,6 +32,27 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     return null;
   }
 
+  // Convert all comments to domain format
+  const allComments = issueDb.comments.map((c) => ({
+    id: c.id as CommentId,
+    user: dnull({
+      ...c.user,
+      createdAt: c.user.createdAt.getTime(),
+      updatedAt: c.user.updatedAt.getTime(),
+    }),
+    message: c.message,
+    createdAt: c.createdAt.getTime(),
+    updatedAt: c.updatedAt.getTime(),
+    parentId: (c.parentId as CommentId | null) || null,
+    replies: [] as Comment[],
+  }));
+
+  // Group comments into tree structure (max depth 2)
+  const topLevel = allComments.filter((c) => !c.parentId);
+  topLevel.forEach((parent) => {
+    parent.replies = allComments.filter((c) => c.parentId === parent.id);
+  });
+
   const issue: Issue = {
     id: issueDb.id,
     name: issueDb.name,
@@ -40,16 +61,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     priority: issueDb.priority as Priority,
     asignee: dnull(issueDb.asignee),
     reporter: dnull(issueDb.reporter),
-    comments: issueDb.comments.map((comment) => ({
-      ...comment,
-      createdAt: comment.createdAt.getTime(),
-      updatedAt: comment.updatedAt.getTime(),
-      user: dnull({
-        ...comment.user,
-        createdAt: comment.user.createdAt.getTime(),
-        updatedAt: comment.user.updatedAt.getTime(),
-      }),
-    })),
+    comments: topLevel,
     createdAt: issueDb.createdAt.getTime(),
     updatedAt: issueDb.updatedAt.getTime(),
   };
@@ -67,17 +79,24 @@ export type CreateIssueInputData = {
   comments: Comment[];
 };
 export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId> => {
+  // Flatten replies into flat comment list with parentId set
+  const flatComments = issue.comments.flatMap((c) => [
+    { ...c, parentId: c.parentId ?? null },
+    ...(c.replies || []).map((r) => ({ ...r, parentId: c.id })),
+  ]);
+
   const newIssue = await db.issue.create({
     data: {
       ...issue,
       priority: undefined,
       priorityId: issue.priority,
       comments: {
-        create: issue.comments.map((comment) => {
+        create: flatComments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId,
           };
 
           return {
@@ -94,6 +113,12 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
 
 export type UpdateIssueInputData = CreateIssueInputData & { id: IssueId };
 export const updateIssue = async (issue: UpdateIssueInputData) => {
+  // Flatten replies into flat comment list with parentId set
+  const flatComments = issue.comments.flatMap((c) => [
+    { ...c, parentId: c.parentId ?? null },
+    ...(c.replies || []).map((r) => ({ ...r, parentId: c.id })),
+  ]);
+
   await db.issue.update({
     where: {
       id: issue.id,
@@ -103,11 +128,12 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       priority: undefined,
       priorityId: issue.priority,
       comments: {
-        upsert: issue.comments.map((comment) => {
+        upsert: flatComments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId,
           };
 
           return {
