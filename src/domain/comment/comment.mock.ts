@@ -4,6 +4,28 @@ import { Comment } from "./comment";
 const createdAt = Date.now();
 const updatedAt = Date.now();
 
+// Reply to reply (depth 2 — no Reply button shown)
+export const commentMock1Reply2: Comment = {
+  id: "reply-2-of-comment-1",
+  user: usersMock[5], // Mr. Potato
+  message: "@Little Green Men Yes, exactly! The permission system is well-designed.",
+  createdAt: createdAt + 120000,
+  updatedAt: createdAt + 120000,
+  parentId: "reply-1-of-comment-1",
+  replies: [],
+};
+
+// Reply to commentMock1 (depth 1 — has Reply button, has one nested reply)
+export const commentMock1Reply1: Comment = {
+  id: "reply-1-of-comment-1",
+  user: usersMock[7], // Little Green Men
+  message: "@Jessie That's a great point about permission handling!",
+  createdAt: createdAt + 60000,
+  updatedAt: createdAt + 60000,
+  parentId: "92149ee5-0459-4286-8323-1542e1295154",
+  replies: [commentMock1Reply2],
+};
+
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
   user: usersMock[3], // Jessie
@@ -11,6 +33,8 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  parentId: undefined,
+  replies: [commentMock1Reply1],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +43,8 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  parentId: undefined,
+  replies: [],
 };
 
 export const commentMock3: Comment = {
@@ -28,6 +54,8 @@ export const commentMock3: Comment = {
     "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard.",
   createdAt,
   updatedAt,
+  parentId: undefined,
+  replies: [],
 };
 
 export const commentMock4: Comment = {
@@ -37,6 +65,8 @@ export const commentMock4: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  parentId: undefined,
+  replies: [],
 };
 
 export const commentMock5: Comment = {
@@ -46,4 +76,6 @@ export const commentMock5: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  parentId: undefined,
+  replies: [],
 };

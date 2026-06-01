@@ -52,7 +52,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       const isExistingIssue = Boolean(issue?.id);
       const formData = new FormData(formTarget);
       const action = isExistingIssue ? "update" : "create";
-      formData.set("comments", JSON.stringify(comments));
+      formData.set("comments", JSON.stringify(flattenComments(comments)));
       formData.set("_action", action);
 
       fetcher.submit(formData, {
@@ -92,10 +92,37 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
+    setComments((prev) =>
+      prev
+        .filter((comment) => comment.id !== commentId)
+        .map((comment) => ({
+          ...comment,
+          replies: (comment.replies || []).filter((r) => r.id !== commentId),
+        }))
     );
-    setComments(updatedComments);
+  };
+
+  const addReply = (parentId: CommentId, reply: Comment): void => {
+    setComments((prev) => {
+      const updateReplies = (comments: Comment[]): Comment[] => {
+        return comments.map((c) => {
+          if (c.id === parentId) {
+            return {
+              ...c,
+              replies: [...(c.replies || []), reply],
+            };
+          }
+          if (c.replies?.length) {
+            return {
+              ...c,
+              replies: updateReplies(c.replies),
+            };
+          }
+          return c;
+        });
+      };
+      return updateReplies(prev);
+    });
   };
 
   useEffect(() => {
@@ -178,6 +205,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              addReply={addReply}
                             />
                           </li>
                         ))}
@@ -256,6 +284,20 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       />
     </>
   );
+};
+
+/**
+ * Recursively flatten comment tree (top-level + replies) into a single array.
+ * This is needed when serializing comments for form submission.
+ */
+const flattenComments = (comments: Comment[]): Omit<Comment, "replies">[] => {
+  const result: Omit<Comment, "replies">[] = [];
+  for (const c of comments) {
+    const { replies, ...rest } = c;
+    result.push(rest);
+    if (replies?.length) result.push(...flattenComments(replies));
+  }
+  return result;
 };
 
 interface Props {
