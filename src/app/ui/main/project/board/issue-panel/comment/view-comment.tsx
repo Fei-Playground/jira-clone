@@ -49,7 +49,7 @@ export const ViewComment = ({
         <button
           onClick={edit}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className="font-primary-light hover:underline"
           aria-label="Edit comment"
         >
           Edit
@@ -58,7 +58,7 @@ export const ViewComment = ({
         <button
           onClick={remove}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className="font-primary-light hover:underline"
           aria-label="Delete comment"
         >
           Delete
@@ -74,7 +74,7 @@ export const ViewComment = ({
         <p className="mr-4 inline-block font-primary-bold">
           {comment.user.name}
         </p>
-        <span className="font-primary-light text-xs">
+        <span className="font-primary-light text-2xs">
           {comment.createdAt ? (
             formatDateTime(comment.createdAt)
           ) : (

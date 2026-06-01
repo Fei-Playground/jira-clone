@@ -9,7 +9,7 @@ export const CreatedUpdatedAt = ({ issue }: Props): JSX.Element => {
 
   return (
     <table>
-      <tbody className="text-xs text-font-subtlest">
+      <tbody className="text-2xs text-font-subtlest">
         {values.map(({ label, value }) => (
           <tr key={label}>
             <td className="pr-4">

@@ -54,7 +54,7 @@ export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
               <Select.ItemIndicator />
               <span
                 className={cx(
-                  "flex w-fit items-center gap-2 rounded px-1 py-0.5 text-2xs uppercase",
+                  "flex w-fit items-center gap-2 rounded px-1 py-0.5 text-3xs uppercase",
                   category.type === "TODO" &&
                     "bg-background-accent-grey-subtler text-font-accent-grey",
                   category.type === "IN_PROGRESS" &&

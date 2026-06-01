@@ -61,7 +61,7 @@ export const EditBox = ({
       />
       <div
         className={cx(
-          "mt-2 flex gap-2 text-sm",
+          "mt-2 flex gap-2 text-xs",
           isEditing ? "visible" : "hidden"
         )}
       >
