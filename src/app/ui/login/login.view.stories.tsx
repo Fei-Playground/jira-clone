@@ -7,7 +7,18 @@ const meta: Meta<typeof LoginView> = {
   title: "Pages/Login",
   component: LoginView,
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
+    viewport: {
+      viewports: {
+        wide: {
+          name: "Wide",
+          styles: {
+            width: "1440px",
+            height: "900px",
+          },
+        },
+      },
+    },
   },
   argTypes: {
     users: {
@@ -42,5 +53,38 @@ type Story = StoryObj<typeof LoginView>;
 export const Default: Story = {
   args: {
     users: usersMock,
+  },
+};
+
+export const Mobile: Story = {
+  args: {
+    users: usersMock,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "iphone12",
+    },
+  },
+};
+
+export const Tablet: Story = {
+  args: {
+    users: usersMock,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "ipad",
+    },
+  },
+};
+
+export const Desktop: Story = {
+  args: {
+    users: usersMock,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "wide",
+    },
   },
 };
