@@ -1,4 +1,4 @@
-import { User, UserId } from "@domain/user";
+import { User } from "@domain/user";
 import { UserAvatar } from "@app/components/user-avatar";
 
 export const MentionList = ({

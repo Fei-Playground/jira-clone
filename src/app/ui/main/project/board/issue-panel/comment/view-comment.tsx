@@ -20,13 +20,13 @@ export const ViewComment = ({
   const users = projectStore.project.users;
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplyingTo, setIsReplyingTo] = useState<boolean>(false);
-  const [replies, setReplies] = useState<Comment[]>(
-    comment.replies || []
-  );
+  const [replies, setReplies] = useState<Comment[]>(comment.replies || []);
   const [showReplies, setShowReplies] = useState<boolean>(false);
   const fetcher = useFetcher();
 
+  // Edit/Delete actions are only available to comment author
   const isNotSelfComment = comment.user.id !== user.id;
+  // Determine if we should show the "Show N replies" button
   const hasReplies = replies.length > 0;
 
   const edit = () => setIsEditing(true);
@@ -52,6 +52,8 @@ export const ViewComment = ({
   const startReply = () => setIsReplyingTo(true);
   const cancelReply = () => setIsReplyingTo(false);
 
+  // Create a new reply and add it to the replies list
+  // Temporary IDs use "temp-" prefix until persisted to backend
   const saveReply = (replyText: string, mentions?: User[]): void => {
     const newReply: Comment = {
       id: `temp-${uuid()}`,
@@ -66,12 +68,11 @@ export const ViewComment = ({
   };
 
   const removeReply = (replyId: CommentId): void => {
-    const updatedReplies = replies.filter(
-      (reply) => reply.id !== replyId
-    );
+    const updatedReplies = replies.filter((reply) => reply.id !== replyId);
     setReplies(updatedReplies);
   };
 
+  // Resolve mentioned user IDs to User objects for display in MentionList
   const getMentionedUsers = (): User[] => {
     if (!comment.mentions) return [];
     return comment.mentions
@@ -83,30 +84,34 @@ export const ViewComment = ({
     <div className="font-primary-light">
       <p>{comment.message}</p>
       <MentionList mentionedUsers={getMentionedUsers()} />
-      <div
-        className={cx(
-          "mt-3 text-font-subtlest",
-          isNotSelfComment ? "hidden" : "visible"
-        )}
-      >
-        <button
-          onClick={edit}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Edit comment"
+      {/* Edit/Delete only visible to the comment author */}
+      <div className="mt-3 flex items-center text-font-subtlest">
+        <div
+          className={cx(
+            "flex items-center",
+            isNotSelfComment ? "hidden" : "visible"
+          )}
         >
-          Edit
-        </button>
-        <span className="mx-2">{"·"}</span>
-        <button
-          onClick={remove}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Delete comment"
-        >
-          Delete
-        </button>
-        <span className="mx-2">{"·"}</span>
+          <button
+            onClick={edit}
+            disabled={isNotSelfComment}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Edit comment"
+          >
+            Edit
+          </button>
+          <span className="mx-2">{"·"}</span>
+          <button
+            onClick={remove}
+            disabled={isNotSelfComment}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Delete comment"
+          >
+            Delete
+          </button>
+          <span className="mx-2">{"·"}</span>
+        </div>
+        {/* Reply is always available to any user */}
         <button
           onClick={startReply}
           className="font-primary-light text-xs hover:underline"
@@ -153,6 +158,7 @@ export const ViewComment = ({
             )}
           </div>
 
+          {/* Reply composition box shown when user clicks "Reply" */}
           {isReplyingTo && (
             <div className="mt-4">
               <EditBox
@@ -165,21 +171,21 @@ export const ViewComment = ({
             </div>
           )}
 
+          {/* Replies section with show/hide toggle */}
           {hasReplies && (
             <div className="mt-4">
               <button
                 onClick={() => setShowReplies(!showReplies)}
                 className="font-primary-light text-xs text-font-subtle hover:underline"
-                aria-label={
-                  showReplies ? "Hide replies" : "Show replies"
-                }
+                aria-label={showReplies ? "Hide replies" : "Show replies"}
               >
                 {showReplies ? "Hide" : "Show"} {replies.length}{" "}
                 {replies.length === 1 ? "reply" : "replies"}
               </button>
 
+              {/* Recursively render replies using ViewComment component */}
               {showReplies && (
-                <ul className="mt-4 border-l-2 border-border-neutral pl-6 space-y-6">
+                <ul className="border-border-neutral mt-4 space-y-6 border-l-2 pl-6">
                   {replies.map((reply) => (
                     <li key={reply.id}>
                       <ViewComment
@@ -198,8 +204,9 @@ export const ViewComment = ({
   );
 };
 
+// Determine if a comment has been edited after creation.
+// Compares timestamps at second precision to avoid false positives from minor timing differences.
 const commentIsEdited = (comment: Comment): boolean => {
-  // Convert miliseconds to seconds just in case there is a minimal difference
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
   const updatedAtInSeconds = Math.floor(comment.updatedAt / 1000);
   return createdAtInSeconds !== updatedAtInSeconds;

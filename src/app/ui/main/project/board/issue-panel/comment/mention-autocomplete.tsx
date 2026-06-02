@@ -1,4 +1,3 @@
-import { useEffect, useState, useCallback } from "react";
 import { User } from "@domain/user";
 import { UserAvatar } from "@app/components/user-avatar";
 
@@ -23,7 +22,7 @@ export const MentionAutocomplete = ({
 
   return (
     <div
-      className="absolute bottom-full left-0 z-50 mb-1 max-w-xs rounded border border-border-neutral bg-elevation-surface-overlay shadow-md"
+      className="border-border-neutral absolute bottom-full left-0 z-50 mb-1 max-w-xs rounded border bg-elevation-surface-overlay shadow-md"
       style={position}
     >
       <ul className="max-h-48 overflow-y-auto py-1">

@@ -3,10 +3,9 @@ import { unstable_createRemixStub as createRemixStub } from "@remix-run/testing"
 import { ViewComment } from "./view-comment";
 import { UserContextProvider } from "@app/store/user.store";
 import { ProjectContextProvider } from "@app/ui/main/project";
-import { commentMock1, commentMock2 } from "@domain/comment";
+import { commentMock1, commentMock2, Comment } from "@domain/comment";
 import { userMock1, usersMock } from "@domain/user";
 import { projectMock1 } from "@domain/project";
-import { Comment } from "@domain/comment";
 
 const meta: Meta<typeof ViewComment> = {
   title: "Comment/ViewComment",
@@ -57,7 +56,8 @@ export const WithoutReplies: Story = {
 const ownComment: Comment = {
   id: "user-own-comment",
   user: userMock1, // Daniel Serrano (current user)
-  message: "This is my own comment, so I can edit and delete it, plus reply to it.",
+  message:
+    "This is my own comment, so I can edit and delete it, plus reply to it.",
   createdAt: Date.now(),
   updatedAt: Date.now(),
 };
@@ -89,7 +89,8 @@ export const EditedComment: Story = {
 const commentWithMentions: Comment = {
   id: "comment-with-mentions",
   user: usersMock[3], // Jessie
-  message: "Great work @Buzz Lightyear and @Woody on the implementation! Let's sync with @Mr Potato as well.",
+  message:
+    "Great work @Buzz Lightyear and @Woody on the implementation! Let's sync with @Mr Potato as well.",
   mentions: [
     usersMock[2].id, // Buzz Lightyear
     usersMock[1].id, // Woody
