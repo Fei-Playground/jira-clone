@@ -3,8 +3,10 @@ import { useFetcher } from "react-router";
 import cx from "classix";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
+import { MentionHighlight } from "./mention-highlight";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -12,6 +14,7 @@ export const ViewComment = ({
   removeComment,
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
+  const { project } = useProjectStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(comment.message);
   const fetcher = useFetcher();
@@ -39,7 +42,7 @@ export const ViewComment = ({
 
   const idleComment = (
     <div className="font-primary-light">
-      <p>{message}</p>
+      <MentionHighlight message={message} users={project.users} />
       <div
         className={cx(
           "mt-3 text-font-subtlest",
@@ -94,6 +97,7 @@ export const ViewComment = ({
               save={save}
               cancel={cancel}
               autofocus
+              users={project.users}
             />
           ) : (
             idleComment
@@ -104,8 +108,8 @@ export const ViewComment = ({
   );
 };
 
+// Compare at second precision to ignore sub-second timestamp differences
 const commentIsEdited = (comment: Comment): boolean => {
-  // Convert miliseconds to seconds just in case there is a minimal difference
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
   const updatedAtInSeconds = Math.floor(comment.updatedAt / 1000);
   return createdAtInSeconds !== updatedAtInSeconds;
