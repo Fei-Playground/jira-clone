@@ -21,7 +21,7 @@ import {
   deleteIssue,
   UpdateIssueInputData,
 } from "@infrastructure/db/issue";
-import { deleteComment } from "@infrastructure/db/comment";
+import { deleteComment, updateComment } from "@infrastructure/db/comment";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
@@ -144,6 +144,16 @@ export const action: ActionFunction = async ({ request, params }) => {
     console.log("DELETING ISSUE");
     await deleteIssue(id);
     emitter.emit(EVENTS.ISSUE_DELETED, Date.now());
+  }
+
+  if (_action === "updateComment") {
+    const commentId = formData.get("commentId") as CommentId;
+    const message = formData.get("message") as string;
+
+    if (!commentId || !message) return null;
+
+    await updateComment(commentId, message);
+    return redirect(`/projects/${projectId}/board/issue/${id}`, 202);
   }
 
   if (_action === "deleteComment") {

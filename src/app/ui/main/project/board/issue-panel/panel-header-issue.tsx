@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Form, Link, useLocation } from "react-router";
 import * as AlertDialog from "@app/components/alert-dialog";
 import cx from "classix";
@@ -5,6 +6,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 import { IssueId } from "@domain/issue";
 import { TaskIcon } from "@app/components/icons";
+import { Tooltip } from "@app/components/tooltip";
 
 export const PanelHeaderIssue = ({
   id,
@@ -12,6 +14,18 @@ export const PanelHeaderIssue = ({
 }: PanelHeaderIssueProps): JSX.Element => {
   const location = useLocation();
   const previousUrl = location.pathname.split("/issue")[0];
+  const [showCopied, setShowCopied] = useState<boolean>(false);
+
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(id);
+      setShowCopied(true);
+      // Reset tooltip to default after 2 seconds
+      setTimeout(() => setShowCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy issue ID:", err);
+    }
+  };
 
   return (
     <div className="flex">
@@ -19,7 +33,15 @@ export const PanelHeaderIssue = ({
         <span className="flex items-center">
           <TaskIcon size={20} />
         </span>
-        <span className="ml-1 text-font-subtlest text-opacity-80">{id}</span>
+        <Tooltip title={showCopied ? "Copied!" : "Click to copy ID"}>
+          <button
+            onClick={handleCopyClick}
+            className="ml-1 cursor-pointer text-font-subtlest text-opacity-80 hover:text-opacity-100 hover:underline"
+            aria-label="Copy issue ID"
+          >
+            {id}
+          </button>
+        </Tooltip>
       </span>
       <DeleteIssueModalDialog disabled={deleteDisabled} />
       <Link
@@ -63,7 +85,7 @@ const DeleteIssueModalDialog = ({
           <AlertDialog.Title>Delete issue?</AlertDialog.Title>
           <AlertDialog.Description>
             This action is permanent and cannot be undone. Are you sure you want
-            to remove this issue completely?
+            to delete this issue completely?
           </AlertDialog.Description>
           <Form method="delete" className="mt-8 flex w-full justify-end gap-4">
             <AlertDialog.Cancel aria-label="Cancel">Cancel</AlertDialog.Cancel>

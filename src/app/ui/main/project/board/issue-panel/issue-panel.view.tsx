@@ -9,6 +9,7 @@ import {
   useNavigate,
 } from "react-router";
 import * as Dialog from "@app/components/dialog";
+import * as AlertDialog from "@app/components/alert-dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
@@ -20,6 +21,7 @@ import { Button } from "@app/components/button";
 import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { Tooltip } from "@app/components/tooltip";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
@@ -35,6 +37,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
+  const [showUnsavedWarning, setShowUnsavedWarning] = useState<boolean>(false);
+
   const { user } = useUserStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
@@ -83,8 +87,46 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     postData(e.currentTarget);
   };
 
+  /**
+   * Detects if the form has unsaved changes by comparing current form state
+   * with the original issue data. Used to prompt the unsaved changes warning dialog.
+   */
+  const checkUnsavedChanges = (): boolean => {
+    if (!formRef.current) return false;
+
+    const formData = new FormData(formRef.current);
+    const currentTitle = formData.get("title") as string;
+    const currentDescription = formData.get("description") as string;
+    const currentStatus = formData.get("status") as string;
+    const currentPriority = formData.get("priority") as string;
+    const currentAsignee = formData.get("asignee") as string;
+
+    const hasChanges =
+      currentTitle !== (issue?.name || "") ||
+      currentDescription !== (issue?.description || "") ||
+      currentStatus !== (issue?.categoryType || initStatus) ||
+      currentPriority !== (issue?.priority.id || "low") ||
+      currentAsignee !== (issue?.asignee?.id || user.id) ||
+      comments.length !== (issue?.comments || []).length;
+
+    return hasChanges;
+  };
+
   const handleProgrammaticClose = () => {
+    if (checkUnsavedChanges()) {
+      setShowUnsavedWarning(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  const confirmClose = () => {
+    setShowUnsavedWarning(false);
     setIsOpen(false);
+  };
+
+  const cancelClose = () => {
+    setShowUnsavedWarning(false);
   };
 
   const addComment = (newComment: Comment): void => {
@@ -105,6 +147,19 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   }, [onKeyDown]);
 
   useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (checkUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  });
+
+  // Navigate away from issue panel after close animation completes (300ms)
+  useEffect(() => {
     if (!isOpen) {
       setTimeout(() => {
         const previousUrl = location.pathname.split("/issue")[0];
@@ -113,6 +168,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [isOpen, navigate, location.pathname]);
 
+  // Track submission completion to show toast notifications
+  // We use a ref to detect the transition from submitting -> idle with data
   const wasSubmitting = useRef(false);
   useEffect(() => {
     const submitting = fetcher.state !== "idle";
@@ -126,6 +183,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       );
       if (formAction === "create") {
         toast.success("Issue created successfully");
+      } else if (formAction === "update") {
+        toast.success("Issue updated successfully");
       }
       wasSubmitting.current = false;
     }
@@ -133,6 +192,29 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
 
   return (
     <>
+      <AlertDialog.Root open={showUnsavedWarning}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay />
+          <AlertDialog.Content>
+            <AlertDialog.Title>Discard unsaved changes?</AlertDialog.Title>
+            <AlertDialog.Description>
+              You have unsaved changes that will be lost if you close now. Are
+              you sure you want to discard them?
+            </AlertDialog.Description>
+            <div className="mt-8 flex w-full justify-end gap-4">
+              <AlertDialog.Cancel onClick={cancelClose} aria-label="Cancel">
+                Cancel
+              </AlertDialog.Cancel>
+              <AlertDialog.Action
+                onClick={confirmClose}
+                aria-label="Discard changes"
+              >
+                Discard
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
       <Dialog.Root open={true}>
         <Dialog.Portal container={portalContainer}>
           <Dialog.Overlay>
@@ -172,16 +254,22 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <div>
                         <CreateComment addComment={addComment} />
                       </div>
-                      <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                      {comments.length === 0 ? (
+                        <p className="mt-6 text-sm text-font-subtlest">
+                          No comments yet. Be the first to comment!
+                        </p>
+                      ) : (
+                        <ul className="mt-8 space-y-6">
+                          {comments.map((comment) => (
+                            <li key={comment.id}>
+                              <ViewComment
+                                comment={comment}
+                                removeComment={removeComment}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </section>
                   <section className="col-span-2 space-y-10">
@@ -223,22 +311,24 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
                   </span>
                   <div className="flex justify-center">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-fit"
-                      disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
-                    >
-                      {transition.state !== "idle" ? (
-                        <>
-                          Submmiting
-                          <Spinner />
-                        </>
-                      ) : (
-                        "Accept"
-                      )}
-                    </Button>
+                    <Tooltip title="Shift+S">
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="w-fit"
+                        disabled={transition.state !== "idle"}
+                        aria-label="Accept changes"
+                      >
+                        {transition.state !== "idle" ? (
+                          <>
+                            Submitting
+                            <Spinner />
+                          </>
+                        ) : (
+                          "Accept"
+                        )}
+                      </Button>
+                    </Tooltip>
                   </div>
                   <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
                     Press <Kbd>Esc</Kbd> to close
@@ -249,7 +339,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
           </Dialog.Overlay>
         </Dialog.Portal>
       </Dialog.Root>
-      {/* To avoid hydration issues because a missmatch with the server*/}
+      {/* Portal container rendered client-side to avoid SSR hydration mismatch */}
       <div
         ref={setPortalContainer}
         className="fixed left-0 top-0 z-50 h-full w-full"

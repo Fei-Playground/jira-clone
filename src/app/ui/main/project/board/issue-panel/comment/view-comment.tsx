@@ -24,6 +24,7 @@ export const ViewComment = ({
   const remove = () => {
     removeComment(comment.id);
 
+    // Skip server deletion for temporary (unsaved) comments
     if (comment.id.startsWith("temp-")) return;
 
     fetcher.submit(
@@ -35,6 +36,14 @@ export const ViewComment = ({
   const save = (commentText: string): void => {
     setMessage(commentText);
     setIsEditing(false);
+
+    // Skip server update for temporary (unsaved) comments
+    if (comment.id.startsWith("temp-")) return;
+
+    fetcher.submit(
+      { commentId: comment.id, message: commentText, _action: "updateComment" },
+      { method: "post" }
+    );
   };
 
   const idleComment = (
@@ -104,8 +113,11 @@ export const ViewComment = ({
   );
 };
 
+/**
+ * Determines if a comment has been edited by comparing timestamps.
+ * Converts to seconds to avoid false positives from millisecond precision differences.
+ */
 const commentIsEdited = (comment: Comment): boolean => {
-  // Convert miliseconds to seconds just in case there is a minimal difference
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
   const updatedAtInSeconds = Math.floor(comment.updatedAt / 1000);
   return createdAtInSeconds !== updatedAtInSeconds;
