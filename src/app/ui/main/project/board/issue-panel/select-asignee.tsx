@@ -28,7 +28,7 @@ export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
     >
       <Select.Trigger aria-label="Open asignee select">
         <div className="mr-2">
-          <UserAvatar {...selectedValue} size={32} />
+          <UserAvatar {...selectedValue} size={29} />
         </div>
         <Select.Value />
         <Select.TriggerIcon />
@@ -39,7 +39,7 @@ export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
           {users.map((user, index) => (
             <Select.Item key={index} value={user.id}>
               <Select.ItemIndicator />
-              <UserAvatar {...user} />
+              <UserAvatar {...user} size={32} />
               <Select.ItemText>{user.name}</Select.ItemText>
             </Select.Item>
           ))}
