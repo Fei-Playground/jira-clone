@@ -24,21 +24,24 @@ interface ChartData {
   userId: string;
 }
 
+/** Default color for users without a custom color */
+const DEFAULT_USER_COLOR = "#3b82f6" as const;
+
 export const WorkloadChart = ({ issues, users }: WorkloadChartProps): JSX.Element => {
-  // Group issues by assignee
+  // Build a map of issue counts by assignee ID
   const workloadMap = new Map<string, number>();
   issues.forEach((issue) => {
     const count = workloadMap.get(issue.asignee.id) || 0;
     workloadMap.set(issue.asignee.id, count + 1);
   });
 
-  // Filter to users with assigned issues and build chart data
+  // Create chart data only for users with assigned issues
   const data: ChartData[] = users
     .filter((user) => workloadMap.has(user.id))
     .map((user) => ({
       name: user.name,
       value: workloadMap.get(user.id) || 0,
-      color: user.color || "#3b82f6",
+      color: user.color || DEFAULT_USER_COLOR,
       userId: user.id,
     }));
 
@@ -46,7 +49,8 @@ export const WorkloadChart = ({ issues, users }: WorkloadChartProps): JSX.Elemen
     return (
       <div
         aria-label="No team members with assigned issues"
-        className="flex h-48 items-center justify-center text-sm text-font-subtle"
+        className="flex h-48 items-center justify-center text-sm
+          text-font-subtle"
       >
         No issues assigned yet
       </div>
@@ -54,14 +58,23 @@ export const WorkloadChart = ({ issues, users }: WorkloadChartProps): JSX.Elemen
   }
 
   return (
-    <div aria-label="Workload by Team Member: vertical bar chart" className="w-full">
+    <div
+      aria-label="Workload by Team Member: vertical bar chart"
+      className="w-full"
+    >
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
           margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-          <XAxis dataKey="name" stroke="var(--color-font-subtle)" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="var(--color-border)"
+          />
+          <XAxis
+            dataKey="name"
+            stroke="var(--color-font-subtle)"
+          />
           <YAxis stroke="var(--color-font-subtle)" />
           <Tooltip
             formatter={(value) => [`${value} issues`, "Assigned"]}

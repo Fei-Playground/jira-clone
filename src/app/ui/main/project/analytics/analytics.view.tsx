@@ -10,6 +10,16 @@ import { WorkflowChart } from "./workflow-chart";
 import { PriorityChart } from "./priority-chart";
 import { WorkloadChart } from "./workload-chart";
 
+/**
+ * Calculates the color indicator for completion rate based on percentage.
+ * Green for strong progress (≥50%), yellow for moderate progress (≥25%), red for low progress.
+ */
+const getCompletionRateColor = (rate: number): "red" | "green" | "yellow" => {
+  if (rate >= 50) return "green";
+  if (rate >= 25) return "yellow";
+  return "red";
+};
+
 export const AnalyticsView = (): JSX.Element => {
   const { project } = useProjectStore();
 
@@ -19,24 +29,26 @@ export const AnalyticsView = (): JSX.Element => {
   // Calculate metrics
   const totalIssues = allIssues.length;
   const doneIssues = allIssues.filter((i) => i.categoryType === "DONE");
-  const inProgressIssues = allIssues.filter((i) => i.categoryType === "IN_PROGRESS");
+  const inProgressIssues = allIssues.filter(
+    (i) => i.categoryType === "IN_PROGRESS"
+  );
   const highPriorityIssues = allIssues.filter((i) => i.priority.id === "high");
 
-  // Calculate completion rate
+  // Calculate completion rate as percentage (0-100)
   const completionRate =
     totalIssues === 0 ? 0 : Math.round((doneIssues.length / totalIssues) * 100);
 
-  // Determine completion rate color
-  const completionRateColor =
-    completionRate >= 50 ? "green" : completionRate >= 25 ? "yellow" : "red";
+  const completionRateColor = getCompletionRateColor(completionRate);
 
   return (
     <div className="flex h-full flex-col overflow-y-auto bg-elevation-surface-base">
       <section className="mx-auto w-full max-w-6xl px-6 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-primary-bold text-2xl text-font">Analytics</h1>
-          <p className="text-sm text-font-subtle">Team&apos;s project progress at a glance</p>
+          <h1 className="text-2xl font-primary-bold text-font">Analytics</h1>
+          <p className="text-sm text-font-subtle">
+            Team&apos;s project progress at a glance
+          </p>
         </div>
 
         {/* Empty state */}
@@ -79,13 +91,13 @@ export const AnalyticsView = (): JSX.Element => {
             {/* Charts Grid */}
             <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div className="rounded-lg border border-border bg-elevation-surface-raised p-6">
-                <h2 className="mb-4 font-primary-bold text-lg text-font">
+                <h2 className="mb-4 text-lg font-primary-bold text-font">
                   Workflow Progress
                 </h2>
                 <WorkflowChart issues={allIssues} />
               </div>
               <div className="rounded-lg border border-border bg-elevation-surface-raised p-6">
-                <h2 className="mb-4 font-primary-bold text-lg text-font">
+                <h2 className="mb-4 text-lg font-primary-bold text-font">
                   Issue Priority Distribution
                 </h2>
                 <PriorityChart issues={allIssues} />
@@ -94,7 +106,7 @@ export const AnalyticsView = (): JSX.Element => {
 
             {/* Workload Section */}
             <div className="rounded-lg border border-border bg-elevation-surface-raised p-6">
-              <h2 className="mb-4 font-primary-bold text-lg text-font">
+              <h2 className="mb-4 text-lg font-primary-bold text-font">
                 Workload by Team Member
               </h2>
               <WorkloadChart issues={allIssues} users={project.users} />

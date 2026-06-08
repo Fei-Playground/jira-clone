@@ -5,8 +5,6 @@ import { ProjectContextProvider } from "@app/ui/main/project/project.store";
 import { projectMock1 } from "@domain/project";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 const meta: Meta<typeof AnalyticsView> = {
   title: "Pages/Main/Project/AnalyticsView",
   component: AnalyticsView,
