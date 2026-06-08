@@ -28,6 +28,7 @@ import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
+import { Attachments } from "./attachments";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
@@ -203,6 +204,9 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         initDescription={issue?.description || ""}
                         readOnly={userIsNotReporter}
                       />
+                    </div>
+                    <div className="mb-6">
+                      <Attachments />
                     </div>
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
