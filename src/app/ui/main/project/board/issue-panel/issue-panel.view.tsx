@@ -32,12 +32,15 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [commentMessage, setCommentMessage] = useState<string>("");
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
   const { user } = useUserStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
+  const createCommentRef = useRef<HTMLTextAreaElement>(null);
   const actionData = useActionData() as IssueActionData;
   const fetcher = useFetcher();
   const params = useSearchParams();
@@ -88,7 +91,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    if (replyingToId) {
+      addReplyToComment(replyingToId, newComment);
+      setReplyingToId(null);
+    } else {
+      setComments([...comments, newComment]);
+    }
   };
 
   const removeComment = (commentId: CommentId): void => {
@@ -96,6 +104,35 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       (comment) => comment.id !== commentId
     );
     setComments(updatedComments);
+  };
+
+  const addReplyToComment = (
+    parentCommentId: CommentId,
+    reply: Comment
+  ): void => {
+    const updatedComments = comments.map((comment) => {
+      if (comment.id === parentCommentId) {
+        return {
+          ...comment,
+          replies: [...(comment.replies || []), reply],
+        };
+      }
+      return comment;
+    });
+    setComments(updatedComments);
+  };
+
+  const handleReply = (firstName: string, parentCommentId: CommentId) => {
+    setReplyingToId(parentCommentId);
+    const mention = `@${firstName} `;
+    setCommentMessage(mention);
+    setTimeout(() => {
+      if (createCommentRef.current) {
+        createCommentRef.current.focus();
+        const length = mention.length;
+        createCommentRef.current.setSelectionRange(length, length);
+      }
+    }, 0);
   };
 
   useEffect(() => {
@@ -170,7 +207,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <CreateComment
+                          ref={createCommentRef}
+                          addComment={addComment}
+                          message={commentMessage}
+                          setMessage={setCommentMessage}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
                         {comments.map((comment) => (
@@ -178,6 +220,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              onReply={handleReply}
                             />
                           </li>
                         ))}

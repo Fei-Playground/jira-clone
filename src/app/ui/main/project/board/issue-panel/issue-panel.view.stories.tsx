@@ -36,7 +36,30 @@ export const WithComments: Story = {
   args: {
     issue: {
       ...issue,
-      comments: issue.comments,
+      comments: issue.comments.map((comment, index) => ({
+        ...comment,
+        replies:
+          index === 0
+            ? [
+                {
+                  id: "reply-1",
+                  user: todoIssuesMock1[0].asignee,
+                  message:
+                    "Thanks for the tip! I noticed this helps with debugging cross-browser issues too.",
+                  createdAt: comment.createdAt + 60000,
+                  updatedAt: comment.createdAt + 60000,
+                },
+                {
+                  id: "reply-2",
+                  user: comment.user,
+                  message:
+                    "Absolutely! It's been a lifesaver for identifying 404 vs 500 errors quickly.",
+                  createdAt: comment.createdAt + 120000,
+                  updatedAt: comment.createdAt + 120000,
+                },
+              ]
+            : undefined,
+      })),
     },
   },
 };
