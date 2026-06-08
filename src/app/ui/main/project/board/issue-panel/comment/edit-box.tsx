@@ -4,22 +4,27 @@ import { TextareaAutosize } from "@app/components/textarea-autosize";
 import { Button } from "@app/components/button";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 
+// Form for creating or editing a comment
+// forwardRef allows parent to access textarea for focus and cursor manipulation
 export const EditBox = forwardRef<HTMLTextAreaElement, EditBoxProps>(
   ({ defaultMessage, autofocus, save, cancel }, ref) => {
     const [message, setMessage] = useState<string>(defaultMessage);
     const [initError, setInitError] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
+    // Message must have content and not be only whitespace
     const messageIsValid = (): boolean => {
       return message.length > 0 && !textAreOnlySpaces(message);
     };
 
+    // Reset form to its initial state after save or cancel
     const resetValues = () => {
       setMessage(defaultMessage);
       setInitError(false);
       setIsEditing(false);
     };
 
+    // Validate and save, or show error message
     const onSave = () => {
       if (messageIsValid()) {
         save(message);
@@ -29,12 +34,15 @@ export const EditBox = forwardRef<HTMLTextAreaElement, EditBoxProps>(
       }
     };
 
+    // Cancel editing and reset form
     const onCancel = () => {
       if (cancel) cancel();
       resetValues();
     };
+    // Show save/cancel buttons when textarea is focused
     const onFocus = () => setIsEditing(true);
 
+    // Show error state and custom placeholder if validation failed
     const isError = initError && !messageIsValid();
     const placeholder = isError
       ? "Message cannot be empty"

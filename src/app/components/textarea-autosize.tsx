@@ -1,6 +1,8 @@
 import { useLayoutEffect, useState, useRef, forwardRef } from "react";
 import cx from "classix";
 
+// Textarea with auto-sizing height based on content
+// forwardRef allows parent to access and control the textarea element
 export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>(
   (props: TitleProps, ref) => {
     const {
@@ -16,8 +18,10 @@ export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>(
     } = props;
 
     const [textareaHeight, setTextareaHeight] = useState<number>(40);
+    // Mirror paragraph to calculate scroll height for auto-sizing
     const textareaRef = useRef<HTMLParagraphElement>(null);
 
+    // Place cursor at end of text on focus for better UX (especially during replies)
     const handleOnFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       const target = e.currentTarget;
       const length = target.value.length;
@@ -26,6 +30,7 @@ export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>(
       if (onFocus) onFocus();
     };
 
+    // Forward change events to parent state
     const handleTitleChange = (
       e: React.FormEvent<HTMLTextAreaElement>
     ): void => {
@@ -33,10 +38,13 @@ export const TextareaAutosize = forwardRef<HTMLTextAreaElement, TitleProps>(
       setValue(value);
     };
 
+    // Check if value contains actual content (not just whitespace)
+    // This prevents the mirror paragraph from showing only spaces
     const valueIsNotOnlySpaces = (): boolean => {
       return !/^( )\1*$/.test(value);
     };
 
+    // Update textarea height when content changes by measuring the mirror element
     useLayoutEffect(() => {
       if (!textareaRef.current) return;
 

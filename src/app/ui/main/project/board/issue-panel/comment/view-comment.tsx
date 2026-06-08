@@ -7,6 +7,8 @@ import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
 import { formatDateTime } from "@utils/formatDateTime";
 
+// Displays a comment and its nested replies (conversation thread)
+// level tracks nesting depth to render different UI for replies vs top-level comments
 export const ViewComment = ({
   comment,
   removeComment,
@@ -40,15 +42,18 @@ export const ViewComment = ({
     setIsEditing(false);
   };
 
+  // Remove a reply from the nested replies list
   const removeReply = (replyId: CommentId): void => {
     const updatedReplies = replies.filter((r) => r.id !== replyId);
     setReplies(updatedReplies);
   };
 
+  // Extract first name for mention and trigger reply in parent
   const handleReply = () => {
     onReply(comment.user.name.split(" ")[0], comment.id);
   };
 
+  // Top-level comment view with edit/delete (if owner) and reply buttons
   const idleComment = (
     <div className="font-primary-light">
       <p>{message}</p>
@@ -87,6 +92,7 @@ export const ViewComment = ({
     </div>
   );
 
+  // Nested reply view with limited actions (no Reply button on replies)
   const replyIdleComment = (
     <div className="font-primary-light">
       <p>{message}</p>
@@ -146,15 +152,17 @@ export const ViewComment = ({
                 autofocus
               />
             ) : level === 0 ? (
+              // Show full comment view for top-level comments
               idleComment
             ) : (
+              // Show simplified reply view for nested replies
               replyIdleComment
             )}
           </div>
         </div>
       </div>
 
-      {/* Render nested replies */}
+      {/* Render nested replies as an indented conversation thread */}
       {replies.length > 0 && (
         <ul className="border-border-subtle ml-10 mt-6 space-y-6 border-l-2 pl-6">
           {replies.map((reply) => (
@@ -174,7 +182,8 @@ export const ViewComment = ({
 };
 
 const commentIsEdited = (comment: Comment): boolean => {
-  // Convert miliseconds to seconds just in case there is a minimal difference
+  // Compare created vs updated timestamps in seconds to account for minimal timing differences
+  // Prevents false "EDITED" labels from rounding errors in timestamp handling
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
   const updatedAtInSeconds = Math.floor(comment.updatedAt / 1000);
   return createdAtInSeconds !== updatedAtInSeconds;
@@ -184,5 +193,7 @@ interface ViewCommentProps {
   comment: Comment;
   removeComment: (commentId: CommentId) => void;
   onReply: (firstName: string, parentCommentId: CommentId) => void;
+  // level tracks nesting depth (0 for top-level, 1+ for replies)
+  // Used to show different UI and prevent reply-on-reply
   level?: number;
 }
