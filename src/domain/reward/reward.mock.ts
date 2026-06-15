@@ -1,0 +1,68 @@
+import { Reward } from "./reward";
+
+export const rewardsMock: Reward[] = [
+  {
+    id: "r1",
+    name: "Cat toy for Whiskers",
+    description: "Pick a fun toy for the cat!",
+    pointCost: 30,
+    emoji: "🐱",
+    category: "fun",
+  },
+  {
+    id: "r2",
+    name: "Stay up 30 min late",
+    description: "Bedtime pushed back by 30 minutes.",
+    pointCost: 40,
+    emoji: "📖",
+    category: "time",
+  },
+  {
+    id: "r3",
+    name: "30 min extra tablet time",
+    description: "An extra half hour of tablet fun.",
+    pointCost: 50,
+    emoji: "🎮",
+    category: "time",
+  },
+  {
+    id: "r4",
+    name: "Pizza night choice",
+    description: "You pick the pizza toppings tonight!",
+    pointCost: 60,
+    emoji: "🍕",
+    category: "fun",
+  },
+  {
+    id: "r5",
+    name: "Movie night pick",
+    description: "You choose what the family watches.",
+    pointCost: 75,
+    emoji: "🎬",
+    category: "experience",
+  },
+  {
+    id: "r6",
+    name: "$5 to spend online",
+    description: "Five dollars to spend on anything you choose.",
+    pointCost: 80,
+    emoji: "🛍️",
+    category: "experience",
+  },
+  {
+    id: "r7",
+    name: "Art supply splurge",
+    description: "Pick out new art supplies!",
+    pointCost: 100,
+    emoji: "🎨",
+    category: "experience",
+  },
+  {
+    id: "r8",
+    name: "Sleepover",
+    description: "Invite a friend for a sleepover!",
+    pointCost: 150,
+    emoji: "🌙",
+    category: "experience",
+  },
+];

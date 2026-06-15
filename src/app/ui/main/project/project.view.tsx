@@ -5,6 +5,7 @@ const sectionTitles: Record<string, string> = {
   board: "Board",
   analytics: "Analytics",
   backlog: "Backlog",
+  rewards: "Rewards",
 };
 const defaultSection = "board";
 

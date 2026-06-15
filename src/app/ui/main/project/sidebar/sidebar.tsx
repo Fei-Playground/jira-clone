@@ -92,7 +92,6 @@ const navItems: NavItemProps[] = [
     href: "rewards",
     icon: <span className="text-lg">🎁</span>,
     name: "Rewards",
-    disabled: true,
   },
   {
     href: "review",
