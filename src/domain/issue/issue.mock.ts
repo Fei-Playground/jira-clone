@@ -15,121 +15,120 @@ const createdAt = new Date("2022-01-18 11:00").valueOf();
 export const todoIssuesMock1: Issue[] = [
   {
     id: "4db55cbf-222d-424a-b23b-08e61534c706",
-    name: "HINT: Check network status when navigating to an error page.",
+    name: "Get up and make your bed",
     description:
-      'There are two sections on the sidebar that will intentionally throw an error. The section "Server error" will trigger a 500 error response, while "Not found" returns a 404 error. You can check the status response on the browser network tab and see how it is handled on the UI.',
+      "Start the day right! Make your bed before breakfast. Smooth out the covers and fluff your pillows.",
     reporter: userMock1,
     asignee: userMock1,
-    comments: [commentMock4, commentMock5],
-    priority: priorityMedium,
-    categoryType: "DONE",
+    comments: [],
+    priority: priorityLow,
+    categoryType: "TODO",
     createdAt,
-    updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    updatedAt: createdAt,
   },
-];
-
-export const inProgressIssuesMock1: Issue[] = [
   {
     id: "ea07f7ca-13e9-4143-b623-f5713adef81a",
-    name: "HINT: Open two tabs to see events in real time.",
+    name: "Brush teeth & wash face",
     description:
-      "With the same project open in two different tabs, try making some changes on one of them. The result will be reflected instantly on the other. This will happen with every other user with the app open.",
-    reporter: userMock1, // Daniel Serrano
-    asignee: userMock2, // Woody
+      "Morning hygiene routine. Brush for a full 2 minutes and wash your face with warm water.",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
     comments: [],
-    priority: priorityHigh,
-    categoryType: "IN_PROGRESS",
+    priority: priorityLow,
+    categoryType: "TODO",
     createdAt,
     updatedAt: createdAt,
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
-    name: "HINT: Try to login and interact with different users. ",
+    name: "Eat breakfast & clean up after yourself",
     description:
-      "This will be reflected on the UI (e. g. which user created and issue or wrote a comment). A user can only see the projects they are assigned to. You can try this by creating a new project at the /projects page. To logout, go to the avatar dropdown (top right).",
-    reporter: userMock2, // Woody
-    asignee: usersMock[2], // Buzz Lightyear
-    comments: [commentMock1, commentMock2],
-    priority: priorityHigh,
-    categoryType: "IN_PROGRESS",
+      "Have a healthy breakfast, then put your dishes in the dishwasher and wipe down the table.",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "TODO",
     createdAt,
-    updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    updatedAt: createdAt,
+  },
+  {
+    id: "cb3eb5e6-299d-4e1a-8521-a5541f8403e4",
+    name: "Read for 20 minutes",
+    description:
+      "Pick any book you love. Reading counts toward your Daily Mission bonus!",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
+    comments: [],
+    priority: priorityHigh,
+    categoryType: "TODO",
+    createdAt,
+    updatedAt: createdAt,
   },
 ];
 
-export const doneIssuesMock1: Issue[] = [
-  {
-    id: "cb3eb5e6-299d-4e1a-8521-a5541f8403e4",
-    name: "HINT: Check the URL when filter or navigate. Try navigate directly to the URL.",
-    description:
-      "All the routing is handled server-side thanks to Remix Run framework. Everytime you apply a filter, a new request is sent, the data is revalidated in the server and the page HTML is resent to the server. This is very useful when sharing a link. The other person will receive the same exact result as you.",
-    reporter: userMock1,
-    asignee: userMock1,
-    comments: [],
-    priority: priorityLow,
-    categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 10:51").valueOf(),
-  },
+export const inProgressIssuesMock1: Issue[] = [
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
-    name: "HINT: Try key combinations to execute actions. They are indicated on the UI.",
+    name: "Put away clothes (floor check!)",
     description:
-      'E. g., try Shift + N on the board page to create a new issue. By default, it will be created under the category "TO DO". Another common key combination is using Shift + S to save changes (try it on this very issue!).',
-    reporter: userMock1,
+      "Pick up everything off the floor. Dirty clothes go in the hamper, clean clothes get folded and put away.",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "IN_PROGRESS",
+    createdAt,
+    updatedAt: createdAt,
+  },
+  {
+    id: "f3efefcf-7859-4241-8b03-4ae815183355",
+    name: "Unload the dishwasher",
+    description:
+      "Put all clean dishes, cups, and silverware in their proper places. Check that everything is actually clean first!",
+    reporter: usersMock[1], // Mom
     asignee: userMock1,
     comments: [commentMock3],
     priority: priorityMedium,
-    categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 02:04").valueOf(),
-  },
-];
-
-// PROJECT 2
-export const todoIssuesMock2: Issue[] = [
-  {
-    id: "f3efefcf-7859-4241-8b03-4ae815183355",
-    name: "Add and display issue timestamps",
-    description:
-      "Id should be create automatically on new Issue(). It must be displayed on issue panel, as well as an updatedAt parameter",
-    reporter: userMock1,
-    asignee: userMock2,
-    comments: [],
-    priority: priorityMedium,
-    categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-18 11:01").valueOf(),
-  },
-  {
-    id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
-    name: "Add projects section and the ability to create multiple projects",
-    description:
-      "Router would be needed. Can create and edit project, as well as add users to that particular project",
-    reporter: userMock1,
-    asignee: userMock1,
-    comments: [],
-    priority: priorityLow,
-    categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-23 14:28").valueOf(),
-  },
-];
-
-export const inProgressIssuesMock2: Issue[] = [
-  {
-    id: "812664aa-82be-418b-9ba3-1d7acdcd6be2",
-    name: "Add dark mode",
-    description: "",
-    reporter: userMock1,
-    asignee: userMock1,
-    comments: [],
-    priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
   },
 ];
+
+export const doneIssuesMock1: Issue[] = [
+  {
+    id: "812664aa-82be-418b-9ba3-1d7acdcd6be2",
+    name: "Fill cat water bowl",
+    description:
+      "Refill the cat's water bowl with fresh, clean water. Rinse it out first!",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
+    comments: [commentMock1, commentMock2],
+    priority: priorityLow,
+    categoryType: "DONE",
+    createdAt,
+    updatedAt: createdAt,
+  },
+  {
+    id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
+    name: "Scoop the litter box",
+    description:
+      "Scoop all clumps from the litter box and tie up the bag. Add fresh litter if needed.",
+    reporter: usersMock[1], // Mom
+    asignee: userMock1,
+    comments: [commentMock4, commentMock5],
+    priority: priorityHigh,
+    categoryType: "DONE",
+    createdAt,
+    updatedAt: createdAt,
+  },
+];
+
+// PROJECT 2
+export const todoIssuesMock2: Issue[] = [];
+
+export const inProgressIssuesMock2: Issue[] = [];
 
 export const doneIssuesMock2: Issue[] = [];
 

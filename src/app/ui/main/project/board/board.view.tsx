@@ -47,7 +47,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   const { revalidate } = useRevalidator();
   const navigate = useNavigate();
 
-  // Reset optimistic submissions when the categories data changes
+  // Reset optimistic UI state when server data changes (replaces useEffect for synchronous reset)
   if (categories !== prevCategories) {
     setPrevCategories(categories);
     setSubmittingIssues([]);
@@ -86,7 +86,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   return (
     <section className="mt-12 flex h-full flex-col">
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
-        Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
+        Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new mission
       </span>
       <div className="flex h-full gap-3">
         {categories.map((category) => (

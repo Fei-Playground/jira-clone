@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
-import { todoIssuesMock1 } from "@domain/issue";
+import { todoIssuesMock1, doneIssuesMock1 } from "@domain/issue";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,11 +32,9 @@ export const Default: Story = {
   },
 };
 
+// Done issue "Fill cat water bowl" has commentMock1 with a threaded reply (commentMock2)
 export const WithComments: Story = {
   args: {
-    issue: {
-      ...issue,
-      comments: issue.comments,
-    },
+    issue: doneIssuesMock1[0],
   },
 };

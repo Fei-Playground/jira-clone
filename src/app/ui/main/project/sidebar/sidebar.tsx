@@ -80,29 +80,25 @@ interface Props {
 const navItems: NavItemProps[] = [
   {
     href: "board",
-    icon: <HiOutlineViewBoards size={24} />,
-    name: "Board",
+    icon: <span className="text-lg">🎯</span>,
+    name: "Daily Missions",
   },
   {
     href: "analytics",
-    icon: <ImStatsDots size={20} />,
-    name: "Analytics",
+    icon: <span className="text-lg">⭐</span>,
+    name: "Progress & Points",
   },
   {
-    href: "backlog",
-    icon: <BsListNested size={24} />,
-    name: "Backlog",
+    href: "rewards",
+    icon: <span className="text-lg">🎁</span>,
+    name: "Rewards",
     disabled: true,
   },
   {
-    href: "server-error",
-    icon: <BsCloudSlash size={24} />,
-    name: "Server error",
-  },
-  {
-    href: "not-found",
-    icon: <TbError404 size={24} />,
-    name: "Not found",
+    href: "review",
+    icon: <span className="text-lg">📋</span>,
+    name: "Daily Review",
+    disabled: true,
   },
 ];
 

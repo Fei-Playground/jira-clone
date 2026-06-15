@@ -14,6 +14,7 @@ export enum Theme {
   LAVA = "lava",
   LIME = "lime",
   BARBIE = "barbie",
+  IZZY = "izzy",
 }
 export const themes: Array<Theme> = Object.values(Theme);
 export enum Preference {
@@ -22,7 +23,7 @@ export enum Preference {
 }
 const preferences: Array<Preference> = Object.values(Preference);
 
-export const DEFAULT_THEME: Theme = Theme.LIGHT;
+export const DEFAULT_THEME: Theme = Theme.IZZY;
 const DEFAULT_PREFERENCE: Preference = Preference.SYSTEM;
 
 type ThemeContextType = {

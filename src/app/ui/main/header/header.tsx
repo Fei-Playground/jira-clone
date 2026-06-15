@@ -17,8 +17,8 @@ export const Header = (): JSX.Element => {
           to="/"
           className="flex cursor-pointer items-center rounded px-3 py-2 text-font hover:bg-background-brand-subtlest hover:text-font-brand"
         >
-          <img src="/images/logo.png" width={24} height={24} alt="Logo" />
-          <span className="ml-2">Jira Clone</span>
+          <span className="text-2xl">✨</span>
+          <span className="ml-2 font-primary-bold">Izzy's Independence Board</span>
         </Link>
       </section>
       <section className="flex items-center gap-4">
@@ -31,15 +31,7 @@ export const Header = (): JSX.Element => {
             <HiQuestionMarkCircle size={24} />
           </button>
         </Tooltip>
-        <Tooltip title="Github">
-          <a
-            href="https://github.com/daniserrano7/jira-clone"
-            className={iconBaseClass}
-            aria-label="Go to my Github"
-          >
-            <AiFillGithub size={24} />
-          </a>
-        </Tooltip>
+
         <SelctTheme />
         <UserProfile />
       </section>

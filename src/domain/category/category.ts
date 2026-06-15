@@ -5,9 +5,9 @@ export type CategoryType = (typeof categoryTypes)[number];
 export const categoryTypes = ["TODO", "IN_PROGRESS", "DONE"] as const;
 
 export const categoryTypeDict: Record<CategoryType, string> = {
-  TODO: "To do",
-  IN_PROGRESS: "In progress",
-  DONE: "Done",
+  TODO: "New Mission",
+  IN_PROGRESS: "In Progress",
+  DONE: "Done ✓",
 };
 
 export interface Category {

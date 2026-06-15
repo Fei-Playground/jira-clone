@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+
 import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
@@ -41,7 +41,11 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     asignee: dnull(issueDb.asignee),
     reporter: dnull(issueDb.reporter),
     comments: issueDb.comments.map((comment) => ({
-      ...comment,
+      id: comment.id,
+      message: comment.message,
+      userId: comment.userId,
+      issueId: comment.issueId,
+      parentId: (comment as any).parentId || undefined,
       createdAt: comment.createdAt.getTime(),
       updatedAt: comment.updatedAt.getTime(),
       user: dnull({
@@ -74,10 +78,11 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
       priorityId: issue.priority,
       comments: {
         create: issue.comments.map((comment) => {
-          const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
+          const commentInput: any = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId || null,
           };
 
           return {
@@ -104,10 +109,11 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       priorityId: issue.priority,
       comments: {
         upsert: issue.comments.map((comment) => {
-          const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
+          const commentInput: any = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId || null,
           };
 
           return {

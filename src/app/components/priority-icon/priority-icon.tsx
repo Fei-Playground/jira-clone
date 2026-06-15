@@ -1,5 +1,5 @@
 import cx from "classix";
-import { HiFlag } from "react-icons/hi";
+import { FaStar } from "react-icons/fa";
 import { PriorityId } from "@domain/priority";
 
 export const PriorityIcon = ({
@@ -10,11 +10,11 @@ export const PriorityIcon = ({
     className={cx(
       "flex",
       priority === "low" && "text-icon-accent-green",
-      priority === "medium" && "text-icon-accent-yellow",
-      priority === "high" && "text-icon-accent-red"
+      priority === "medium" && "text-[#1d9aaa]", // teal
+      priority === "high" && "text-[#f87462]" // coral
     )}
   >
-    <HiFlag size={size} />
+    <FaStar size={size} />
   </span>
 );
 

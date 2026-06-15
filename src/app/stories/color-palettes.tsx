@@ -205,8 +205,8 @@ const CopyButton = ({ colorValue }: CopyButtonProps) => {
           setIsCopied(false);
         }, 1500);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // Silently ignore clipboard errors
       });
   };
 

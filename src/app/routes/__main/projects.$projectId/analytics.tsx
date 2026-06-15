@@ -1,4 +1,5 @@
 import type { LoaderFunction, MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
 import { data as json, redirect } from "react-router";
 import invariant from "tiny-invariant";
 import { Project, ProjectId } from "@domain/project";
@@ -83,5 +84,6 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function AnalyticsRoute() {
-  return <AnalyticsView />;
+  const { project } = useLoaderData() as LoaderData;
+  return <AnalyticsView project={project} />;
 }

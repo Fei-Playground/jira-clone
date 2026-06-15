@@ -3,17 +3,17 @@ import { Priority } from "./priority";
 export const prioritiesMock: Priority[] = [
   {
     id: "low",
-    name: "Low",
+    name: "10 pts",
     order: 0,
   },
   {
     id: "medium",
-    name: "Medium",
+    name: "15 pts",
     order: 1,
   },
   {
     id: "high",
-    name: "High",
+    name: "20 pts",
     order: 2,
   },
 ];

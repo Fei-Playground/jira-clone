@@ -38,9 +38,9 @@ export const links = () => {
 };
 
 export const meta: MetaFunction = () => {
-  const title = "Jira clone";
+  const title = "Izzy's Independence Board";
   const description =
-    "Task manager application inspired in Jira. Side project made with Remix, React, Tailwind, TypeScript and more.";
+    "Izzy's personal responsibility, reward, and mission-tracking board. Freedom grows when responsibility grows.";
   const image =
     "https://jira-clone.fly.dev/static/images/select-theme-light.png";
   const url = "https://jira-clone.fly.dev";

@@ -9,14 +9,14 @@ export const ProjectsView = ({
 }: ProjectsViewProps): JSX.Element => {
   return (
     <div className="p-6">
-      <h1 className="font-primary-black text-2xl">PROJECTS</h1>
+      <h1 className="font-primary-black text-2xl">MY BOARDS</h1>
       <div className="mt-8">
         <Link to="new" className="flex w-fit">
           <Button color="neutral" variant="subtlest" className="py-3 pl-3 pr-4">
             <span>
               <AiOutlinePlus size={22} />
             </span>
-            <span className="leading-4">Add Project</span>
+            <span className="leading-4">+ New Board</span>
           </Button>
         </Link>
       </div>

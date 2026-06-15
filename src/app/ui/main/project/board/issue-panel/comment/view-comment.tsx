@@ -10,9 +10,12 @@ import { formatDateTime } from "@utils/formatDateTime";
 export const ViewComment = ({
   comment,
   removeComment,
+  onReply,
+  isReply,
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  // Local state prevents direct mutation of comment prop
   const [message, setMessage] = useState<string>(comment.message);
   const fetcher = useFetcher();
 
@@ -40,29 +43,40 @@ export const ViewComment = ({
   const idleComment = (
     <div className="font-primary-light">
       <p>{message}</p>
-      <div
-        className={cx(
-          "mt-3 text-font-subtlest",
-          isNotSelfComment ? "hidden" : "visible"
+      <div className="mt-3 flex gap-2 text-font-subtlest">
+        {/* Reply button - visible to all users, hidden for nested replies (single-level threading only) */}
+        {!isReply && onReply && (
+          <button
+            onClick={() => onReply(comment)}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Reply to comment"
+          >
+            Reply
+          </button>
         )}
-      >
-        <button
-          onClick={edit}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Edit comment"
-        >
-          Edit
-        </button>
-        <span className="mx-2">{"·"}</span>
-        <button
-          onClick={remove}
-          disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
-          aria-label="Delete comment"
-        >
-          Delete
-        </button>
+        {/* Edit and Delete - only for comment author */}
+        {!isNotSelfComment && (
+          <>
+            {!isReply && onReply && <span className="mx-1">{"·"}</span>}
+            <button
+              onClick={edit}
+              disabled={isNotSelfComment}
+              className="font-primary-light text-xs hover:underline"
+              aria-label="Edit comment"
+            >
+              Edit
+            </button>
+            <span className="mx-1">{"·"}</span>
+            <button
+              onClick={remove}
+              disabled={isNotSelfComment}
+              className="font-primary-light text-xs hover:underline"
+              aria-label="Delete comment"
+            >
+              Delete
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -114,4 +128,6 @@ const commentIsEdited = (comment: Comment): boolean => {
 interface ViewCommentProps {
   comment: Comment;
   removeComment: (commentId: CommentId) => void;
+  onReply?: (comment: Comment) => void;
+  isReply?: boolean;
 }

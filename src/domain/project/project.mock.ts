@@ -3,14 +3,13 @@ import { usersMock } from "@domain/user";
 import { categoriesMock1, categoriesMock2 } from "@domain/category";
 
 export const projectMock1: Project = {
-  id: "jira-clone",
-  name: "JIRA Clone",
-  description: "Software project",
+  id: "izzy-independence-board",
+  name: "Izzy's Independence Board",
+  description: "Freedom grows when responsibility grows.",
   users: usersMock,
   categories: categoriesMock1,
-  image:
-    "https://admin.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xxlarge",
-  createdAt: new Date("2023-01-01 10:00").valueOf(),
+  image: "/images/default-project.png",
+  createdAt: new Date("2024-01-01 10:00").valueOf(),
 };
 
 export const projectMock2: Project = {
@@ -25,4 +24,4 @@ export const projectMock2: Project = {
   createdAt: new Date("2023-01-01 11:00").valueOf(),
 };
 
-export const projectsMock: Project[] = [projectMock1, projectMock2];
+export const projectsMock: Project[] = [projectMock1];

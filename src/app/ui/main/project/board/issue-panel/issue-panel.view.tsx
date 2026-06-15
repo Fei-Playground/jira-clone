@@ -21,7 +21,7 @@ import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
-import { CreateComment } from "./comment/create-comment";
+import { CreateComment, CreateCommentHandle } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
@@ -32,9 +32,11 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [replyToComment, setReplyToComment] = useState<Comment | null>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
+  const createCommentRef = useRef<CreateCommentHandle>(null);
   const { user } = useUserStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
@@ -88,8 +90,19 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    // If replying, attach parentId to create threaded comment
+    const commentWithParent: Comment = replyToComment
+      ? { ...newComment, parentId: replyToComment.id }
+      : newComment;
+    setComments([...comments, commentWithParent]);
+    setReplyToComment(null);
   };
+
+  const onReply = (comment: Comment) => {
+    setReplyToComment(comment);
+  };
+
+  const clearReply = () => setReplyToComment(null);
 
   const removeComment = (commentId: CommentId): void => {
     const updatedComments = comments.filter(
@@ -113,6 +126,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [isOpen, navigate, location.pathname]);
 
+  // Track submission lifecycle to show success toast only once per submission
   const wasSubmitting = useRef(false);
   useEffect(() => {
     const submitting = fetcher.state !== "idle";
@@ -168,19 +182,50 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       />
                     </div>
                     <div>
-                      <p className="font-primary-black text-font">Comments</p>
+                      <p className="font-primary-black text-font">
+                        Notes & Messages
+                      </p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <CreateComment
+                          ref={createCommentRef}
+                          addComment={addComment}
+                          replyText={
+                            replyToComment
+                              ? `@${replyToComment.user.name.split(" ")[0]} `
+                              : ""
+                          }
+                          clearReply={clearReply}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
+                        {comments
+                          .filter((c) => !c.parentId)
+                          .map((comment) => (
+                            <li key={comment.id}>
+                              <ViewComment
+                                comment={comment}
+                                removeComment={removeComment}
+                                onReply={onReply}
+                              />
+                              {/* Threaded replies */}
+                              {comments
+                                .filter(
+                                  (reply) => reply.parentId === comment.id
+                                )
+                                .map((reply) => (
+                                  <div
+                                    key={reply.id}
+                                    className="ml-12 mt-4 border-l-2 border-border pl-4"
+                                  >
+                                    <ViewComment
+                                      comment={reply}
+                                      removeComment={removeComment}
+                                      isReply={true}
+                                    />
+                                  </div>
+                                ))}
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   </section>
@@ -192,17 +237,17 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Priority</p>
+                      <p className="mb-1">Points</p>
                       <SelectPriority
                         initPriority={issue?.priority.id || "low"}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Asignee</p>
+                      <p className="mb-1">Assigned to</p>
                       <SelectAsignee initAsignee={issue?.asignee || user} />
                     </div>
                     <div>
-                      <p className="mb-1">Reporter</p>
+                      <p className="mb-1">Created by</p>
                       <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
                         <UserAvatar {...reporter} />
                         <input
@@ -232,7 +277,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     >
                       {transition.state !== "idle" ? (
                         <>
-                          Submmiting
+                          Submitting
                           <Spinner />
                         </>
                       ) : (

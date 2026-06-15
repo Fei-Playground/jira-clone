@@ -26,12 +26,14 @@ const preview: Preview = {
   decorators: [
     withThemeByClassName({
       themes: {
+        izzy: "izzy",
         light: "light",
         dark: "dark",
         lava: "lava",
         lime: "lime",
+        barbie: "barbie",
       },
-      defaultTheme: "light",
+      defaultTheme: "izzy",
     }),
   ],
 };
