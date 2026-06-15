@@ -97,7 +97,6 @@ const navItems: NavItemProps[] = [
     href: "review",
     icon: <span className="text-lg">📋</span>,
     name: "Daily Review",
-    disabled: true,
   },
 ];
 
