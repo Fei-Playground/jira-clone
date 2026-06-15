@@ -1,11 +1,39 @@
-import cx from "classix";
 import { Project } from "@domain/project";
+import { Issue } from "@domain/issue";
 
-// Maps priority levels to point values (matches the "★ 10/15/20 pts" labels)
+/**
+ * Converts priority IDs to point values.
+ * Priority point values match the "★ 10/15/20 pts" labels shown throughout the UI.
+ */
 const getPointsForPriority = (priorityId: string): number => {
-  const map: Record<string, number> = { low: 10, medium: 15, high: 20 };
-  return map[priorityId] || 0;
+  const pointsMap: Record<string, number> = { low: 10, medium: 15, high: 20 };
+  return pointsMap[priorityId] || 0;
 };
+
+/**
+ * Reusable mission card component.
+ * Displays a mission with a status badge and point value.
+ */
+const MissionCard = ({
+  issue,
+  statusBadge,
+  pointsColor,
+}: {
+  issue: Issue;
+  statusBadge: React.ReactNode;
+  pointsColor: string;
+}) => (
+  <div className="flex items-center justify-between rounded-lg bg-elevation-surface-raised p-4 shadow-xs">
+    <div className="flex items-center gap-3">
+      {statusBadge}
+      <span className="font-primary text-font">{issue.name}</span>
+    </div>
+    <div className={`flex items-center gap-2 font-primary-bold ${pointsColor}`}>
+      <span>⭐</span>
+      <span>{getPointsForPriority(issue.priority.id)} pts</span>
+    </div>
+  </div>
+);
 
 export const DailyReviewView = ({ project }: Props): JSX.Element => {
   // Get issues by category type
@@ -32,7 +60,7 @@ export const DailyReviewView = ({ project }: Props): JSX.Element => {
         📋 Daily Review
       </h1>
       <p className="mb-8 font-primary-light text-font-subtle">
-        Check off Izzy's missions and leave a note!
+        Check off Izzy&apos;s missions and leave a note!
       </p>
 
       {/* Completed Missions Section */}
@@ -43,21 +71,16 @@ export const DailyReviewView = ({ project }: Props): JSX.Element => {
           </h2>
           <div className="space-y-3">
             {doneIssues.map((issue) => (
-              <div
+              <MissionCard
                 key={issue.id}
-                className="flex items-center justify-between rounded-lg bg-elevation-surface-raised p-4 shadow-xs"
-              >
-                <div className="flex items-center gap-3">
+                issue={issue}
+                statusBadge={
                   <span className="rounded-full bg-background-success px-3 py-1 font-primary-bold text-xs text-font-inverse">
                     Completed
                   </span>
-                  <span className="font-primary text-font">{issue.name}</span>
-                </div>
-                <div className="flex items-center gap-2 font-primary-bold text-font-brand">
-                  <span>⭐</span>
-                  <span>{getPointsForPriority(issue.priority.id)} pts</span>
-                </div>
-              </div>
+                }
+                pointsColor="text-font-brand"
+              />
             ))}
           </div>
         </div>
@@ -71,21 +94,16 @@ export const DailyReviewView = ({ project }: Props): JSX.Element => {
           </h2>
           <div className="space-y-3">
             {inProgressIssues.map((issue) => (
-              <div
+              <MissionCard
                 key={issue.id}
-                className="flex items-center justify-between rounded-lg bg-elevation-surface-raised p-4 shadow-xs"
-              >
-                <div className="flex items-center gap-3">
+                issue={issue}
+                statusBadge={
                   <span className="rounded-full bg-background-warning px-3 py-1 font-primary-bold text-xs text-font-inverse">
                     In Progress
                   </span>
-                  <span className="font-primary text-font">{issue.name}</span>
-                </div>
-                <div className="flex items-center gap-2 font-primary-bold text-font-subtle">
-                  <span>⭐</span>
-                  <span>{getPointsForPriority(issue.priority.id)} pts</span>
-                </div>
-              </div>
+                }
+                pointsColor="text-font-subtle"
+              />
             ))}
           </div>
         </div>
@@ -99,21 +117,16 @@ export const DailyReviewView = ({ project }: Props): JSX.Element => {
           </h2>
           <div className="space-y-3">
             {todoIssues.map((issue) => (
-              <div
+              <MissionCard
                 key={issue.id}
-                className="flex items-center justify-between rounded-lg bg-elevation-surface-raised p-4 shadow-xs"
-              >
-                <div className="flex items-center gap-3">
+                issue={issue}
+                statusBadge={
                   <span className="rounded-full bg-background-neutral px-3 py-1 font-primary-bold text-xs text-font-subtle">
                     Not Started
                   </span>
-                  <span className="font-primary text-font">{issue.name}</span>
-                </div>
-                <div className="flex items-center gap-2 font-primary-bold text-font-subtlest">
-                  <span>⭐</span>
-                  <span>{getPointsForPriority(issue.priority.id)} pts</span>
-                </div>
-              </div>
+                }
+                pointsColor="text-font-subtlest"
+              />
             ))}
           </div>
         </div>

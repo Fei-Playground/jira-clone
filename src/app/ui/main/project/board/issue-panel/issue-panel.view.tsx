@@ -32,6 +32,10 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  /**
+   * Tracks which comment is being replied to.
+   * When set, CreateComment pre-fills with "@FirstName " and attaches parentId.
+   */
   const [replyToComment, setReplyToComment] = useState<Comment | null>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
@@ -89,8 +93,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setIsOpen(false);
   };
 
+  /**
+   * Adds a new comment to the list.
+   * If replying to an existing comment, attaches parentId to create a threaded reply.
+   */
   const addComment = (newComment: Comment): void => {
-    // If replying, attach parentId to create threaded comment
     const commentWithParent: Comment = replyToComment
       ? { ...newComment, parentId: replyToComment.id }
       : newComment;
@@ -98,6 +105,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setReplyToComment(null);
   };
 
+  /**
+   * Called when user clicks "Reply" on a comment.
+   * Sets replyToComment state, which triggers CreateComment to pre-fill with @mention.
+   */
   const onReply = (comment: Comment) => {
     setReplyToComment(comment);
   };
@@ -198,6 +209,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         />
                       </div>
                       <ul className="mt-8 space-y-6">
+                        {/**
+                         * Render top-level comments first, then indented replies beneath each.
+                         * Single-level threading: replies can't be replied to (isReply=true hides Reply button).
+                         */}
                         {comments
                           .filter((c) => !c.parentId)
                           .map((comment) => (
@@ -207,7 +222,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                                 removeComment={removeComment}
                                 onReply={onReply}
                               />
-                              {/* Threaded replies */}
+                              {/* Render threaded replies indented with left border */}
                               {comments
                                 .filter(
                                   (reply) => reply.parentId === comment.id

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useFetcher } from "react-router";
-import cx from "classix";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
@@ -15,7 +14,10 @@ export const ViewComment = ({
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  // Local state prevents direct mutation of comment prop
+  /**
+   * Local copy of message to avoid mutating the comment prop directly.
+   * Allows optimistic UI updates when editing without affecting parent state.
+   */
   const [message, setMessage] = useState<string>(comment.message);
   const fetcher = useFetcher();
 
@@ -44,7 +46,10 @@ export const ViewComment = ({
     <div className="font-primary-light">
       <p>{message}</p>
       <div className="mt-3 flex gap-2 text-font-subtlest">
-        {/* Reply button - visible to all users, hidden for nested replies (single-level threading only) */}
+        {/**
+         * Reply button: visible to all users on top-level comments only.
+         * Hidden for nested replies to enforce single-level threading.
+         */}
         {!isReply && onReply && (
           <button
             onClick={() => onReply(comment)}
@@ -54,7 +59,9 @@ export const ViewComment = ({
             Reply
           </button>
         )}
-        {/* Edit and Delete - only for comment author */}
+        {/**
+         * Edit and Delete buttons: only visible to the comment author.
+         */}
         {!isNotSelfComment && (
           <>
             {!isReply && onReply && <span className="mx-1">{"·"}</span>}
@@ -118,8 +125,11 @@ export const ViewComment = ({
   );
 };
 
+/**
+ * Checks if a comment has been edited.
+ * Compares timestamps in seconds to avoid false positives from millisecond-level drift.
+ */
 const commentIsEdited = (comment: Comment): boolean => {
-  // Convert miliseconds to seconds just in case there is a minimal difference
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
   const updatedAtInSeconds = Math.floor(comment.updatedAt / 1000);
   return createdAtInSeconds !== updatedAtInSeconds;

@@ -1,4 +1,4 @@
-import { userMock1, usersMock } from "@domain/user";
+import { usersMock } from "@domain/user";
 import { Comment } from "./comment";
 
 const createdAt = Date.now();

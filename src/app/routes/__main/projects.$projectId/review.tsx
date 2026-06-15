@@ -69,7 +69,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export function ErrorBoundary({ error }: { error: Error }) {
   console.error(error);
-  const errorMessage = "The daily review page failed. Navigate to the board page";
+  const errorMessage =
+    "The daily review page failed. Navigate to the board page";
 
   return (
     <div className="flex h-full items-center justify-center">

@@ -28,16 +28,22 @@ export const CreateComment = forwardRef<
   const [isEditing, setIsEditing] = useState(false);
   const [initError, setInitError] = useState(false);
 
-  // Pre-fill input with @mention when replying (e.g., "@Mom ")
+  /**
+   * When replying, pre-fill input with @mention (e.g., "@Mom ") and focus the textarea.
+   * The timeout ensures the DOM has updated with the new message before focusing.
+   */
   useEffect(() => {
     if (replyText) {
       setMessage(replyText);
       setIsEditing(true);
-      // Defer focus to next tick to ensure DOM update
       setTimeout(() => textareaRef.current?.focus(), 0);
     }
   }, [replyText]);
 
+  /**
+   * Expose focus method to parent component.
+   * Allows IssuePanel to imperatively focus the textarea when reply is triggered.
+   */
   useImperativeHandle(ref, () => ({
     focus: () => {
       textareaRef.current?.focus();
@@ -56,6 +62,7 @@ export const CreateComment = forwardRef<
 
   const onSave = () => {
     if (messageIsValid()) {
+      // Create a temporary comment with "temp-" prefix to distinguish from persisted comments
       addComment({
         id: "temp-" + uuid(),
         user,

@@ -1,10 +1,13 @@
 import cx from "classix";
 import { Project } from "@domain/project";
 
-// Maps priority levels to point values (matches the "★ 10/15/20 pts" labels)
+/**
+ * Converts priority IDs to point values.
+ * Priority point values match the "★ 10/15/20 pts" labels shown throughout the UI.
+ */
 const getPointsForPriority = (priorityId: string): number => {
-  const map: Record<string, number> = { low: 10, medium: 15, high: 20 };
-  return map[priorityId] || 0;
+  const pointsMap: Record<string, number> = { low: 10, medium: 15, high: 20 };
+  return pointsMap[priorityId] || 0;
 };
 
 export const AnalyticsView = ({ project }: { project: Project }) => {
@@ -23,7 +26,7 @@ export const AnalyticsView = ({ project }: { project: Project }) => {
   return (
     <div className="max-w-2xl p-6">
       <h1 className="mb-2 font-primary-black text-2xl text-font">
-        ✨ Here's how you're doing today, Izzy!
+        ✨ Here&apos;s how you&apos;re doing today, Izzy!
       </h1>
       <p className="mb-8 font-primary-light text-font-subtle">
         Keep going! Every mission brings you more freedom.
@@ -84,6 +87,10 @@ export const AnalyticsView = ({ project }: { project: Project }) => {
   );
 };
 
+/**
+ * Stat card component for displaying metrics.
+ * Used for Points, Tablet Time, and Missions Done statistics.
+ */
 const StatCard = ({
   emoji,
   label,

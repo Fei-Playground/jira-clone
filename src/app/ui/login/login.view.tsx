@@ -20,13 +20,13 @@ export const LoginView = ({ users }: Props) => {
     <div className="mx-auto max-w-[480px] pt-[8vh] text-center">
       <div className="mb-6 text-5xl">✨</div>
       <h1 className="font-primary-black text-4xl text-font">
-        Izzy's Independence Board
+        Izzy&apos;s Independence Board
       </h1>
       <p className="mb-2 mt-3 font-primary-light text-lg text-font-subtle">
-        Who's here today?
+        Who&apos;s here today?
       </p>
       <p className="mb-8 font-primary-light text-sm italic text-font-subtlest">
-        "Freedom grows when responsibility grows."
+        &quot;Freedom grows when responsibility grows.&quot;
       </p>
       <Form method="post" className="mx-auto w-[300px]">
         <Select.Root
@@ -66,7 +66,7 @@ export const LoginView = ({ users }: Props) => {
           aria-label="Login"
           className="mt-4 w-full"
         >
-          Let's Go! 🚀
+          Let&apos;s Go! 🚀
         </Button>
       </Form>
     </div>

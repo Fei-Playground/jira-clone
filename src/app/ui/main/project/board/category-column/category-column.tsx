@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import { Link, useFetcher } from "react-router";
 import { AiOutlinePlus } from "react-icons/ai";
-import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
@@ -107,7 +106,9 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         </div>
       </div>
       {/* Column header */}
-      <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
+      <div
+        className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out"
+      >
         <span className="flex gap-2">
           <span>{category.name}</span>
           {!emptyCategory && <span>( {category.issues.length} )</span>}

@@ -3,10 +3,13 @@ import { Project } from "@domain/project";
 import { Reward } from "@domain/reward";
 import { Button } from "@app/components/button";
 
-// Maps priority levels to point values (matches the "★ 10/15/20 pts" labels)
+/**
+ * Converts priority IDs to point values.
+ * Priority point values match the "★ 10/15/20 pts" labels shown throughout the UI.
+ */
 const getPointsForPriority = (priorityId: string): number => {
-  const map: Record<string, number> = { low: 10, medium: 15, high: 20 };
-  return map[priorityId] || 0;
+  const pointsMap: Record<string, number> = { low: 10, medium: 15, high: 20 };
+  return pointsMap[priorityId] || 0;
 };
 
 export const RewardsView = ({ project, rewards }: Props): JSX.Element => {
@@ -19,6 +22,7 @@ export const RewardsView = ({ project, rewards }: Props): JSX.Element => {
     0
   );
 
+  // Track which rewards have been redeemed (client-side only, no DB persistence yet)
   const [redeemedIds, setRedeemedIds] = useState<Set<string>>(new Set());
 
   // Calculate points spent on redeemed rewards
@@ -28,6 +32,11 @@ export const RewardsView = ({ project, rewards }: Props): JSX.Element => {
 
   const pointsAvailable = totalPointsEarned - pointsSpent;
 
+  /**
+   * Handle reward redemption.
+   * Deducts the reward's point cost from available points by marking it as redeemed.
+   * No DB persistence — state resets on page reload.
+   */
   const handleRedeem = (rewardId: string, pointCost: number) => {
     if (pointsAvailable >= pointCost && !redeemedIds.has(rewardId)) {
       setRedeemedIds((prev) => new Set(prev).add(rewardId));
@@ -55,7 +64,7 @@ export const RewardsView = ({ project, rewards }: Props): JSX.Element => {
         🎁 Reward Shop
       </h1>
       <p className="mb-6 font-primary-light text-font-subtle">
-        Spend your points on rewards you've earned!
+        Spend your points on rewards you&apos;ve earned!
       </p>
 
       {/* Reward Grid */}

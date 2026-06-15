@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router";
-import { HiOutlineViewBoards } from "react-icons/hi";
 import cx from "classix";
 import { RiArrowDropLeftLine } from "react-icons/ri";
-import { ImStatsDots } from "react-icons/im";
-import { BsListNested, BsCloudSlash } from "react-icons/bs";
-import { TbError404 } from "react-icons/tb";
 
 export const Sidebar = (props: Props): JSX.Element => {
   const { projectName, projectDescription, projectImage } = props;

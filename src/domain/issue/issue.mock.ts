@@ -1,4 +1,4 @@
-import { userMock1, userMock2, usersMock } from "@domain/user";
+import { userMock1, usersMock } from "@domain/user";
 import {
   commentMock1,
   commentMock2,
