@@ -5,6 +5,18 @@ const plugin = require("tailwindcss/plugin");
 module.exports = {
   content: ["./src/app/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
+  // Safelist classes used dynamically (e.g. mobile sidebar overlay) that
+  // Tailwind's static scanner may miss when they appear only in template literals.
+  safelist: [
+    "inset-0",
+    "inset-y-0",
+    "translate-x-0",
+    "-translate-x-full",
+    "pointer-events-auto",
+    "pointer-events-none",
+    "bg-black/50",
+    "shadow-xl",
+  ],
   theme: {
     colors: {
       font: {

@@ -6,6 +6,7 @@ import { projectMock1 } from "@domain/project";
 import { UserContextProvider } from "@app/store/user.store";
 import { ThemeProvider, Theme, Preference } from "@app/store/theme.store";
 import { ProjectContextProvider } from "@app/ui/main/project";
+import { SidebarProvider } from "../sidebar.context";
 import { Header } from "./header";
 
 const meta: Meta<typeof Header> = {
@@ -32,12 +33,14 @@ const renderInProjectRoute = (initialEntry: string): ReactElement => {
         specifiedTheme={Theme.IZZY}
         specifiedPreference={Preference.SELECTED}
       >
-        <ProjectContextProvider project={projectMock1}>
-          <div className="flex h-full flex-col">
-            <Header />
-            <Outlet />
-          </div>
-        </ProjectContextProvider>
+        <SidebarProvider>
+          <ProjectContextProvider project={projectMock1}>
+            <div className="flex h-full flex-col">
+              <Header />
+              <Outlet />
+            </div>
+          </ProjectContextProvider>
+        </SidebarProvider>
       </ThemeProvider>
     </UserContextProvider>
   );
@@ -92,6 +95,18 @@ export const WithProjectTabs: Story = {
 };
 
 /**
+ * Header on a narrow (mobile) viewport. The hamburger (☰) button appears at
+ * the left of the logo and the per-tab labels collapse — this is the entry
+ * point that opens the mobile sidebar drawer.
+ */
+export const Mobile: Story = {
+  globals: {
+    viewport: { value: "mobile2", isRotated: false },
+  },
+  render: () => renderInProjectRoute(`/projects/${projectId}/board`),
+};
+
+/**
  * Same Header with the ⭐ Progress & Points tab active to show the
  * active/highlighted state applied to a different tab.
  */
@@ -111,9 +126,11 @@ export const NoProject: Story = {
           specifiedTheme={Theme.IZZY}
           specifiedPreference={Preference.SELECTED}
         >
-          <div className="w-full">
-            <Header />
-          </div>
+          <SidebarProvider>
+            <div className="w-full">
+              <Header />
+            </div>
+          </SidebarProvider>
         </ThemeProvider>
       </UserContextProvider>
     );
