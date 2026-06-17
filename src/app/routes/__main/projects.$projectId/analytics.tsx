@@ -1,6 +1,5 @@
 import type { LoaderFunction, MetaFunction } from "react-router";
-import { useLoaderData } from "react-router";
-import { data as json, redirect } from "react-router";
+import { data as json, redirect, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Project, ProjectId } from "@domain/project";
 import { getProject } from "@infrastructure/db/project";
@@ -9,6 +8,7 @@ import { Error500 } from "@app/components/error-500";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  // Return empty array if loader fails to prevent meta generation errors
   if (!data) return [];
   const { project } = data as unknown as LoaderData;
   const title = "Jira clone - Analytics";
@@ -57,7 +57,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.projectId, `params.projectId is required`);
 
-  const project: Project | null = await getProject(projectId);
+  const project: Project | null = await getProject(projectId, {
+    sortIssuesBy: "date",
+  });
 
   if (!project) {
     throw new Response("Not Found", {

@@ -3,7 +3,7 @@ import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {
   board: "Board",
-  analytics: "Analytics",
+  analytics: "Insights",
   backlog: "Backlog",
   rewards: "Rewards",
   review: "Daily Review",

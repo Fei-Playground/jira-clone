@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
 import { AnalyticsView } from "./analytics.view";
-import "react-toastify/dist/ReactToastify.css";
 
 const meta: Meta<typeof AnalyticsView> = {
   title: "Pages/Main/Project/AnalyticsView",
@@ -12,7 +11,20 @@ const meta: Meta<typeof AnalyticsView> = {
   },
   decorators: [
     (Story) => {
-      return withRemixStub(withMainContext(Story));
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            padding: "24px 20px",
+          }}
+        >
+          <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
+            {withRemixStub(withMainContext(Story))}
+          </div>
+        </div>
+      );
     },
   ],
 };
