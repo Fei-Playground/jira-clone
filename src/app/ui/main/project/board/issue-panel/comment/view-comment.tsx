@@ -21,6 +21,7 @@ export const ViewComment = ({
   const [message, setMessage] = useState<string>(comment.message);
   const fetcher = useFetcher();
 
+  // Only the original comment author can edit or delete their comment
   const isNotSelfComment = comment.user.id !== user.id;
 
   const edit = () => setIsEditing(true);
@@ -29,6 +30,7 @@ export const ViewComment = ({
   const remove = () => {
     removeComment(comment.id);
 
+    // Temporary comments (optimistically added) don't need server deletion
     if (comment.id.startsWith("temp-")) return;
 
     fetcher.submit(
@@ -67,7 +69,6 @@ export const ViewComment = ({
             {!isReply && onReply && <span className="mx-1">{"·"}</span>}
             <button
               onClick={edit}
-              disabled={isNotSelfComment}
               className="font-primary-light text-xs hover:underline"
               aria-label="Edit comment"
             >
@@ -76,7 +77,6 @@ export const ViewComment = ({
             <span className="mx-1">{"·"}</span>
             <button
               onClick={remove}
-              disabled={isNotSelfComment}
               className="font-primary-light text-xs hover:underline"
               aria-label="Delete comment"
             >
@@ -126,8 +126,8 @@ export const ViewComment = ({
 };
 
 /**
- * Checks if a comment has been edited.
- * Compares timestamps in seconds to avoid false positives from millisecond-level drift.
+ * Determines if a comment has been edited by comparing creation and update timestamps.
+ * Converts to seconds to avoid false positives from millisecond-level precision differences.
  */
 const commentIsEdited = (comment: Comment): boolean => {
   const createdAtInSeconds = Math.floor(comment.createdAt / 1000);
@@ -138,6 +138,8 @@ const commentIsEdited = (comment: Comment): boolean => {
 interface ViewCommentProps {
   comment: Comment;
   removeComment: (commentId: CommentId) => void;
+  /** Called when the user clicks Reply — passes the comment being replied to up to the parent. */
   onReply?: (comment: Comment) => void;
+  /** True when this component is rendering a threaded reply (hides the Reply button to enforce single-level threading). */
   isReply?: boolean;
 }
