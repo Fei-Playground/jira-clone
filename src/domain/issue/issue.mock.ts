@@ -25,6 +25,8 @@ export const todoIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    start_date: new Date("2024-01-01").valueOf(),
+    end_date: new Date("2024-01-15").valueOf(),
   },
 ];
 
@@ -41,6 +43,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    start_date: new Date("2024-01-20").valueOf(),
+    end_date: new Date("2024-02-28").valueOf(),
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -54,6 +58,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    start_date: new Date("2024-02-01").valueOf(),
+    end_date: new Date("2024-03-10").valueOf(),
   },
 ];
 
@@ -70,6 +76,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    start_date: new Date("2024-01-05").valueOf(),
+    end_date: new Date("2024-01-25").valueOf(),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -83,6 +91,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    start_date: new Date("2024-01-08").valueOf(),
+    end_date: new Date("2024-02-20").valueOf(),
   },
 ];
 
@@ -100,6 +110,8 @@ export const todoIssuesMock2: Issue[] = [
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    start_date: new Date("2024-01-10").valueOf(),
+    end_date: new Date("2024-02-05").valueOf(),
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -128,6 +140,8 @@ export const inProgressIssuesMock2: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    start_date: new Date("2024-02-10").valueOf(),
+    end_date: new Date("2024-03-15").valueOf(),
   },
 ];
 

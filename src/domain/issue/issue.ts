@@ -15,4 +15,6 @@ export interface Issue {
   priority: Priority;
   createdAt: number;
   updatedAt: number;
+  start_date?: number;
+  end_date?: number;
 }
