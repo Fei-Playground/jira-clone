@@ -4,12 +4,13 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
-import { Category } from "@domain/category";
+import { Category, CategoryType } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
 import { IssueCard, DropItem, DRAG_ISSUE_CARD } from "./issue-card";
+import { useColorPalette, ColorPalette } from "@app/store/color-palette.store";
 
 export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const {
@@ -79,10 +80,19 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     }
   }, []);
 
+  const { palette } = useColorPalette();
+  const columnColorMap: Record<CategoryType, keyof ColorPalette> = {
+    TODO: "columnTodo",
+    IN_PROGRESS: "columnInProgress",
+    DONE: "columnDone",
+  };
+  const columnBgColor = palette[columnColorMap[category.type]] as string;
+
   return (
     <div
       ref={dropRef as unknown as React.Ref<HTMLDivElement>}
-      className="relative flex h-full w-[260px] max-w-[260px] flex-col rounded-md bg-elevation-surface-sunken"
+      className="relative flex h-full w-[260px] max-w-[260px] flex-col rounded-md"
+      style={{ backgroundColor: columnBgColor }}
     >
       {/* Column drop area */}
       <div

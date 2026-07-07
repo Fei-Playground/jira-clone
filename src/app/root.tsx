@@ -19,6 +19,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "@app/store/theme.store";
+import { ColorPaletteProvider, useColorPalette } from "@app/store/color-palette.store";
 import { formatTags, formatProperties } from "@utils/meta";
 import { getThemeSession } from "./session-storage/theme-storage.server";
 import { Toast } from "./components/toast";
@@ -89,7 +90,9 @@ export default function AppWithProviders() {
   const { theme, preference } = useLoaderData<LoaderData>();
   return (
     <ThemeProvider specifiedTheme={theme} specifiedPreference={preference}>
-      <App />
+      <ColorPaletteProvider>
+        <App />
+      </ColorPaletteProvider>
     </ThemeProvider>
   );
 }
@@ -98,6 +101,7 @@ const App = (): JSX.Element => {
   const loaderData = useLoaderData<LoaderData>();
   const { theme: sessionTheme, preference: sessionPreference } = loaderData;
   const { theme } = useTheme();
+  const { palette } = useColorPalette();
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -125,7 +129,7 @@ const App = (): JSX.Element => {
         <Meta />
         <Links />
       </head>
-      <body className="h-full bg-elevation-surface font-primary text-font">
+      <body className="h-full font-primary text-font" style={{ backgroundColor: palette.backgroundColor }}>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
