@@ -8,9 +8,11 @@ export const UserAvatar = ({
   color,
   size = 36,
   tooltip = false,
+  imageSrc,
 }: UserAvatarProps): JSX.Element => {
   const imageMinName = image?.replace(".webp", "-min.webp");
-  const imageSrc = size > 80 ? `/avatars/${image}` : `/avatars/${imageMinName}`;
+  const defaultImageSrc = size > 80 ? `/avatars/${image}` : `/avatars/${imageMinName}`;
+  const resolvedSrc = imageSrc ?? (image ? defaultImageSrc : undefined);
   const imageSize = {
     width: `${size}px`,
     minWidth: `${size}px`,
@@ -27,7 +29,7 @@ export const UserAvatar = ({
       <Avatar.Root className="flex items-center rounded-full" style={imageSize}>
         <Avatar.Image
           className="rounded-full object-cover"
-          src={image ? imageSrc : undefined}
+          src={resolvedSrc}
           style={imageSize}
           alt={name}
         />
@@ -50,4 +52,6 @@ export const UserAvatar = ({
 interface UserAvatarProps extends Omit<User, "id"> {
   size?: number;
   tooltip?: boolean;
+  /** Optional direct image src (e.g. a data URL). When provided, bypasses the /avatars/ path logic. */
+  imageSrc?: string;
 }

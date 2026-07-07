@@ -1,8 +1,10 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { User } from "@domain/user";
 
 interface UserStore {
   user: User;
+  photoDataUrl: string | null;
+  updatePhoto: (dataUrl: string | null) => void;
 }
 
 const UserContext = createContext<UserStore | undefined>(undefined);
@@ -13,9 +15,19 @@ export const UserContextProvider = ({
 }: {
   user: User;
   children: JSX.Element;
-}): JSX.Element => (
-  <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
-);
+}): JSX.Element => {
+  const [photoDataUrl, setPhotoDataUrl] = useState<string | null>(null);
+
+  const updatePhoto = (dataUrl: string | null) => {
+    setPhotoDataUrl(dataUrl);
+  };
+
+  return (
+    <UserContext.Provider value={{ user, photoDataUrl, updatePhoto }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
 
 export const useUserStore = (): UserStore => {
   const userStore = useContext(UserContext);
