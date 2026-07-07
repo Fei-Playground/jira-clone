@@ -3,18 +3,23 @@ import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { LuSparkles } from "react-icons/lu";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { Tooltip } from "@app/components/tooltip";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
+import { AiCreateTicketDialog } from "./ai-create-ticket-dialog";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [showAiDialog, setShowAiDialog] = useState(false);
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,9 +31,24 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-3 inline">
+            <Tooltip title="Create with AI (Shift+A)">
+              <button
+                onClick={() => setShowAiDialog(true)}
+                className="flex cursor-pointer items-center gap-1.5 rounded border-none bg-background-brand-subtlest px-3 py-1.5 font-primary-bold text-xs text-font-brand hover:bg-background-brand-subtlest-hovered active:bg-background-brand-subtlest-pressed"
+                aria-label="Create ticket with AI"
+              >
+                <LuSparkles size={14} />
+                Create with AI
+              </button>
+            </Tooltip>
+          </div>
         </section>
+        {showAiDialog && (
+          <AiCreateTicketDialog onClose={() => setShowAiDialog(false)} />
+        )}
         <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
+          <Categories categories={project.categories} onOpenAiDialog={() => setShowAiDialog(true)} />
         </DndProvider>
         <Outlet />
       </div>
@@ -40,7 +60,7 @@ interface Props {
   project: Project;
 }
 
-const Categories = ({ categories }: CategoriesProps): JSX.Element => {
+const Categories = ({ categories, onOpenAiDialog }: CategoriesProps): JSX.Element => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [submittingIssues, setSubmittingIssues] = useState<IssueId[]>([]);
   const [prevCategories, setPrevCategories] = useState(categories);
@@ -68,8 +88,12 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
         e.preventDefault();
         navigate("issue/new");
       }
+      if (e.shiftKey && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+        onOpenAiDialog();
+      }
     },
-    [navigate]
+    [navigate, onOpenAiDialog]
   );
 
   // Revalidate to update category columns on event received
@@ -86,7 +110,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   return (
     <section className="mt-12 flex h-full flex-col">
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
-        Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
+        Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue · <Kbd>Shift</Kbd> + <Kbd>A</Kbd> for AI
       </span>
       <div className="flex h-full gap-3">
         {categories.map((category) => (
@@ -106,4 +130,5 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
 
 interface CategoriesProps {
   categories: Category[];
+  onOpenAiDialog: () => void;
 }

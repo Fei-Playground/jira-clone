@@ -45,6 +45,9 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
+  const initTitle = params[0].get("ai_title") || "";
+  const initDescription = params[0].get("ai_description") || "";
+  const initPriority = (params[0].get("ai_priority") as "low" | "medium" | "high") || "low";
   const userIsNotReporter = user.id !== reporter.id;
 
   const postData = useCallback(
@@ -154,7 +157,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div className="my-5 -ml-3 mb-6">
                       <Dialog.Title asChild>
                         <Title
-                          initTitle={issue?.name || ""}
+                          initTitle={issue?.name || initTitle}
                           readOnly={userIsNotReporter}
                           error={actionData?.errors?.name}
                         />
@@ -163,7 +166,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <p className="font-primary-black text-font">Description</p>
                     <div className="-ml-3 mb-6">
                       <Description
-                        initDescription={issue?.description || ""}
+                        initDescription={issue?.description || initDescription}
                         readOnly={userIsNotReporter}
                       />
                     </div>
@@ -194,7 +197,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="mb-1">Priority</p>
                       <SelectPriority
-                        initPriority={issue?.priority.id || "low"}
+                        initPriority={issue?.priority.id || initPriority}
                       />
                     </div>
                     <div>
