@@ -5,13 +5,19 @@ import { AiFillGithub } from "react-icons/ai";
 import { Tooltip } from "@app/components/tooltip";
 import { SelctTheme } from "./select-theme";
 import { UserProfile } from "./user-profile";
+import { ColorPalettePanel } from "./color-palette-panel";
+import { useColorPalette } from "@app/store/color-palette.store";
 
 export const Header = (): JSX.Element => {
   const iconBaseClass =
     "w-[24px] h-[24px] text-icon rounded-full flex items-center justify-center hover:bg-background-brand-subtlest hover:text-icon-brand";
+  const { palette } = useColorPalette();
 
   return (
-    <header className="relative z-10 flex w-full items-center justify-between bg-elevation-surface-raised px-5 py-2 shadow-[0_1px_5px_-1px_rgba(0,0,0,0.3)]">
+    <header
+      className="relative z-10 flex w-full items-center justify-between px-5 py-2 shadow-[0_1px_5px_-1px_rgba(0,0,0,0.3)]"
+      style={{ backgroundColor: palette.navbarColor }}
+    >
       <section>
         <Link
           to="/"
@@ -41,6 +47,7 @@ export const Header = (): JSX.Element => {
           </a>
         </Tooltip>
         <SelctTheme />
+        <ColorPalettePanel />
         <UserProfile />
       </section>
     </header>

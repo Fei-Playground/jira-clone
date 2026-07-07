@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
+import { useColorPalette } from "@app/store/color-palette.store";
 
 const sectionTitles: Record<string, string> = {
   board: "Board",
@@ -15,6 +16,7 @@ export const ProjectView = ({
 }: Props): JSX.Element => {
   const location = useLocation();
   const section = location.pathname.split("/").slice(-1)[0];
+  const { palette } = useColorPalette();
 
   const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
 
@@ -26,7 +28,7 @@ export const ProjectView = ({
         projectImage={image || "/images/default-project.png"}
       />
       <div className="z-10 flex h-full w-full flex-grow flex-col px-5 py-6">
-        <section>
+        <section style={{ backgroundColor: palette.headerColor, borderRadius: "8px", padding: "12px 16px", marginBottom: "8px" }}>
           <Link to="/projects" className="underline underline-offset-[3px]">
             Projects
           </Link>
