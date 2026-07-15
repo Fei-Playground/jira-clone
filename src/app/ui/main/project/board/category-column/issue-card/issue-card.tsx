@@ -5,8 +5,11 @@ import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
+import { EventTypeId, eventTypeDict } from "@domain/event-type";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
+import { Tooltip } from "@app/components/tooltip";
+import { EventTypeIcon } from "@app/ui/main/project/board/issue-panel/event-type-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export interface DropItem {
@@ -58,6 +61,7 @@ export const IssueCard = ({
         link={issueLink}
         name={issue.name}
         priorityId={issue.priority.id}
+        eventType={issue.eventType}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
       />
@@ -76,6 +80,7 @@ export const IssueCardContent = ({
   link,
   name,
   priorityId,
+  eventType,
   idPrefix,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
@@ -90,11 +95,16 @@ export const IssueCardContent = ({
       <>
         <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
         <div className="flex items-center justify-between pt-4">
-          <span className="flex items-center">
+          <span className="flex items-center gap-2">
             <TaskIcon size={18} />
-            <span className="ml-1.5 text-2xs text-font-subtlest">
-              {idPrefix}
-            </span>
+            <span className="text-2xs text-font-subtlest">{idPrefix}</span>
+            {eventType && (
+              <Tooltip title={eventTypeDict[eventType]}>
+                <span>
+                  <EventTypeIcon eventType={eventType} size={15} />
+                </span>
+              </Tooltip>
+            )}
           </span>
           <PriorityIcon priority={priorityId} />
         </div>
@@ -107,6 +117,7 @@ interface IssueCardContentProps {
   link: string;
   name: string;
   priorityId: PriorityId;
+  eventType?: EventTypeId;
   idPrefix: string;
   isSubmitting: boolean;
 }

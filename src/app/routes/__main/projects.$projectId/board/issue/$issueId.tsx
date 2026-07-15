@@ -14,6 +14,7 @@ import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { PriorityId } from "@domain/priority";
+import { EventTypeId } from "@domain/event-type";
 import { isValidSort } from "@domain/filter";
 import {
   getIssue,
@@ -115,6 +116,11 @@ export const action: ActionFunction = async ({ request, params }) => {
     const priority = formData.get("priority") as PriorityId;
     const asigneeId = formData.get("asignee") as UserId;
     const reporterId = formData.get("reporter") as UserId;
+    const eventTypeRaw = formData.get("eventType") as string | null;
+    const eventType =
+      eventTypeRaw && eventTypeRaw.length > 0
+        ? (eventTypeRaw as EventTypeId)
+        : null;
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
@@ -127,6 +133,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      eventType,
     };
 
     if (!name || textAreOnlySpaces(name)) {

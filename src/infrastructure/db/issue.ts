@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
+import { EventTypeId } from "@domain/event-type";
 import { Priority, PriorityId } from "@domain/priority";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
@@ -38,6 +39,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     description: issueDb.description || undefined,
     categoryType: issueDb.category.type as CategoryType,
     priority: issueDb.priority as Priority,
+    eventType: (issueDb.eventType as EventTypeId) || undefined,
     asignee: dnull(issueDb.asignee),
     reporter: dnull(issueDb.reporter),
     comments: issueDb.comments.map((comment) => ({
@@ -65,6 +67,7 @@ export type CreateIssueInputData = {
   asigneeId: UserId;
   reporterId: UserId;
   comments: Comment[];
+  eventType?: EventTypeId | null;
 };
 export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId> => {
   const newIssue = await db.issue.create({
@@ -72,6 +75,7 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
       ...issue,
       priority: undefined,
       priorityId: issue.priority,
+      eventType: issue.eventType ?? null,
       comments: {
         create: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
@@ -102,6 +106,7 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       ...issue,
       priority: undefined,
       priorityId: issue.priority,
+      eventType: issue.eventType ?? null,
       comments: {
         upsert: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { EventTypeId } from "@domain/event-type";
 import { withRemixStub } from "@app/stories/utils";
 import { IssueCardContent } from "./issue-card";
 
@@ -43,7 +44,7 @@ const meta: Meta<typeof IssueCardContent> = {
   decorators: [
     (Story) =>
       withRemixStub(
-        <div style={{ width: 230 }}>
+        <div style={{ width: 520 }}>
           <Story />
         </div>
       ),
@@ -68,6 +69,49 @@ export const Default: Story = {
       ))}
     </div>
   ),
+};
+
+const eventTypeVariants: {
+  eventType: EventTypeId;
+  name: string;
+}[] = [
+  { eventType: "planning", name: "Sprint planning session" },
+  { eventType: "review", name: "Sprint review" },
+  { eventType: "retrospective", name: "Team retrospective" },
+  { eventType: "standup", name: "Daily standup" },
+  { eventType: "demo", name: "Product demo" },
+  { eventType: "workshop", name: "Design workshop" },
+  { eventType: "one_on_one", name: "1:1 with manager" },
+  { eventType: "other", name: "Miscellaneous task" },
+];
+
+export const EventTypes: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-4">
+      {eventTypeVariants.map(({ eventType, name }) => (
+        <IssueCardContent
+          key={eventType}
+          link="https://google.com"
+          name={name}
+          priorityId="high"
+          eventType={eventType}
+          idPrefix={eventType.toUpperCase().slice(0, 4)}
+          isSubmitting={false}
+        />
+      ))}
+    </div>
+  ),
+};
+
+export const WithEventTypeBadge: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Daily standup",
+    priorityId: "high",
+    eventType: "standup",
+    idPrefix: "1234",
+    isSubmitting: false,
+  },
 };
 
 export const Standard: Story = {

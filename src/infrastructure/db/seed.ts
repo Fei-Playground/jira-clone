@@ -78,6 +78,7 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
       id: issue.id,
       name: issue.name,
       description: issue.description,
+      eventType: issue.eventType ?? null,
       category: { connect: { id: categoryId } },
       asignee: { connect: { id: issue.asignee.id } },
       reporter: { connect: { id: issue.reporter.id } },
@@ -90,7 +91,7 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
         })),
       },
     },
-    update: {},
+    update: { eventType: issue.eventType ?? null },
   });
 };
 

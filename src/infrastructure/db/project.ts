@@ -4,6 +4,7 @@ import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
 import { Priority } from "@domain/priority";
+import { EventTypeId } from "@domain/event-type";
 import { Sort } from "@domain/filter";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
@@ -49,6 +50,7 @@ export const getProject = async (
               createdAt: true,
               reporter: true,
               asignee: true,
+              eventType: true,
             },
             orderBy: orderBy,
           },
@@ -76,6 +78,7 @@ export const getProject = async (
         id: issue.id,
         name: issue.name,
         priority: issue.priority as Priority,
+        eventType: (issue.eventType as EventTypeId) || undefined,
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
         comments: [],
