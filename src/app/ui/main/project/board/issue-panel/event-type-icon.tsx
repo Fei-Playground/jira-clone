@@ -1,17 +1,20 @@
 import cx from "classix";
 import { EventTypeId, eventTypeColors } from "@domain/event-type";
 import {
-  MdOutlineEventNote,  // planning
+  MdOutlineEventNote, // planning
   MdOutlineRateReview, // review
-  MdOutlineLoop,       // retrospective
-  MdOutlineCoffee,     // standup
-  MdCoPresent,         // demo
+  MdOutlineLoop, // retrospective
+  MdOutlineCoffee, // standup
+  MdCoPresent, // demo
   MdOutlineWorkspaces, // workshop
-  MdOutlinePeopleAlt,  // one_on_one
-  MdOutlineCategory,   // other
+  MdOutlinePeopleAlt, // one_on_one
+  MdOutlineCategory, // other
 } from "react-icons/md";
 
-const eventTypeIconMap: Record<EventTypeId, React.ComponentType<{ size?: number }>> = {
+const eventTypeIconMap: Record<
+  EventTypeId,
+  React.ComponentType<{ size?: number }>
+> = {
   planning: MdOutlineEventNote,
   review: MdOutlineRateReview,
   retrospective: MdOutlineLoop,

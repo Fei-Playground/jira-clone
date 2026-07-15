@@ -30,7 +30,13 @@ export const ProjectContextProvider = ({
 
   return (
     <ProjectContext.Provider
-      value={{ project, search, setSearch, eventTypeFilter, setEventTypeFilter }}
+      value={{
+        project,
+        search,
+        setSearch,
+        eventTypeFilter,
+        setEventTypeFilter,
+      }}
     >
       {children}
     </ProjectContext.Provider>

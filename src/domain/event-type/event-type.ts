@@ -46,15 +46,17 @@ export const eventTypeColors: Record<EventTypeId, { bg: string; text: string }> 
 };
 
 /**
- * Bold background class for chart bars — more vibrant than the badge bg.
+ * Hex color for chart bars — distinct colors per event type.
+ * Uses raw design-system primitives to avoid semantic-token collisions
+ * (e.g. brand-bold and info-bold both resolve to Blue700).
  */
 export const eventTypeBarBg: Record<EventTypeId, string> = {
-  planning: "bg-background-info-bold",
-  review: "!bg-background-accent-blue-bolder",
-  retrospective: "bg-background-warning-bold",
-  standup: "!bg-background-accent-green-bolder",
-  demo: "bg-background-success-bold",
-  workshop: "bg-background-danger-bold",
-  one_on_one: "!bg-background-accent-grey-bolder",
-  other: "bg-background-neutral-bold",
+  planning: "#0c66e4", // Blue700
+  review: "#1d7f8c", // Teal700
+  retrospective: "#ca3521", // Red700
+  standup: "#1f845a", // Green700
+  demo: "#f18d13", // Orange500
+  workshop: "#ae4787", // Magenta700
+  one_on_one: "#e2b203", // Yellow400
+  other: "#626f86", // Neutral600
 };

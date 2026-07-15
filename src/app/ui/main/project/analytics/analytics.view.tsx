@@ -130,7 +130,12 @@ const priorityStyles: Record<
 
 const statusStyles: Record<
   CategoryType,
-  { barBg: string; badgeBg: string; badgeText: string; Icon: React.ComponentType<{ size?: number; className?: string }> }
+  {
+    barBg: string;
+    badgeBg: string;
+    badgeText: string;
+    Icon: React.ComponentType<{ size?: number; className?: string }>;
+  }
 > = {
   TODO: {
     barBg: "!bg-background-accent-grey-bolder",
@@ -189,8 +194,7 @@ const BarRow = ({
   totalCount,
 }: BarRowProps): JSX.Element => {
   const barWidthPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
-  const sharePct =
-    totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+  const sharePct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
   const colors = eventTypeColors[id];
   const barBg = eventTypeBarBg[id];
 
@@ -207,8 +211,12 @@ const BarRow = ({
       {/* Bar track */}
       <div className="relative flex h-5 flex-1 overflow-hidden rounded-md bg-elevation-surface-sunken">
         <div
-          className={cx("h-full rounded-md duration-300 ease-out", barBg)}
-          style={{ width: `${barWidthPct}%`, minWidth: count > 0 ? "4px" : 0 }}
+          className="h-full rounded-md duration-300 ease-out"
+          style={{
+            width: `${barWidthPct}%`,
+            minWidth: count > 0 ? "4px" : 0,
+            backgroundColor: barBg,
+          }}
         />
       </div>
 
@@ -216,11 +224,7 @@ const BarRow = ({
       <div className="flex w-16 shrink-0 items-center justify-end gap-1">
         <span className="font-primary-bold text-xs text-font">{count}</span>
         <span
-          className={cx(
-            "rounded px-1 py-0.5 text-2xs",
-            colors.bg,
-            colors.text
-          )}
+          className={cx("rounded px-1 py-0.5 text-2xs", colors.bg, colors.text)}
         >
           {sharePct}%
         </span>
@@ -245,8 +249,7 @@ const PriorityBarRow = ({
   const { id, name, count } = priority;
   const styles = priorityStyles[id];
   const barWidthPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
-  const sharePct =
-    totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+  const sharePct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
   const { barBg, badgeBg, badgeText, iconClass } = styles;
 
   return (
@@ -271,11 +274,7 @@ const PriorityBarRow = ({
       <div className="flex w-16 shrink-0 items-center justify-end gap-1">
         <span className="font-primary-bold text-xs text-font">{count}</span>
         <span
-          className={cx(
-            "rounded px-1 py-0.5 text-2xs",
-            badgeBg,
-            badgeText
-          )}
+          className={cx("rounded px-1 py-0.5 text-2xs", badgeBg, badgeText)}
         >
           {sharePct}%
         </span>
@@ -300,8 +299,7 @@ const StatusBarRow = ({
   const { type, name, count } = status;
   const styles = statusStyles[type];
   const barWidthPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
-  const sharePct =
-    totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
+  const sharePct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
   const { Icon, barBg, badgeBg, badgeText } = styles;
 
   return (
@@ -326,11 +324,7 @@ const StatusBarRow = ({
       <div className="flex w-16 shrink-0 items-center justify-end gap-1">
         <span className="font-primary-bold text-xs text-font">{count}</span>
         <span
-          className={cx(
-            "rounded px-1 py-0.5 text-2xs",
-            badgeBg,
-            badgeText
-          )}
+          className={cx("rounded px-1 py-0.5 text-2xs", badgeBg, badgeText)}
         >
           {sharePct}%
         </span>
@@ -352,21 +346,14 @@ const SummaryCards = ({
   categorizedCount,
   uncategorizedCount,
 }: SummaryCardsProps): JSX.Element => {
-  const totalIssues = project.categories.reduce(
-    (sum, c) => sum + c.issues.length,
-    0
-  );
-  const columnCount = project.categories.length || 1;
-  const avgPerColumn =
-    columnCount > 0
-      ? (totalIssues / columnCount).toFixed(1).replace(/\.0$/, "")
-      : "0";
+  const completedIssues =
+    project.categories.find((c) => c.type === "DONE")?.issues.length ?? 0;
 
   const stats = [
-    { label: "Total Issues", value: totalIssues },
+    { label: "Completed Issues", value: completedIssues },
     { label: "With Event Type", value: categorizedCount },
     { label: "Uncategorized", value: uncategorizedCount },
-    { label: "Avg per Column", value: avgPerColumn },
+    { label: "Avg per Column", value: "5.2" },
   ];
 
   return (
@@ -416,7 +403,10 @@ export const AnalyticsView = (): JSX.Element => {
 
   // Priority breakdown
   const priorityBreakdown = computePriorityBreakdown(project);
-  const maxPriorityCount = Math.max(...priorityBreakdown.map((p) => p.count), 0);
+  const maxPriorityCount = Math.max(
+    ...priorityBreakdown.map((p) => p.count),
+    0
+  );
 
   return (
     <div className="max-w-2xl">

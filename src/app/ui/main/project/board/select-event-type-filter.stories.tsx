@@ -15,7 +15,8 @@ const FilterHarness = ({
   const { setEventTypeFilter } = useProjectStore();
   useEffect(() => {
     setEventTypeFilter(initialFilter);
-  }, [setEventTypeFilter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setEventTypeFilter, JSON.stringify(initialFilter)]);
   return <SelectEventTypeFilter />;
 };
 

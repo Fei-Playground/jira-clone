@@ -45,7 +45,7 @@ export const SelectEventType = ({ initEventType }: Props): JSX.Element => {
             </span>
           </>
         ) : (
-          <span className="text-font-subtlest text-2xs">No type</span>
+          <span className="text-2xs text-font-subtlest">No type</span>
         )}
         <Select.TriggerIcon />
       </Select.Trigger>
@@ -55,7 +55,7 @@ export const SelectEventType = ({ initEventType }: Props): JSX.Element => {
           <Select.Item value="none">
             <Select.ItemIndicator />
             <Select.ItemText>
-              <span className="text-font-subtlest text-2xs">None</span>
+              <span className="text-2xs text-font-subtlest">None</span>
             </Select.ItemText>
           </Select.Item>
           {eventTypeIds.map((eventTypeId) => {

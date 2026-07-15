@@ -66,9 +66,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       const matchesSearch = issue.name.toLowerCase().includes(search);
       const matchesEventType =
         eventTypeFilter.length === 0 ||
-        (issue.eventType
-          ? eventTypeFilter.includes(issue.eventType)
-          : false);
+        (issue.eventType ? eventTypeFilter.includes(issue.eventType) : false);
       return matchesSearch && matchesEventType;
     });
 
