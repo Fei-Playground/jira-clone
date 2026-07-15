@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useParams, Link } from "react-router";
 import cx from "classix";
 import { MdBarChart } from "react-icons/md";
 import { TbCircleDashed, TbProgress, TbCircleCheck } from "react-icons/tb";
@@ -185,6 +185,7 @@ interface BarRowProps {
   count: number;
   maxCount: number;
   totalCount: number;
+  href?: string;
 }
 
 const BarRow = ({
@@ -192,14 +193,15 @@ const BarRow = ({
   count,
   maxCount,
   totalCount,
+  href,
 }: BarRowProps): JSX.Element => {
   const barWidthPct = maxCount > 0 ? (count / maxCount) * 100 : 0;
   const sharePct = totalCount > 0 ? Math.round((count / totalCount) * 100) : 0;
   const colors = eventTypeColors[id];
   const barBg = eventTypeBarBg[id];
 
-  return (
-    <div className="flex items-center gap-3">
+  const inner = (
+    <>
       {/* Label */}
       <div className="flex w-32 shrink-0 items-center gap-1.5">
         <EventTypeIcon eventType={id} size={14} />
@@ -211,7 +213,7 @@ const BarRow = ({
       {/* Bar track */}
       <div className="relative flex h-5 flex-1 overflow-hidden rounded-md bg-elevation-surface-sunken">
         <div
-          className="h-full rounded-md duration-300 ease-out"
+          className="h-full origin-left animate-grow-x rounded-md"
           style={{
             width: `${barWidthPct}%`,
             minWidth: count > 0 ? "4px" : 0,
@@ -229,8 +231,22 @@ const BarRow = ({
           {sharePct}%
         </span>
       </div>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className="group -mx-1 flex items-center gap-3 rounded p-1 transition-colors duration-150 hover:bg-background-neutral"
+        title={`Filter board by: ${eventTypeDict[id]}`}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return <div className="flex items-center gap-3">{inner}</div>;
 };
 
 // ─── Priority bar row ────────────────────────────────────────────────────────
@@ -265,7 +281,7 @@ const PriorityBarRow = ({
       {/* Bar track */}
       <div className="relative flex h-5 flex-1 overflow-hidden rounded-md bg-elevation-surface-sunken">
         <div
-          className={cx("h-full rounded-md duration-300 ease-out", barBg)}
+          className={cx("h-full origin-left animate-grow-x rounded-md", barBg)}
           style={{ width: `${barWidthPct}%`, minWidth: count > 0 ? "4px" : 0 }}
         />
       </div>
@@ -315,7 +331,7 @@ const StatusBarRow = ({
       {/* Bar track */}
       <div className="relative flex h-5 flex-1 overflow-hidden rounded-md bg-elevation-surface-sunken">
         <div
-          className={cx("h-full rounded-md duration-300 ease-out", barBg)}
+          className={cx("h-full origin-left animate-grow-x rounded-md", barBg)}
           style={{ width: `${barWidthPct}%`, minWidth: count > 0 ? "4px" : 0 }}
         />
       </div>
@@ -378,6 +394,7 @@ const SummaryCards = ({
 export const AnalyticsView = (): JSX.Element => {
   const loaderData = useLoaderData() as LoaderData | undefined;
   const project = loaderData?.project;
+  const params = useParams();
 
   if (!project) {
     return (
@@ -431,6 +448,11 @@ export const AnalyticsView = (): JSX.Element => {
                 count={row.count}
                 maxCount={maxEventTypeCount}
                 totalCount={categorizedCount}
+                href={
+                  params.projectId
+                    ? `/projects/${params.projectId}/board?eventType=${row.id}`
+                    : undefined
+                }
               />
             ))}
           </div>

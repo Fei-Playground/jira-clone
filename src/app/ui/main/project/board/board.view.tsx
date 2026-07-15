@@ -1,11 +1,17 @@
 import { useState, useCallback, useEffect } from "react";
-import { Outlet, useNavigate, useRevalidator } from "react-router";
+import {
+  Outlet,
+  useNavigate,
+  useRevalidator,
+  useSearchParams,
+} from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
+import { EventTypeId, eventTypeIds } from "@domain/event-type";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
@@ -16,8 +22,18 @@ import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [searchParams] = useSearchParams();
+  const eventTypeParam = searchParams.get("eventType") as EventTypeId | null;
+  const initialEventTypeFilter =
+    eventTypeParam && (eventTypeIds as string[]).includes(eventTypeParam)
+      ? [eventTypeParam]
+      : [];
+
   return (
-    <ProjectContextProvider project={project}>
+    <ProjectContextProvider
+      project={project}
+      initialEventTypeFilter={initialEventTypeFilter}
+    >
       <div className="box-border flex h-full flex-col">
         <section className="flex items-center">
           <Search />

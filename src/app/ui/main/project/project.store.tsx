@@ -20,13 +20,17 @@ const ProjectContext = createContext<ProjectStore | undefined>(undefined);
 
 export const ProjectContextProvider = ({
   project,
+  initialEventTypeFilter = [],
   children,
 }: {
   project: Project;
+  initialEventTypeFilter?: EventTypeId[];
   children: JSX.Element;
 }): JSX.Element => {
   const [search, setSearch] = useState("");
-  const [eventTypeFilter, setEventTypeFilter] = useState<EventTypeId[]>([]);
+  const [eventTypeFilter, setEventTypeFilter] = useState<EventTypeId[]>(
+    initialEventTypeFilter
+  );
 
   return (
     <ProjectContext.Provider
