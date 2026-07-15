@@ -262,6 +262,11 @@ module.exports = {
             transform: `translateX(calc(100% + 1rem))`,
           },
         },
+        // Analytics bar chart
+        "grow-x": {
+          "0%": { transform: "scaleX(0)", transformOrigin: "left" },
+          "100%": { transform: "scaleX(1)", transformOrigin: "left" },
+        },
       },
       animation: {
         // Dropdown menu
@@ -273,6 +278,8 @@ module.exports = {
         "slide-right-fade": "slide-right-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         "slide-down-fade": "slide-down-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         "slide-left-fade": "slide-left-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        // Analytics bar chart
+        "grow-x": "grow-x 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
         // Toast
         "toast-hide": "toast-hide 100ms ease-in forwards",
         "toast-slide-in-right": "toast-slide-in-right 150ms cubic-bezier(0.16, 1, 0.3, 1)",

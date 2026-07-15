@@ -26,6 +26,7 @@ import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
+import { SelectEventType } from "./select-event-type";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
@@ -196,6 +197,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <SelectPriority
                         initPriority={issue?.priority.id || "low"}
                       />
+                    </div>
+                    <div>
+                      <p className="mb-1">Event Type</p>
+                      <SelectEventType initEventType={issue?.eventType} />
                     </div>
                     <div>
                       <p className="mb-1">Asignee</p>

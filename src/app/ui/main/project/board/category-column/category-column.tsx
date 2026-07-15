@@ -23,7 +23,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search } = useProjectStore();
+  const { search, eventTypeFilter } = useProjectStore();
   const emptyCategory = category.issues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
@@ -63,7 +63,11 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
 
   const filteredIssues = (): Issue[] =>
     category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
+      const matchesSearch = issue.name.toLowerCase().includes(search);
+      const matchesEventType =
+        eventTypeFilter.length === 0 ||
+        (issue.eventType ? eventTypeFilter.includes(issue.eventType) : false);
+      return matchesSearch && matchesEventType;
     });
 
   useEffect(() => {

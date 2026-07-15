@@ -57,6 +57,7 @@ model Issue {
   updatedAt   DateTime  @updatedAt
   priority    Priority  @relation(fields: [priorityId], references: [id])
   priorityId  String
+  eventType   String?   // Maps to EventTypeId: planning|review|retrospective|standup|demo|workshop|one_on_one|other
 }
 
 model Comment {

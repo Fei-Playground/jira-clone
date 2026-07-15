@@ -6,26 +6,42 @@ import {
   SetStateAction,
 } from "react";
 import { Project } from "@domain/project";
+import { EventTypeId } from "@domain/event-type";
 
 interface ProjectStore {
   project: Project;
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
+  eventTypeFilter: EventTypeId[];
+  setEventTypeFilter: Dispatch<SetStateAction<EventTypeId[]>>;
 }
 
 const ProjectContext = createContext<ProjectStore | undefined>(undefined);
 
 export const ProjectContextProvider = ({
   project,
+  initialEventTypeFilter = [],
   children,
 }: {
   project: Project;
+  initialEventTypeFilter?: EventTypeId[];
   children: JSX.Element;
 }): JSX.Element => {
   const [search, setSearch] = useState("");
+  const [eventTypeFilter, setEventTypeFilter] = useState<EventTypeId[]>(
+    initialEventTypeFilter
+  );
 
   return (
-    <ProjectContext.Provider value={{ project, search, setSearch }}>
+    <ProjectContext.Provider
+      value={{
+        project,
+        search,
+        setSearch,
+        eventTypeFilter,
+        setEventTypeFilter,
+      }}
+    >
       {children}
     </ProjectContext.Provider>
   );
