@@ -11,6 +11,22 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-1a",
+      user: usersMock[1], // Woody
+      message: "That makes sense — is this tied to the user role or just ownership?",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "reply-1b",
+      user: usersMock[3], // Jessie
+      message: "Just ownership for now. The reporter of the issue is the only one with edit rights.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +35,15 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "reply-2a",
+      user: usersMock[2], // Buzz Lightyear
+      message: "Good to know! Tested it and confirmed — great accessibility feature.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock3: Comment = {
