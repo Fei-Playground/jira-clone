@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import cx from "classix";
 import { BiSearch } from "react-icons/bi";
 import { IoCloseOutline } from "react-icons/io5";
 import { useProjectStore } from "@app/ui/main/project";
+import { Tooltip } from "@app/components/tooltip";
+import { Kbd } from "@app/components/kbd-placeholder";
 
 export const Search = (): JSX.Element => {
   const { search, setSearch } = useProjectStore();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const clearSearch = () => setSearch("");
   const renderIcon = (): JSX.Element => {
@@ -20,26 +23,55 @@ export const Search = (): JSX.Element => {
     setSearch(e.target.value);
   };
 
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Ignore if focus is already inside an input, textarea, select, or contenteditable
+    const target = e.target as HTMLElement;
+    const isEditable =
+      target.tagName === "INPUT" ||
+      target.tagName === "TEXTAREA" ||
+      target.tagName === "SELECT" ||
+      target.isContentEditable;
+
+    if (e.key === "/" && !isEditable && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      inputRef.current?.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  const ShortcutHint = (
+    <span className="flex items-center gap-1 text-font-inverse">
+      Press <Kbd>/</Kbd> to search
+    </span>
+  );
+
   return (
-    <div className="relative w-fit">
-      <input
-        type="text"
-        name="search"
-        value={search}
-        placeholder="Filter issues"
-        onChange={handleChange}
-        className={cx(
-          "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
-          "border-1 box-border pl-2 pr-8 outline outline-2 outline-border-input duration-200 ease-in-out",
-          "placeholder:font-primary-light placeholder:text-xs placeholder:text-font-subtlest",
-          "placeholder:duration-200 placeholder:ease-in-out focus:w-[190px]",
-          "focus:bg-background-input-pressed focus:shadow-blue focus:outline-border-brand"
-        )}
-      />
-      <span className="absolute right-0 top-1/2 -translate-y-1/2 px-2">
-        {renderIcon()}
-      </span>
-    </div>
+    <Tooltip title={ShortcutHint}>
+      <div className="relative w-fit">
+        <input
+          ref={inputRef}
+          type="text"
+          name="search"
+          value={search}
+          placeholder="Filter issues"
+          onChange={handleChange}
+          className={cx(
+            "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
+            "border-1 box-border pl-2 pr-8 outline outline-2 outline-border-input duration-200 ease-in-out",
+            "placeholder:font-primary-light placeholder:text-xs placeholder:text-font-subtlest",
+            "placeholder:duration-200 placeholder:ease-in-out focus:w-[190px]",
+            "focus:bg-background-input-pressed focus:shadow-blue focus:outline-border-brand"
+          )}
+        />
+        <span className="absolute right-0 top-1/2 -translate-y-1/2 px-2">
+          {renderIcon()}
+        </span>
+      </div>
+    </Tooltip>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import cx from "classix";
 import { twMerge } from "tailwind-merge";
 
@@ -41,7 +41,7 @@ export const Tooltip = ({
 };
 
 interface TooltipProps {
-  title: string;
+  title: React.ReactNode;
   show?: boolean;
   className?: string;
   children: JSX.Element;
