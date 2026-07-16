@@ -24,3 +24,18 @@ export default meta;
 type Story = StoryObj<typeof Search>;
 
 export const Default: Story = {};
+
+export const TooltipVisible: Story = {
+  play: async ({ canvasElement }) => {
+    // Simulate hover on the search component to show the tooltip
+    const tooltipContainer = canvasElement.querySelector(".relative");
+    if (tooltipContainer) {
+      const hoverEvent = new MouseEvent("mouseenter", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+      tooltipContainer.dispatchEvent(hoverEvent);
+    }
+  },
+};
