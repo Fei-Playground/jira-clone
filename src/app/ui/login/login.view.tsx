@@ -68,6 +68,9 @@ export const LoginView = ({ users }: Props) => {
           Login
         </Button>
       </Form>
+      <p className="mt-8 text-center text-xs text-font-subtle">
+        © 2026 Jira Clone. All rights reserved.
+      </p>
     </div>
   );
 };
