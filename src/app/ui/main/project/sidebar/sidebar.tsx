@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router";
 import { HiOutlineViewBoards } from "react-icons/hi";
+import { MdViewKanban } from "react-icons/md";
 import cx from "classix";
 import { RiArrowDropLeftLine } from "react-icons/ri";
 import { ImStatsDots } from "react-icons/im";
@@ -82,6 +83,11 @@ const navItems: NavItemProps[] = [
     href: "board",
     icon: <HiOutlineViewBoards size={24} />,
     name: "Board",
+  },
+  {
+    href: "kanban",
+    icon: <MdViewKanban size={24} />,
+    name: "Kanban",
   },
   {
     href: "analytics",
