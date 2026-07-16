@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import cx from "classix";
 import {
   RiArrowLeftLine,
@@ -17,6 +17,7 @@ import {
 } from "./kpi-builder.types";
 import { KpiDetailsPanel } from "./kpi-details-panel";
 import { SubKpiNode } from "./sub-kpi-node";
+import { KpiDependencyTree } from "./kpi-dependency-tree";
 
 interface KpiBuilderProps {
   onCancel?: () => void;
@@ -92,6 +93,19 @@ export const KpiBuilder = ({
   const [generationState, setGenerationState] = useState<GenerationState>(
     initialGenerationState
   );
+  const [highlightedSubKpiId, setHighlightedSubKpiId] = useState<string | undefined>();
+  // Ref map: sub-KPI id → DOM element for scroll-to behaviour
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  const handleTreeNodeClick = useCallback((id: string) => {
+    setHighlightedSubKpiId(id);
+    const el = cardRefs.current.get(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // Clear highlight after a moment
+      setTimeout(() => setHighlightedSubKpiId(undefined), 1800);
+    }
+  }, []);
 
   const updateForm = (patch: Partial<KpiFormData>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -359,15 +373,38 @@ export const KpiBuilder = ({
           )}
 
           {isDone && form.subKpis.length > 0 && (
-            <div className="flex flex-col gap-3">
-              {form.subKpis.map((sub, idx) => (
-                <SubKpiNode
-                  key={sub.id}
-                  subKpi={sub}
-                  onChange={(updated) => handleSubKpiChange(idx, updated)}
-                  depth={0}
-                />
-              ))}
+            <div className="flex flex-col gap-4">
+              {/* Dependency tree overview */}
+              <KpiDependencyTree
+                rootName={form.name || "Final KPI"}
+                subKpis={form.subKpis}
+                onNodeClick={handleTreeNodeClick}
+                highlightedId={highlightedSubKpiId}
+              />
+
+              {/* Detailed sub-KPI cards */}
+              <div className="flex flex-col gap-3">
+                {form.subKpis.map((sub, idx) => (
+                  <div
+                    key={sub.id}
+                    ref={(el) => {
+                      if (el) cardRefs.current.set(sub.id, el);
+                      else cardRefs.current.delete(sub.id);
+                    }}
+                    className={cx(
+                      "rounded-md transition-all duration-300",
+                      highlightedSubKpiId === sub.id &&
+                        "ring-2 ring-border-brand ring-offset-1"
+                    )}
+                  >
+                    <SubKpiNode
+                      subKpi={sub}
+                      onChange={(updated) => handleSubKpiChange(idx, updated)}
+                      depth={0}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
