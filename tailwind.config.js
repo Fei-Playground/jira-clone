@@ -3,7 +3,7 @@
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  content: ["./src/app/**/*.{js,ts,jsx,tsx}"],
+  content: ["./src/app/**/*.{js,ts,jsx,tsx}", "./src/olga/**/*.{ts,tsx}"],
   darkMode: "class",
   theme: {
     colors: {
@@ -208,6 +208,33 @@ module.exports = {
       "dialog-overlay": "rgba(0,0,0,0.45)",
     },
     extend: {
+      colors: {
+        "olga-navy": "#0A192F",
+        "olga-navy-soft": "#13294B",
+        "olga-amber": "#C8963E",
+        "olga-amber-bg": "#FBF3E4",
+        "olga-amber-ink": "#6E4E15",
+        "olga-surface": "#F7F9FC",
+        "olga-rule": "#D8DEE7",
+        "olga-slate": "#64748B",
+        "olga-slate-lt": "#94A3B8",
+        "olga-ink": "#111827",
+        "olga-approved": "#2E5A45",
+        "olga-approved-bg": "#EAF3EE",
+        "olga-declined": "#8B3A3A",
+        "olga-declined-bg": "#F9EDED",
+        "olga-expiring": "#B45309",
+      },
+      fontFamily: {
+        display: ["Playfair Display", "Caladea", "Georgia", "serif"],
+        body: ["Inter", "Carlito", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+      },
+      boxShadow: {
+        "olga-card": "0 1px 3px rgba(10,25,47,0.08), 0 1px 2px rgba(10,25,47,0.06)",
+        "olga-raised": "0 4px 6px rgba(10,25,47,0.10), 0 2px 4px rgba(10,25,47,0.08)",
+        "olga-modal": "0 20px 25px rgba(10,25,47,0.15), 0 10px 10px rgba(10,25,47,0.10)",
+      },
       fontSize: {
         "2xs": ["0.75rem", "1rem"],
         xs: ["0.8125rem", "1rem"],

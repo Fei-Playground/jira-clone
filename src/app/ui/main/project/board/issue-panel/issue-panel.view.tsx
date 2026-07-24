@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
+import { v4 as uuid } from "uuid";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
@@ -98,6 +99,18 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setComments(updatedComments);
   };
 
+  const addReply = (parentId: CommentId, message: string): void => {
+    const reply: Comment = {
+      id: "temp-" + uuid(),
+      user,
+      message,
+      parentId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    setComments((prev) => [...prev, reply]);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
 
@@ -173,14 +186,20 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
+                        {comments
+                          .filter((c) => !c.parentId)
+                          .map((comment) => (
+                            <li key={comment.id}>
+                              <ViewComment
+                                comment={comment}
+                                replies={comments.filter(
+                                  (c) => c.parentId === comment.id
+                                )}
+                                removeComment={removeComment}
+                                addReply={addReply}
+                              />
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   </section>

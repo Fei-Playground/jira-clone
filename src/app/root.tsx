@@ -30,6 +30,16 @@ import fuck from "react-toastify/dist/ReactToastify.css?url";
 
 export const links = () => {
   return [
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap",
+    },
     { rel: "stylesheet", href: fonts },
     { rel: "stylesheet", href: styles },
     { rel: "stylesheet", href: fuck },

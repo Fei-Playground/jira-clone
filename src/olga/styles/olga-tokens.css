@@ -1,0 +1,63 @@
+/* OL-GA v2 Design Tokens */
+:root {
+  /* ─── Colors ─────────────────────────────────────────────── */
+  --olga-navy: #0a192f;
+  --olga-navy-soft: #13294b;
+  --olga-amber: #c8963e; /* RESERVED: verification only */
+  --olga-amber-bg: #fbf3e4;
+  --olga-amber-ink: #6e4e15;
+  --olga-white: #ffffff;
+  --olga-surface: #f7f9fc;
+  --olga-rule: #d8dee7;
+  --olga-slate: #64748b;
+  --olga-slate-lt: #94a3b8;
+  --olga-ink: #111827;
+
+  /* Semantic */
+  --olga-approved: #2e5a45;
+  --olga-approved-bg: #eaf3ee;
+  --olga-declined: #8b3a3a;
+  --olga-declined-bg: #f9eded;
+  --olga-expiring: #b45309;
+
+  /* ─── Spacing ─────────────────────────────────────────────── */
+  --olga-space-1: 4px;
+  --olga-space-2: 8px;
+  --olga-space-3: 12px;
+  --olga-space-4: 16px;
+  --olga-space-6: 24px;
+  --olga-space-8: 32px;
+  --olga-space-12: 48px;
+  --olga-space-16: 64px;
+  --olga-screen-margin: 20px;
+  --olga-card-padding: 16px;
+
+  /* ─── Radii ───────────────────────────────────────────────── */
+  --olga-radius-sm: 4px;
+  --olga-radius-md: 8px;
+  --olga-radius-lg: 12px;
+  --olga-radius-full: 9999px;
+
+  /* ─── Shadows ─────────────────────────────────────────────── */
+  --olga-shadow-card: 0 1px 3px rgba(10, 25, 47, 0.08),
+    0 1px 2px rgba(10, 25, 47, 0.06);
+  --olga-shadow-raised: 0 4px 6px rgba(10, 25, 47, 0.1),
+    0 2px 4px rgba(10, 25, 47, 0.08);
+  --olga-shadow-modal: 0 20px 25px rgba(10, 25, 47, 0.15),
+    0 10px 10px rgba(10, 25, 47, 0.1);
+
+  /* ─── Motion ──────────────────────────────────────────────── */
+  --olga-duration-instant: 100ms;
+  --olga-duration-fast: 180ms;
+  --olga-duration-base: 260ms;
+  --olga-duration-reveal: 520ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --olga-duration-instant: 0ms;
+    --olga-duration-fast: 0ms;
+    --olga-duration-base: 0ms;
+    --olga-duration-reveal: 0ms;
+  }
+}

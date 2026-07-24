@@ -31,7 +31,8 @@
       "@domain/*": ["./src/domain/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
       "@app/*": ["./src/app/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@olga/*": ["./src/olga/*"]
     },
     "noEmit": true
   }

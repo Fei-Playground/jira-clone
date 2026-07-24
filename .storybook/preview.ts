@@ -3,6 +3,14 @@ import { withThemeByClassName } from "@storybook/addon-themes";
 
 import "../src/app/styles/app-compiled.css";
 import "../src/app/styles/fonts.css";
+import "../src/olga/styles/olga-tokens.css";
+
+// Load OLGA Google Fonts in Storybook
+const olgaFontLink = document.createElement("link");
+olgaFontLink.rel = "stylesheet";
+olgaFontLink.href =
+  "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap";
+document.head.appendChild(olgaFontLink);
 
 const preview: Preview = {
   parameters: {

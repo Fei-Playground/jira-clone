@@ -3,6 +3,7 @@ import { Comment } from "./comment";
 
 const createdAt = Date.now();
 const updatedAt = Date.now();
+const replyCreatedAt = createdAt + 60_000;
 
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
@@ -46,4 +47,22 @@ export const commentMock5: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+};
+
+export const commentMock1Reply1: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  user: usersMock[7], // Little Green Men
+  message: "Good point! I tried it and it works exactly as described.",
+  parentId: "92149ee5-0459-4286-8323-1542e1295154", // reply to commentMock1
+  createdAt: replyCreatedAt,
+  updatedAt: replyCreatedAt,
+};
+
+export const commentMock2Reply1: Comment = {
+  id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  user: usersMock[5], // Mr. Potato
+  message: "Confirmed — same rule applies to editing the title too!",
+  parentId: "3375b7ea-425d-4bd3-a728-c8888b63a7f2", // reply to commentMock2
+  createdAt: replyCreatedAt,
+  updatedAt: replyCreatedAt,
 };
