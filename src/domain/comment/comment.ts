@@ -8,6 +8,7 @@ export interface Reply {
   user: User;
   message: string;
   createdAt: number;
+  updatedAt?: number;
 }
 
 export interface Comment {

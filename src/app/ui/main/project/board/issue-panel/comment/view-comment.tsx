@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { v4 as uuid } from "uuid";
 import { useFetcher } from "react-router";
 import cx from "classix";
 import { Comment, CommentId, Reply } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
+import { ReplyBox } from "./reply-box";
+import { ViewReply } from "./view-reply";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -15,6 +16,7 @@ export const ViewComment = ({
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [showReplies, setShowReplies] = useState<boolean>(true);
   const [message, setMessage] = useState<string>(comment.message);
   const [replies, setReplies] = useState<Reply[]>(comment.replies ?? []);
   const fetcher = useFetcher();
@@ -25,6 +27,7 @@ export const ViewComment = ({
   const cancel = () => setIsEditing(false);
   const startReply = () => setIsReplying(true);
   const cancelReply = () => setIsReplying(false);
+  const toggleReplies = () => setShowReplies((prev) => !prev);
 
   const remove = () => {
     removeComment(comment.id);
@@ -42,15 +45,10 @@ export const ViewComment = ({
     setIsEditing(false);
   };
 
-  const saveReply = (replyText: string): void => {
-    const newReply: Reply = {
-      id: "reply-" + uuid(),
-      user,
-      message: replyText,
-      createdAt: Date.now(),
-    };
+  const handleReply = (newReply: Reply): void => {
     setReplies((prev) => [...prev, newReply]);
     setIsReplying(false);
+    setShowReplies(true);
   };
 
   const idleComment = (
@@ -58,26 +56,11 @@ export const ViewComment = ({
       <p>{message}</p>
 
       {/* Nested replies */}
-      {replies.length > 0 && (
+      {showReplies && replies.length > 0 && (
         <ul className="mt-4 space-y-4 border-l-2 border-border-input pl-4">
           {replies.map((reply) => (
-            <li key={reply.id} className="flex gap-3">
-              <div className="mt-0.5 shrink-0">
-                <UserAvatar {...reply.user} size={28} />
-              </div>
-              <div>
-                <p className="mr-2 inline-block font-primary-bold text-sm">
-                  {reply.user.name}
-                </p>
-                <span className="font-primary-light text-xs text-font-subtlest">
-                  {reply.createdAt ? (
-                    formatDateTime(reply.createdAt)
-                  ) : (
-                    <i>Date undefined</i>
-                  )}
-                </span>
-                <p className="mt-1 text-sm">{reply.message}</p>
-              </div>
+            <li key={reply.id}>
+              <ViewReply reply={reply} />
             </li>
           ))}
         </ul>
@@ -85,13 +68,8 @@ export const ViewComment = ({
 
       {/* Inline reply editor */}
       {isReplying && (
-        <div className="mt-3 border-l-2 border-border-input pl-4">
-          <EditBox
-            defaultMessage=""
-            save={saveReply}
-            cancel={cancelReply}
-            autofocus
-          />
+        <div className="mt-3">
+          <ReplyBox onReply={handleReply} onCancel={cancelReply} />
         </div>
       )}
 
@@ -105,6 +83,20 @@ export const ViewComment = ({
         >
           Reply
         </button>
+        {replies.length > 0 && (
+          <>
+            <span className="mx-2">{"·"}</span>
+            <button
+              onClick={toggleReplies}
+              className="font-primary-light text-xs text-font-brand hover:underline"
+              aria-label={showReplies ? "Hide replies" : "Show replies"}
+            >
+              {showReplies
+                ? `Hide ${replies.length} ${replies.length === 1 ? "reply" : "replies"}`
+                : `${replies.length} ${replies.length === 1 ? "reply" : "replies"}`}
+            </button>
+          </>
+        )}
         <span className={cx("mx-2", isNotSelfComment && "hidden")}>{"·"}</span>
         <button
           onClick={edit}
