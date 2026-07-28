@@ -4,7 +4,7 @@ import { HiOutlineViewBoards } from "react-icons/hi";
 import cx from "classix";
 import { RiArrowDropLeftLine } from "react-icons/ri";
 import { ImStatsDots } from "react-icons/im";
-import { BsListNested, BsCloudSlash } from "react-icons/bs";
+import { BsListNested, BsCloudSlash, BsClockHistory } from "react-icons/bs";
 import { TbError404 } from "react-icons/tb";
 
 export const Sidebar = (props: Props): JSX.Element => {
@@ -82,6 +82,11 @@ const navItems: NavItemProps[] = [
     href: "board",
     icon: <HiOutlineViewBoards size={24} />,
     name: "Board",
+  },
+  {
+    href: "activity",
+    icon: <BsClockHistory size={22} />,
+    name: "Activity",
   },
   {
     href: "analytics",
