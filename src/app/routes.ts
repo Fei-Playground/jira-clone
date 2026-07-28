@@ -11,6 +11,7 @@ export default [
       route("new", "routes/__main/projects/new.tsx"),
     ]),
     route("projects/:projectId", "routes/__main/projects.$projectId.tsx", [
+      route("activity", "routes/__main/projects.$projectId/activity.tsx"),
       route("analytics", "routes/__main/projects.$projectId/analytics.tsx"),
       route("board", "routes/__main/projects.$projectId/board.tsx", [
         route("issue/new", "routes/__main/projects.$projectId/board/issue/new.tsx"),
