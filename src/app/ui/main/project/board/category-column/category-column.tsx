@@ -7,6 +7,7 @@ import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
+import { Tooltip } from "@app/components/tooltip";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
 import { IssueCard, DropItem, DRAG_ISSUE_CARD } from "./issue-card";
@@ -107,19 +108,27 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         </div>
       </div>
       {/* Column header */}
-      <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
-        <span className="flex gap-2">
-          <span>{category.name}</span>
-          {!emptyCategory && <span>( {category.issues.length} )</span>}
-        </span>
-        <Link
-          to={issueLink}
-          className="text-font-subtlest/60 flex cursor-pointer rounded border-none p-1 hover:bg-background-neutral"
-          aria-label={`Add new ${category.name} issue`}
-        >
-          <AiOutlinePlus size={24} />
-        </Link>
-      </div>
+      <Tooltip
+        className="normal-case"
+        wrapperClassName="sticky left-0 top-0 z-10 w-full"
+        title={`${category.issues.length} ${
+          category.issues.length === 1 ? "issue" : "issues"
+        }`}
+      >
+        <div className="flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
+          <span className="flex gap-2">
+            <span>{category.name}</span>
+            {!emptyCategory && <span>( {category.issues.length} )</span>}
+          </span>
+          <Link
+            to={issueLink}
+            className="text-font-subtlest/60 flex cursor-pointer rounded border-none p-1 hover:bg-background-neutral"
+            aria-label={`Add new ${category.name} issue`}
+          >
+            <AiOutlinePlus size={24} />
+          </Link>
+        </div>
+      </Tooltip>
       {/* Column body items */}
       <div ref={columnRef} className="h-full">
         <div style={{ height: `${columnHeight}px` }}>
