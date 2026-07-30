@@ -1,4 +1,5 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import cx from "classix";
 import { User } from "@domain/user";
 import { UserAvatar } from "@app/components/user-avatar";
 import { ScrollArea } from "@app/components/scroll-area";
@@ -10,11 +11,19 @@ export const UserAvatarList = ({ users }: Props): JSX.Element => {
   const displayUsers = users.slice(0, MAX_DISPLAY_USERS);
 
   return (
-    <span className="ml-2 flex">
+    <span
+      className="flex shrink-0 items-center pl-1"
+      role="list"
+      aria-label="Team members"
+    >
       {displayUsers.map((user, index) => (
         <div
-          key={index}
-          className="z-10 -ml-[5px] rounded-full border-2 border-border bg-elevation-surface hover:z-20"
+          key={user.id}
+          role="listitem"
+          className={cx(
+            "z-10 rounded-full border-2 border-border bg-elevation-surface hover:z-20",
+            index > 0 && "-ml-1.5"
+          )}
         >
           <UserAvatar {...user} size={AVATAR_SIZE} tooltip />
         </div>
@@ -32,7 +41,7 @@ const MoreUsers = ({ users }: MoreUsersProps): JSX.Element => (
   <div className="bg-elevation-surface">
     <DropdownMenu.Root>
       <DropdownMenu.Trigger
-        className="-ml-[5px] box-content flex cursor-pointer items-center justify-center rounded-full border-2 border-border bg-background-neutral text-lg text-font hover:underline"
+        className="-ml-1.5 box-content flex cursor-pointer items-center justify-center rounded-full border-2 border-border bg-background-neutral text-lg text-font hover:underline"
         style={{
           width: `${AVATAR_SIZE}px`,
           height: `${AVATAR_SIZE}px`,

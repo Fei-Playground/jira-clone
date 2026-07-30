@@ -21,23 +21,25 @@ export const Search = (): JSX.Element => {
   };
 
   return (
-    <div className="relative w-fit">
+    <div className="relative w-full max-w-[280px] sm:w-[240px]">
       <input
         type="text"
         name="search"
         value={search}
-        placeholder="Filter issues"
+        placeholder="Search by title"
+        aria-label="Search issues by title"
         onChange={handleChange}
+        autoComplete="off"
         className={cx(
-          "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
-          "border-1 box-border pl-2 pr-8 outline outline-2 outline-border-input duration-200 ease-in-out",
+          "h-10 w-full rounded border-none bg-background-input py-2 pl-3 pr-9",
+          "box-border outline outline-2 outline-border-input duration-200 ease-in-out",
+          "hover:bg-background-input-hovered",
           "placeholder:font-primary-light placeholder:text-xs placeholder:text-font-subtlest",
-          "placeholder:duration-200 placeholder:ease-in-out focus:w-[190px]",
           "focus:bg-background-input-pressed focus:shadow-blue focus:outline-border-brand"
         )}
       />
-      <span className="absolute right-0 top-1/2 -translate-y-1/2 px-2">
-        {renderIcon()}
+      <span className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 px-2.5">
+        <span className="pointer-events-auto">{renderIcon()}</span>
       </span>
     </div>
   );
