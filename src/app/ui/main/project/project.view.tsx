@@ -19,24 +19,26 @@ export const ProjectView = ({
   const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
 
   return (
-    <div className="relative flex h-full flex-grow">
+    <div className="relative flex h-full min-h-0 flex-grow overflow-hidden">
       <Sidebar
         projectName={name}
         projectDescription={description || "Description undefined"}
         projectImage={image || "/images/default-project.png"}
       />
-      <div className="z-10 flex h-full w-full flex-grow flex-col px-5 py-6">
-        <section>
+      <div className="z-10 flex h-full min-h-0 w-full flex-grow flex-col overflow-y-auto px-5 py-6">
+        <section className="shrink-0">
           <Link to="/projects" className="underline underline-offset-[3px]">
             Projects
           </Link>
           <span className="mx-2">/</span>
           <span>{name}</span>
-          <h1 className="mb-5 mt-4 font-primary-black text-2xl">
+          <h1 className="mb-4 mt-3 font-primary-black text-2xl">
             {sectionTitle}
           </h1>
         </section>
-        <Outlet />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
