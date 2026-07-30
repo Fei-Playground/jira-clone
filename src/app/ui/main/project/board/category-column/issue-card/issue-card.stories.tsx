@@ -56,7 +56,7 @@ type Story = StoryObj<typeof IssueCardContent>;
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {[Standard, LongName, Submitting].map(({ args }, index) => (
+      {[High, Medium, Low, LongName, Submitting].map(({ args }, index) => (
         <IssueCardContent
           key={index}
           link={args?.link || "https://google.com"}
@@ -70,12 +70,32 @@ export const Default: Story = {
   ),
 };
 
-export const Standard: Story = {
+export const High: Story = {
   args: {
     link: "https://google.com",
-    name: "Issue 1",
+    name: "Fix payment checkout timeout",
     priorityId: "high",
-    idPrefix: "1234",
+    idPrefix: "PAY",
+    isSubmitting: false,
+  },
+};
+
+export const Medium: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Update onboarding tooltips",
+    priorityId: "medium",
+    idPrefix: "UX",
+    isSubmitting: false,
+  },
+};
+
+export const Low: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Tidy billing export copy",
+    priorityId: "low",
+    idPrefix: "BILL",
     isSubmitting: false,
   },
 };
