@@ -9,7 +9,19 @@ import {
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
 
-const createdAt = new Date("2022-01-18 11:00").valueOf();
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const now = Date.now();
+/** Relative timestamps so board date-filter presets show different results. */
+const daysAgo = (days: number, hour = 11): number => {
+  const date = new Date(now - days * MS_PER_DAY);
+  date.setHours(hour, 0, 0, 0);
+  return date.valueOf();
+};
+
+const createdToday = daysAgo(0, 9);
+const created3DaysAgo = daysAgo(3, 11);
+const created20DaysAgo = daysAgo(20, 14);
+const created60DaysAgo = daysAgo(60, 10);
 
 // PROJECT 1
 export const todoIssuesMock1: Issue[] = [
@@ -23,8 +35,8 @@ export const todoIssuesMock1: Issue[] = [
     comments: [commentMock4, commentMock5],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    createdAt: createdToday,
+    updatedAt: createdToday,
   },
 ];
 
@@ -39,8 +51,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: created3DaysAgo,
+    updatedAt: created3DaysAgo,
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -52,8 +64,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    createdAt: created20DaysAgo,
+    updatedAt: daysAgo(18, 17),
   },
 ];
 
@@ -68,8 +80,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    createdAt: created60DaysAgo,
+    updatedAt: daysAgo(55, 10),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -81,8 +93,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [commentMock3],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    createdAt: created3DaysAgo,
+    updatedAt: daysAgo(1, 2),
   },
 ];
 
@@ -98,8 +110,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityMedium,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    createdAt: createdToday,
+    updatedAt: createdToday,
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -111,8 +123,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-23 14:28").valueOf(),
+    createdAt: created20DaysAgo,
+    updatedAt: daysAgo(15, 14),
   },
 ];
 
@@ -126,8 +138,8 @@ export const inProgressIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: created60DaysAgo,
+    updatedAt: created60DaysAgo,
   },
 ];
 

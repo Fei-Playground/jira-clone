@@ -10,6 +10,7 @@ import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
+import { SelectDateFilter } from "./select-date-filter";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
@@ -25,6 +26,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           </div>
           <div className="inline">
             <SelectSort />
+          </div>
+          <div className="ml-2 inline">
+            <SelectDateFilter />
           </div>
         </section>
         <DndProvider backend={HTML5Backend}>
