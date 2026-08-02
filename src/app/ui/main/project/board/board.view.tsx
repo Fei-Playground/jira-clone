@@ -10,6 +10,7 @@ import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
+import { SelectDateFilter } from "./select-date-filter";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
@@ -23,7 +24,8 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
           </div>
-          <div className="inline">
+          <div className="inline flex items-center gap-2">
+            <SelectDateFilter />
             <SelectSort />
           </div>
         </section>
