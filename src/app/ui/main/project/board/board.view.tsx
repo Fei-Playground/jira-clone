@@ -6,22 +6,27 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
+import { DateFilter } from "@domain/filter";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
+import { SelectDatesFilter } from "./select-dates-filter";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
-export const BoardView = ({ project }: Props): JSX.Element => {
+export const BoardView = ({ project, initialDateFilter }: Props): JSX.Element => {
   return (
-    <ProjectContextProvider project={project}>
+    <ProjectContextProvider project={project} initialDateFilter={initialDateFilter}>
       <div className="box-border flex h-full flex-col">
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
+          </div>
+          <div className="mr-2 inline">
+            <SelectDatesFilter />
           </div>
           <div className="inline">
             <SelectSort />
@@ -38,6 +43,7 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+  initialDateFilter?: DateFilter;
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {

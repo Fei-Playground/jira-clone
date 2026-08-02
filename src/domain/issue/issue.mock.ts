@@ -9,7 +9,24 @@ import {
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
 
-const createdAt = new Date("2022-01-18 11:00").valueOf();
+const hours = (n: number) => n * 60 * 60 * 1000;
+const days = (n: number) => n * 24 * hours(1);
+
+const now = Date.now();
+const todayMorning = (() => {
+  const d = new Date(now);
+  d.setHours(9, 15, 0, 0);
+  return d.valueOf();
+})();
+const yesterdayAfternoon = (() => {
+  const d = new Date(now);
+  d.setDate(d.getDate() - 1);
+  d.setHours(15, 40, 0, 0);
+  return d.valueOf();
+})();
+const threeDaysAgo = now - days(3);
+const twelveDaysAgo = now - days(12);
+const fortyDaysAgo = now - days(40);
 
 // PROJECT 1
 export const todoIssuesMock1: Issue[] = [
@@ -23,8 +40,8 @@ export const todoIssuesMock1: Issue[] = [
     comments: [commentMock4, commentMock5],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    createdAt: fortyDaysAgo,
+    updatedAt: twelveDaysAgo,
   },
 ];
 
@@ -39,8 +56,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: todayMorning,
+    updatedAt: todayMorning,
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -52,8 +69,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    createdAt: yesterdayAfternoon,
+    updatedAt: yesterdayAfternoon + hours(2),
   },
 ];
 
@@ -68,8 +85,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    createdAt: threeDaysAgo,
+    updatedAt: threeDaysAgo + hours(5),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -81,8 +98,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [commentMock3],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    createdAt: twelveDaysAgo,
+    updatedAt: twelveDaysAgo + hours(1),
   },
 ];
 
@@ -98,8 +115,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityMedium,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    createdAt: todayMorning - hours(1),
+    updatedAt: todayMorning,
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -111,8 +128,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-23 14:28").valueOf(),
+    createdAt: threeDaysAgo - hours(4),
+    updatedAt: yesterdayAfternoon,
   },
 ];
 
@@ -126,8 +143,8 @@ export const inProgressIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: fortyDaysAgo + days(2),
+    updatedAt: twelveDaysAgo,
   },
 ];
 

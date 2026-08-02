@@ -5,7 +5,8 @@ import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
+import { IssueId } from "@domain/issue";
+import { issueMatchesDateFilter } from "@domain/filter";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -23,8 +24,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search } = useProjectStore();
-  const emptyCategory = category.issues.length === 0;
+  const { search, dateFilter } = useProjectStore();
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
     : `issue/new?category=${category.type}`;
@@ -61,10 +61,15 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     [category.id]
   );
 
-  const filteredIssues = (): Issue[] =>
-    category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
-    });
+  const filteredIssuesList = category.issues.filter((issue) => {
+    const matchesSearch = issue.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesDate = issueMatchesDateFilter(issue.createdAt, dateFilter);
+    return matchesSearch && matchesDate;
+  });
+  const filteredCount = filteredIssuesList.length;
+  const isFilteredEmpty = filteredCount === 0;
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
@@ -110,7 +115,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
         <span className="flex gap-2">
           <span>{category.name}</span>
-          {!emptyCategory && <span>( {category.issues.length} )</span>}
+          {!isFilteredEmpty && <span>( {filteredCount} )</span>}
         </span>
         <Link
           to={issueLink}
@@ -125,10 +130,10 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         <div style={{ height: `${columnHeight}px` }}>
           <ScrollArea>
             <ul className="mt-1 max-w-[260px] px-3 pb-1">
-              {emptyCategory ? (
+              {isFilteredEmpty ? (
                 <EmptyCategory />
               ) : (
-                filteredIssues().map((issue, index) => (
+                filteredIssuesList.map((issue, index) => (
                   <li key={index} className="mb-2">
                     <IssueCard
                       issue={issue}
