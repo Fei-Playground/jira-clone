@@ -9,7 +9,13 @@ import {
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
 
-const createdAt = new Date("2022-01-18 11:00").valueOf();
+/** Relative timestamps so board date-filter presets stay meaningful in previews. */
+const daysAgo = (days: number, hour = 11, minute = 0): number => {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(hour, minute, 0, 0);
+  return d.valueOf();
+};
 
 // PROJECT 1
 export const todoIssuesMock1: Issue[] = [
@@ -23,8 +29,8 @@ export const todoIssuesMock1: Issue[] = [
     comments: [commentMock4, commentMock5],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    createdAt: daysAgo(2, 11, 0),
+    updatedAt: daysAgo(0, 15, 28),
   },
 ];
 
@@ -39,8 +45,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: daysAgo(0, 9, 15),
+    updatedAt: daysAgo(0, 9, 15),
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -52,8 +58,8 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    createdAt: daysAgo(12, 11, 0),
+    updatedAt: daysAgo(5, 17, 50),
   },
 ];
 
@@ -68,8 +74,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    createdAt: daysAgo(40, 11, 0),
+    updatedAt: daysAgo(35, 10, 51),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -81,8 +87,8 @@ export const doneIssuesMock1: Issue[] = [
     comments: [commentMock3],
     priority: priorityMedium,
     categoryType: "DONE",
-    createdAt,
-    updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    createdAt: daysAgo(20, 11, 0),
+    updatedAt: daysAgo(18, 2, 4),
   },
 ];
 
@@ -98,8 +104,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityMedium,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    createdAt: daysAgo(3, 11, 0),
+    updatedAt: daysAgo(1, 11, 1),
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -111,8 +117,8 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "TODO",
-    createdAt,
-    updatedAt: new Date("2022-01-23 14:28").valueOf(),
+    createdAt: daysAgo(60, 11, 0),
+    updatedAt: daysAgo(55, 14, 28),
   },
 ];
 
@@ -126,8 +132,8 @@ export const inProgressIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
-    updatedAt: createdAt,
+    createdAt: daysAgo(8, 11, 0),
+    updatedAt: daysAgo(1, 16, 0),
   },
 ];
 

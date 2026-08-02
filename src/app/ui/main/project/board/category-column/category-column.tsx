@@ -9,6 +9,7 @@ import { Issue, IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { issueMatchesDateFilter } from "@domain/filter";
 import { IssueCard, DropItem, DRAG_ISSUE_CARD } from "./issue-card";
 
 export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
@@ -23,7 +24,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search } = useProjectStore();
+  const { search, dateFilter } = useProjectStore();
   const emptyCategory = category.issues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
@@ -63,7 +64,11 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
 
   const filteredIssues = (): Issue[] =>
     category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
+      const matchesSearch = issue.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
+      const matchesDate = issueMatchesDateFilter(issue, dateFilter);
+      return matchesSearch && matchesDate;
     });
 
   useEffect(() => {
