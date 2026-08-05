@@ -11,7 +11,11 @@ const meta: Meta<typeof MainLayout> = {
   },
   decorators: [
     (Story) => {
-      return withRemixStub(withMainContext(Story));
+      return (
+        <div className="flex h-screen flex-col">
+          {withRemixStub(withMainContext(Story))}
+        </div>
+      );
     },
   ],
 };
