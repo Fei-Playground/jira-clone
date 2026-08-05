@@ -3,6 +3,7 @@ import { withThemeByClassName } from "@storybook/addon-themes";
 
 import "../src/app/styles/app-compiled.css";
 import "../src/app/styles/fonts.css";
+import "./storybook.css";
 
 const preview: Preview = {
   parameters: {

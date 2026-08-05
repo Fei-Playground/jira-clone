@@ -1,0 +1,12 @@
+/* Match app root layout (root.tsx uses h-full on html/body) so flex/h-full chains work */
+html,
+body,
+#storybook-root {
+  height: 100%;
+  margin: 0;
+}
+
+#storybook-root {
+  display: flex;
+  flex-direction: column;
+}

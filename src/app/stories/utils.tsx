@@ -13,7 +13,7 @@ export const withMainContext = (Story: Story): ReactElement => {
         specifiedTheme={Theme.LIGHT}
         specifiedPreference={Preference.SELECTED}
       >
-        <div className="w-full">
+        <div className="h-full w-full">
           <Story {...({} as Record<string, never>)} />
         </div>
       </ThemeProvider>
