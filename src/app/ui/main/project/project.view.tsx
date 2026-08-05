@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {
-  board: "Board",
+  board: "Sprint Board",
   analytics: "Analytics",
   backlog: "Backlog",
 };
@@ -32,7 +32,7 @@ export const ProjectView = ({
           </Link>
           <span className="mx-2">/</span>
           <span>{name}</span>
-          <h1 className="mb-5 mt-4 font-primary-black text-2xl">
+          <h1 className="mb-5 mt-4 font-primary-black text-2xl italic">
             {sectionTitle}
           </h1>
         </section>
