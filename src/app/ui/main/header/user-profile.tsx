@@ -1,6 +1,7 @@
-import { Form } from "react-router";
+import { Form, Link } from "react-router";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { FaPowerOff } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
 import cx from "classix";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
@@ -29,6 +30,20 @@ export const UserProfile = (): JSX.Element => {
           </DropdownMenu.Item>
           <DropdownMenu.Separator className="h-px bg-border" />
           <DropdownMenu.Item className="select-none p-1 !outline-none">
+            <Link to="/settings" className="block w-full">
+              <Button
+                color="neutral"
+                variant="subtlest"
+                type="button"
+                className="w-full"
+                aria-label="Open settings"
+              >
+                <IoSettingsOutline />
+                <span>Settings</span>
+              </Button>
+            </Link>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item className="select-none p-1 !outline-none">
             <Form action="action/logout" method="post">
               <Button
                 color="danger"
@@ -36,7 +51,6 @@ export const UserProfile = (): JSX.Element => {
                 type="submit"
                 onClick={(e) => e.stopPropagation()} // To prevent dropdown menu from closing
                 className="w-full"
-                // className="flex w-full items-center gap-2 rounded bg-transparent p-2 text-sm text-font-danger hover:bg-background-danger-hovered active:bg-background-danger-pressed"
                 aria-label="Log out"
               >
                 <FaPowerOff />
