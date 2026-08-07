@@ -1,7 +1,47 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withMainContext, withRemixStub } from "@app/stories/utils";
+import { createRoutesStub } from "react-router";
+import { userMock1 } from "@domain/user";
 import { projectMock1 } from "@domain/project";
+import { UserContextProvider } from "@app/store/user.store";
+import { ThemeProvider, Theme, Preference } from "@app/store/theme.store";
 import { ProjectView } from "./project.view";
+import { BoardView } from "./board/board.view";
+
+const withProjectBoardRoute = (Story: React.ComponentType) => {
+  const RemixStub = createRoutesStub([
+    {
+      path: "/",
+      Component: () => (
+        <UserContextProvider user={userMock1}>
+          <ThemeProvider
+            specifiedTheme={Theme.LIGHT}
+            specifiedPreference={Preference.SELECTED}
+          >
+            <div className="h-full w-full">
+              <Story />
+            </div>
+          </ThemeProvider>
+        </UserContextProvider>
+      ),
+      children: [
+        {
+          index: true,
+          Component: () => <BoardView project={projectMock1} />,
+        },
+        {
+          path: "board",
+          Component: () => <BoardView project={projectMock1} />,
+        },
+      ],
+    },
+  ]);
+
+  return (
+    <div className="h-screen">
+      <RemixStub initialEntries={["/board"]} />
+    </div>
+  );
+};
 
 const meta: Meta<typeof ProjectView> = {
   title: "Pages/Main/ProjectView",
@@ -9,11 +49,7 @@ const meta: Meta<typeof ProjectView> = {
   parameters: {
     layout: "fullscreen",
   },
-  decorators: [
-    (Story) => {
-      return withRemixStub(withMainContext(Story));
-    },
-  ],
+  decorators: [withProjectBoardRoute],
 };
 
 export default meta;
