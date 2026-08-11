@@ -79,9 +79,11 @@ const priorityBorderClass: Record<PriorityId, string> = {
 };
 
 const priorityBadgeClass: Record<PriorityId, string> = {
-  low: "bg-background-success text-font-success",
-  medium: "bg-background-warning text-font-warning",
-  high: "bg-background-danger text-font-danger",
+  // Bold fills + inverse text stay readable in both light and dark mode
+  // (subtle danger/warning/success backgrounds collapse into the card surface in dark).
+  low: "bg-background-success-bold text-font-inverse",
+  medium: "bg-background-warning-bold text-font-inverse",
+  high: "bg-background-danger-bold text-font-inverse",
 };
 
 const priorityLabel: Record<PriorityId, string> = {
@@ -116,7 +118,8 @@ export const IssueCardContent = ({
           </span>
           <span
             className={cx(
-              "flex items-center gap-1 rounded-full py-0.5 pl-1 pr-1.5",
+              // Force PriorityIcon accent colors to inherit inverse text on the bold fill
+              "flex items-center gap-1 rounded-full py-0.5 pl-1 pr-1.5 [&>span]:!text-current",
               priorityBadgeClass[priorityId]
             )}
             aria-label={`Priority: ${priorityId}`}
