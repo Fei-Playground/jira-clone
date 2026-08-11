@@ -13,7 +13,7 @@ export const withMainContext = (Story: Story): ReactElement => {
         specifiedTheme={Theme.LIGHT}
         specifiedPreference={Preference.SELECTED}
       >
-        <div className="w-full">
+        <div className="h-full w-full">
           <Story {...({} as Record<string, never>)} />
         </div>
       </ThemeProvider>
@@ -25,7 +25,7 @@ export const withRemixStub = (children: ReactElement) => {
   const RemixStub = createRoutesStub([
     {
       path: "/",
-      Component: () => children,
+      Component: () => <div className="h-full w-full">{children}</div>,
       action: async () => {
         return {
           status: 200,
@@ -34,5 +34,10 @@ export const withRemixStub = (children: ReactElement) => {
     },
   ]);
 
-  return <RemixStub />;
+  // Force the stub root to fill its parent so h-full chains (e.g. BoardView) resolve
+  return (
+    <div className="h-full w-full">
+      <RemixStub />
+    </div>
+  );
 };

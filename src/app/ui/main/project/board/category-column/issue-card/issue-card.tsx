@@ -72,6 +72,24 @@ interface Props {
   handleDragging: (isDragging: boolean) => void;
 }
 
+const priorityBorderClass: Record<PriorityId, string> = {
+  low: "border-l-border-success",
+  medium: "border-l-border-warning",
+  high: "border-l-border-danger",
+};
+
+const priorityBadgeClass: Record<PriorityId, string> = {
+  low: "bg-background-success text-font-success",
+  medium: "bg-background-warning text-font-warning",
+  high: "bg-background-danger text-font-danger",
+};
+
+const priorityLabel: Record<PriorityId, string> = {
+  low: "Low",
+  medium: "Med",
+  high: "High",
+};
+
 export const IssueCardContent = ({
   link,
   name,
@@ -80,9 +98,9 @@ export const IssueCardContent = ({
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
   <div
-    style={{ minWidth: "200px" }}
     className={cx(
-      "flex w-full cursor-pointer flex-col rounded border-none bg-elevation-surface-raised p-3 text-left shadow-xs duration-200 ease-in-out hover:bg-elevation-surface-raised-hovered active:bg-elevation-surface-raised-pressed",
+      "flex w-full cursor-pointer flex-col rounded border-l-[3px] border-solid border-y-transparent border-r-transparent bg-elevation-surface-raised p-3 text-left shadow-xs duration-200 ease-in-out hover:bg-elevation-surface-raised-hovered active:bg-elevation-surface-raised-pressed",
+      priorityBorderClass[priorityId],
       isSubmitting && "opacity-50"
     )}
   >
@@ -96,7 +114,18 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span
+            className={cx(
+              "flex items-center gap-1 rounded-full py-0.5 pl-1 pr-1.5",
+              priorityBadgeClass[priorityId]
+            )}
+            aria-label={`Priority: ${priorityId}`}
+          >
+            <PriorityIcon priority={priorityId} size={14} />
+            <span className="font-primary-bold text-2xs leading-none">
+              {priorityLabel[priorityId]}
+            </span>
+          </span>
         </div>
       </>
     </Link>

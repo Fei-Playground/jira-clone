@@ -82,7 +82,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   return (
     <div
       ref={dropRef as unknown as React.Ref<HTMLDivElement>}
-      className="relative flex h-full w-[260px] max-w-[260px] flex-col rounded-md bg-elevation-surface-sunken"
+      className="relative flex h-full w-[280px] min-w-[280px] flex-shrink-0 flex-col rounded-md bg-elevation-surface-sunken"
     >
       {/* Column drop area */}
       <div
