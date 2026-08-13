@@ -224,9 +224,9 @@
   --color-background-brand-subtlest: var(--Blue100);
   --color-background-brand-subtlest-hovered: var(--Blue200);
   --color-background-brand-subtlest-pressed: var(--Blue300);
-  --color-background-brand-bold: var(--Blue700);
-  --color-background-brand-bold-hovered: var(--Blue800);
-  --color-background-brand-bold-pressed: var(--Blue900);
+  --color-background-brand-bold: var(--Blue800);
+  --color-background-brand-bold-hovered: var(--Blue900);
+  --color-background-brand-bold-pressed: var(--Blue1000);
   --color-background-brand-boldest: var(--Blue1000);
   --color-background-brand-boldest-hovered: var(--Blue900);
   --color-background-brand-boldest-pressed: var(--Blue800);
@@ -362,9 +362,9 @@
   --color-background-brand-subtlest: var(--Blue1000);
   --color-background-brand-subtlest-hovered: var(--Blue900);
   --color-background-brand-subtlest-pressed: var(--Blue800);
-  --color-background-brand-bold: var(--Blue400);
-  --color-background-brand-bold-hovered: var(--Blue300);
-  --color-background-brand-bold-pressed: var(--Blue200);
+  --color-background-brand-bold: var(--Blue500);
+  --color-background-brand-bold-hovered: var(--Blue400);
+  --color-background-brand-bold-pressed: var(--Blue300);
   --color-background-brand-boldest: var(--Blue100);
   --color-background-brand-boldest-hovered: var(--Blue200);
   --color-background-brand-boldest-pressed: var(--Blue300);
