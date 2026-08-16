@@ -44,6 +44,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
       ...comment,
       createdAt: comment.createdAt.getTime(),
       updatedAt: comment.updatedAt.getTime(),
+      parentId: comment.parentId ?? undefined,
       user: dnull({
         ...comment.user,
         createdAt: comment.user.createdAt.getTime(),
@@ -78,6 +79,7 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            ...(comment.parentId ? { parent: { connect: { id: comment.parentId } } } : {}),
           };
 
           return {
@@ -108,6 +110,7 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            ...(comment.parentId ? { parent: { connect: { id: comment.parentId } } } : {}),
           };
 
           return {

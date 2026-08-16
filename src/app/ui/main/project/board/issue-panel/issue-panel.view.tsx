@@ -173,14 +173,20 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
+                        {comments
+                          .filter((c) => !c.parentId)
+                          .map((comment) => (
+                            <li key={comment.id}>
+                              <ViewComment
+                                comment={comment}
+                                replies={comments.filter(
+                                  (c) => c.parentId === comment.id
+                                )}
+                                removeComment={removeComment}
+                                addComment={addComment}
+                              />
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   </section>

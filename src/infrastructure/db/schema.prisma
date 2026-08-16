@@ -60,14 +60,17 @@ model Issue {
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  issue     Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  id        String    @id @default(uuid())
+  issue     Issue     @relation(fields: [issueId], references: [id], onDelete: Cascade)
   issueId   String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
   userId    String
   message   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Priority {

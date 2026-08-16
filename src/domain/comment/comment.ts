@@ -5,6 +5,7 @@ export interface Comment {
   id: CommentId;
   user: User;
   message: string;
+  parentId?: string;
   createdAt: number;
   updatedAt: number;
 }
