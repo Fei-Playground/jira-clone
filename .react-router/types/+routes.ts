@@ -66,6 +66,15 @@ type Pages = {
       "*": string;
     };
   };
+  "/baraka": {
+    params: {};
+  };
+  "/nutridate": {
+    params: {};
+  };
+  "/ops-dashboard": {
+    params: {};
+  };
   "/*": {
     params: {
       "*": string;
@@ -76,7 +85,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/*";
+    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/baraka" | "/nutridate" | "/ops-dashboard" | "/*";
   };
   "routes/index.tsx": {
     id: "routes/index";
@@ -134,6 +143,18 @@ type RouteFiles = {
     id: "routes/__main/projects.$projectId/$";
     page: "/projects/:projectId/*";
   };
+  "routes/baraka.tsx": {
+    id: "routes/baraka";
+    page: "/baraka";
+  };
+  "routes/nutridate.tsx": {
+    id: "routes/nutridate";
+    page: "/nutridate";
+  };
+  "routes/ops-dashboard.tsx": {
+    id: "routes/ops-dashboard";
+    page: "/ops-dashboard";
+  };
   "routes/404.tsx": {
     id: "routes/404";
     page: "/*";
@@ -156,5 +177,8 @@ type RouteModules = {
   "routes/__main/projects.$projectId/board/issue/$issueId": typeof import("./src/app/routes/__main/projects.$projectId/board/issue/$issueId.tsx");
   "routes/__main/projects.$projectId/server-error": typeof import("./src/app/routes/__main/projects.$projectId/server-error.tsx");
   "routes/__main/projects.$projectId/$": typeof import("./src/app/routes/__main/projects.$projectId/$.tsx");
+  "routes/baraka": typeof import("./src/app/routes/baraka.tsx");
+  "routes/nutridate": typeof import("./src/app/routes/nutridate.tsx");
+  "routes/ops-dashboard": typeof import("./src/app/routes/ops-dashboard.tsx");
   "routes/404": typeof import("./src/app/routes/404.tsx");
 };
