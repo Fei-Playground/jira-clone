@@ -21,5 +21,9 @@ export default [
     ]),
   ]),
 
+  route("baraka", "routes/baraka.tsx"),
+  route("nutridate", "routes/nutridate.tsx"),
+  route("ops-dashboard", "routes/ops-dashboard.tsx"),
+
   route("*", "routes/404.tsx"),
 ] satisfies RouteConfig;
