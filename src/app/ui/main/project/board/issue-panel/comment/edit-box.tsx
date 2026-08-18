@@ -74,6 +74,7 @@ export const EditBox = ({
           Save
         </Button>
         <Button
+          type="button"
           color="neutral"
           variant="text"
           className="px-4 py-2.5"

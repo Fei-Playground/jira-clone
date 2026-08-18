@@ -42,6 +42,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     reporter: dnull(issueDb.reporter),
     comments: issueDb.comments.map((comment) => ({
       ...comment,
+      parentId: comment.parentId ?? undefined,
       createdAt: comment.createdAt.getTime(),
       updatedAt: comment.updatedAt.getTime(),
       user: dnull({
@@ -78,6 +79,7 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId ?? null,
           };
 
           return {
@@ -108,6 +110,7 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            parentId: comment.parentId ?? null,
           };
 
           return {

@@ -7,4 +7,5 @@ export interface Comment {
   message: string;
   createdAt: number;
   updatedAt: number;
+  parentId?: string;
 }

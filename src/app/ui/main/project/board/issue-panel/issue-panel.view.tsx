@@ -131,6 +131,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [fetcher.state, fetcher.data, fetcher.formData]);
 
+  // Separate top-level comments from replies
+  const topLevelComments = comments.filter((c) => !c.parentId);
+  const getReplies = (commentId: string) =>
+    comments.filter((c) => c.parentId === commentId);
+
   return (
     <>
       <Dialog.Root open={true}>
@@ -173,11 +178,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {topLevelComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
+                              replies={getReplies(comment.id)}
                               removeComment={removeComment}
+                              addComment={addComment}
                             />
                           </li>
                         ))}
