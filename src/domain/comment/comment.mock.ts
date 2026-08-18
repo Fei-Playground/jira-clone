@@ -1,8 +1,29 @@
 import { userMock1, usersMock } from "@domain/user";
-import { Comment } from "./comment";
+import { Comment, Reply } from "./comment";
 
 const createdAt = Date.now();
 const updatedAt = Date.now();
+
+const replyMock1: Reply = {
+  id: "reply-mock-1",
+  user: usersMock[1], // Woody
+  message: "I agree, this is a great point!",
+  createdAt,
+};
+
+const replyMock2: Reply = {
+  id: "reply-mock-2",
+  user: usersMock[2], // Buzz Lightyear
+  message: "To infinity and beyond — great accessibility too!",
+  createdAt,
+};
+
+const replyMock3: Reply = {
+  id: "reply-mock-3",
+  user: usersMock[0], // Daniel Serrano
+  message: "Thanks for the clarification!",
+  createdAt,
+};
 
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
@@ -11,6 +32,7 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [replyMock1, replyMock2],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +41,7 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  replies: [replyMock3],
 };
 
 export const commentMock3: Comment = {
