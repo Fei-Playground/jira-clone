@@ -2,12 +2,10 @@ import { useState } from "react";
 import { useFetcher } from "react-router";
 import { v4 as uuid } from "uuid";
 import cx from "classix";
-import { Comment, CommentId, Reply } from "@domain/comment";
+import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
-import { ReplyBox } from "./reply-box";
-import { ViewReply } from "./view-reply";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
@@ -20,7 +18,6 @@ export const ViewComment = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(comment.message);
-  const [replies, setReplies] = useState<Reply[]>(comment.replies ?? []);
   const fetcher = useFetcher();
 
   const isNotSelfComment = comment.user.id !== user.id;
