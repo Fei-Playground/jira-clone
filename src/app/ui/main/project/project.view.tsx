@@ -32,7 +32,7 @@ export const ProjectView = ({
           </Link>
           <span className="mx-2">/</span>
           <span>{name}</span>
-          <h1 className="mb-5 mt-4 font-primary-black text-2xl">
+          <h1 className="mb-8 mt-6 font-primary-black text-2xl">
             {sectionTitle}
           </h1>
         </section>

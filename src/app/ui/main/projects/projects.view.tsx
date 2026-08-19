@@ -9,8 +9,8 @@ export const ProjectsView = ({
 }: ProjectsViewProps): JSX.Element => {
   return (
     <div className="p-6">
-      <h1 className="font-primary-black text-2xl">PROJECTS</h1>
-      <div className="mt-8">
+      <h1 className="mb-6 mt-2 font-primary-black text-2xl">PROJECTS</h1>
+      <div className="mt-4">
         <Link to="new" className="flex w-fit">
           <Button color="neutral" variant="subtlest" className="py-3 pl-3 pr-4">
             <span>
