@@ -1,13 +1,16 @@
 import { useState, useCallback, useEffect } from "react";
-import { Outlet, useNavigate, useRevalidator } from "react-router";
+import { Link, Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { AiOutlinePlus } from "react-icons/ai";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
+import { Button } from "@app/components/button";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { useSortBy } from "@app/hooks/useSortBy";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
@@ -26,6 +29,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-auto">
+            <CreateIssueButton />
+          </div>
         </section>
         <DndProvider backend={HTML5Backend}>
           <Categories categories={project.categories} />
@@ -33,6 +39,25 @@ export const BoardView = ({ project }: Props): JSX.Element => {
         <Outlet />
       </div>
     </ProjectContextProvider>
+  );
+};
+
+const CreateIssueButton = (): JSX.Element => {
+  const sortBy = useSortBy();
+  const issueLink = sortBy ? `issue/new?sortBy=${sortBy}` : "issue/new";
+
+  return (
+    <Link to={issueLink} className="flex w-fit">
+      <Button
+        color="primary"
+        variant="contained"
+        className="py-2.5 pl-3 pr-4 shadow-sm"
+        aria-label="Create issue"
+      >
+        <AiOutlinePlus size={20} />
+        <span className="leading-4">Create issue</span>
+      </Button>
+    </Link>
   );
 };
 
