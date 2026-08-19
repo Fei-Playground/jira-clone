@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
-import { todoIssuesMock1 } from "@domain/issue";
+import { inProgressIssuesMock1, todoIssuesMock1 } from "@domain/issue";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,6 +25,8 @@ export default meta;
 type Story = StoryObj<typeof IssuePanel>;
 
 const issue = todoIssuesMock1[0];
+/** Issue that includes a nested reply for the reply affordance. */
+const issueWithThread = inProgressIssuesMock1[1];
 
 export const Default: Story = {
   args: {
@@ -34,9 +36,6 @@ export const Default: Story = {
 
 export const WithComments: Story = {
   args: {
-    issue: {
-      ...issue,
-      comments: issue.comments,
-    },
+    issue: issueWithThread,
   },
 };

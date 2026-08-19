@@ -8,6 +8,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router";
+import { v4 as uuid } from "uuid";
 import * as Dialog from "@app/components/dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
@@ -88,15 +89,32 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    setComments((prev) => [...prev, newComment]);
+  };
+
+  const addReply = (parentId: CommentId, message: string): void => {
+    const reply: Comment = {
+      id: "temp-" + uuid(),
+      user,
+      message,
+      parentId,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    setComments((prev) => [...prev, reply]);
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
+    setComments((prev) =>
+      prev.filter(
+        (comment) => comment.id !== commentId && comment.parentId !== commentId
+      )
     );
-    setComments(updatedComments);
   };
+
+  const topLevelComments = comments.filter((comment) => !comment.parentId);
+  const getReplies = (parentId: CommentId): Comment[] =>
+    comments.filter((comment) => comment.parentId === parentId);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -173,11 +191,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {topLevelComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
+                              getReplies={getReplies}
                               removeComment={removeComment}
+                              addReply={addReply}
                             />
                           </li>
                         ))}
