@@ -47,3 +47,33 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+/** Reply to commentMock1 — shows threaded reply UI in previews. */
+export const commentMock1Reply: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  user: userMock1, // Daniel Serrano
+  message: "Good call — I'll double-check reporter permissions before shipping.",
+  createdAt: createdAt + 60_000,
+  updatedAt: createdAt + 60_000,
+  parentId: commentMock1.id,
+};
+
+/** Nested reply under commentMock1Reply. */
+export const commentMock1ReplyNested: Comment = {
+  id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  user: usersMock[3], // Jessie
+  message: "Thanks! That should cover the edge cases we hit last sprint.",
+  createdAt: createdAt + 120_000,
+  updatedAt: createdAt + 120_000,
+  parentId: commentMock1Reply.id,
+};
+
+/** Reply to commentMock2. */
+export const commentMock2Reply: Comment = {
+  id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
+  user: usersMock[2], // Buzz Lightyear
+  message: "Noted — I'll leave editing to the original author.",
+  createdAt: createdAt + 90_000,
+  updatedAt: createdAt + 90_000,
+  parentId: commentMock2.id,
+};

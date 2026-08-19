@@ -29,6 +29,26 @@ import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
+const collectCommentIdsWithDescendants = (
+  allComments: Comment[],
+  rootId: CommentId
+): CommentId[] => {
+  const ids: CommentId[] = [rootId];
+  const queue: CommentId[] = [rootId];
+
+  while (queue.length > 0) {
+    const currentId = queue.shift() as CommentId;
+    for (const child of allComments) {
+      if (child.parentId === currentId) {
+        ids.push(child.id);
+        queue.push(child.id);
+      }
+    }
+  }
+
+  return ids;
+};
+
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
@@ -88,15 +108,27 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    setComments((prev) => [...prev, newComment]);
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
+    const idsToRemove = collectCommentIdsWithDescendants(comments, commentId);
+
+    setComments((prev) =>
+      prev.filter((comment) => !idsToRemove.includes(comment.id))
     );
-    setComments(updatedComments);
+
+    for (const id of idsToRemove) {
+      if (id.startsWith("temp-")) continue;
+
+      fetcher.submit(
+        { commentId: id, _action: "deleteComment" },
+        { method: "delete" }
+      );
+    }
   };
+
+  const topLevelComments = comments.filter((comment) => !comment.parentId);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -173,10 +205,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {topLevelComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
+                              comments={comments}
+                              addComment={addComment}
                               removeComment={removeComment}
                             />
                           </li>

@@ -7,4 +7,6 @@ export interface Comment {
   message: string;
   createdAt: number;
   updatedAt: number;
+  /** When set, this comment is a reply to another comment. */
+  parentId?: CommentId;
 }
