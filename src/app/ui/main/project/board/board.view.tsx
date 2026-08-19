@@ -51,10 +51,10 @@ const CreateIssueButton = (): JSX.Element => {
       <Button
         color="primary"
         variant="contained"
-        className="py-2.5 pl-3 pr-4 shadow-sm"
+        className="gap-1.5 px-2.5 py-1.5 text-sm shadow-sm"
         aria-label="Create issue"
       >
-        <AiOutlinePlus size={20} />
+        <AiOutlinePlus size={16} />
         <span className="leading-4">Create issue</span>
       </Button>
     </Link>
