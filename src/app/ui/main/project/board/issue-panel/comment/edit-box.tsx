@@ -9,10 +9,11 @@ export const EditBox = ({
   autofocus,
   save,
   cancel,
+  placeholder: placeholderProp,
 }: EditBoxProps): JSX.Element => {
   const [message, setMessage] = useState<string>(defaultMessage);
   const [initError, setInitError] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(Boolean(autofocus));
 
   const messageIsValid = (): boolean => {
     return message.length > 0 && !textAreOnlySpaces(message);
@@ -42,7 +43,7 @@ export const EditBox = ({
   const isError = initError && !messageIsValid();
   const placeholder = isError
     ? "Message cannot be empty"
-    : "Add your comment...";
+    : (placeholderProp ?? "Add your comment...");
 
   return (
     <div className="w-full">
@@ -92,4 +93,5 @@ interface EditBoxProps {
   autofocus?: boolean;
   save: (commentText: string) => void;
   cancel?: () => void;
+  placeholder?: string;
 }

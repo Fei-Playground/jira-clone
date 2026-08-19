@@ -47,3 +47,13 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+/** Reply to commentMock1 — shows nested reply UI in previews. */
+export const commentMock6: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  user: userMock1, // Daniel Serrano
+  message: "Good call — that keeps the panel readable when several people chime in.",
+  parentId: commentMock1.id,
+  createdAt,
+  updatedAt,
+};
