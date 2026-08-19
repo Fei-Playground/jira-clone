@@ -34,12 +34,14 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
         return "bg-background-neutral-bold text-font-inverse hover:bg-background-neutral-bold-hovered active:bg-background-neutral-bold-pressed";
       }
 
+      // One step stronger than the default neutral fill so secondary actions stay
+      // readable without competing with primary buttons.
       if (variant === "subtlest") {
-        return "bg-background-neutral hover:bg-background-neutral-hovered active:bg-background-neutral-pressed";
+        return "bg-background-neutral-hovered text-font hover:bg-background-neutral-pressed active:bg-background-interaction";
       }
 
       if (variant === "text") {
-        return "text-font-subtle hover:bg-background-neutral-hovered active:bg-background-neutral-pressed";
+        return "text-font hover:bg-background-neutral-hovered active:bg-background-neutral-pressed";
       }
 
       return "";
