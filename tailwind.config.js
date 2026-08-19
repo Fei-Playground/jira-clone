@@ -199,8 +199,9 @@ module.exports = {
       "primary-black": ["CircularStdBlack", "sans-serif"],
     },
     boxShadow: {
-      xs: "rgba(0,0,0, 0.2) 0px 1px 1px, rgba(0,0,0, 0.2) 0px 0px 1px",
-      sm: "rgba(9, 30, 66, 0.25) 0px 1px 1px 0px, rgba(9, 30, 66, 0.31) 0px 0px 1px 0px",
+      // Softer card edges: lower-opacity lift + hairline so borders feel calmer
+      xs: "rgba(9, 30, 66, 0.08) 0px 1px 2px, rgba(9, 30, 66, 0.1) 0px 0px 1px",
+      sm: "rgba(9, 30, 66, 0.1) 0px 1px 2px 0px, rgba(9, 30, 66, 0.12) 0px 0px 1px 0px",
       md: "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
       lg: "rgba(14, 18, 22, 0.35) 0px 10px 38px -10px, rgba(14, 18, 22, 0.2) 0px 10px 20px -15px",
       blue: "5px 5px 20px 1px rgba(0, 82, 204, 0.2)",
