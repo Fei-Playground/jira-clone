@@ -23,6 +23,13 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
+import {
+  CommentFilters,
+  CommentFiltersValue,
+  DEFAULT_COMMENT_FILTERS,
+  filterComments,
+  getCommentAuthors,
+} from "./comment/comment-filters";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
@@ -32,6 +39,9 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [commentFilters, setCommentFilters] = useState<CommentFiltersValue>(
+    DEFAULT_COMMENT_FILTERS
+  );
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -97,6 +107,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     );
     setComments(updatedComments);
   };
+
+  const filteredComments = filterComments(comments, commentFilters, user.id);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -172,8 +184,15 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <div>
                         <CreateComment addComment={addComment} />
                       </div>
+                      {comments.length > 0 && (
+                        <CommentFilters
+                          value={commentFilters}
+                          onChange={setCommentFilters}
+                          authors={getCommentAuthors(comments)}
+                        />
+                      )}
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {filteredComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
@@ -182,6 +201,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                           </li>
                         ))}
                       </ul>
+                      {comments.length > 0 && filteredComments.length === 0 && (
+                        <p className="mt-6 text-sm text-font-subtlest">
+                          No comments match your filters
+                        </p>
+                      )}
                     </div>
                   </section>
                   <section className="col-span-2 space-y-10">
