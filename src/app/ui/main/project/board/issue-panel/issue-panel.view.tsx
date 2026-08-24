@@ -92,11 +92,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
-    );
-    setComments(updatedComments);
+    const idsToRemove = collectCommentIdsWithDescendants(comments, commentId);
+    setComments(comments.filter((comment) => !idsToRemove.has(comment.id)));
   };
+
+  const topLevelComments = comments.filter((comment) => !comment.parentId);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -173,10 +173,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {topLevelComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
+                              comments={comments}
+                              addComment={addComment}
                               removeComment={removeComment}
                             />
                           </li>
@@ -261,3 +263,26 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
 interface Props {
   issue?: Issue;
 }
+
+/** Collect a comment id and every nested reply id under it. */
+const collectCommentIdsWithDescendants = (
+  allComments: Comment[],
+  rootId: CommentId
+): Set<CommentId> => {
+  const ids = new Set<CommentId>([rootId]);
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const comment of allComments) {
+      if (
+        comment.parentId &&
+        ids.has(comment.parentId) &&
+        !ids.has(comment.id)
+      ) {
+        ids.add(comment.id);
+        grew = true;
+      }
+    }
+  }
+  return ids;
+};
