@@ -47,3 +47,21 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+export const commentMock6: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  user: userMock1, // Daniel Serrano
+  message: "Good catch — that permission model keeps edits intentional.",
+  parentId: commentMock1.id,
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock7: Comment = {
+  id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  user: usersMock[2], // Buzz Lightyear
+  message: "Keyboard support has been a big win for power users.",
+  parentId: commentMock3.id,
+  createdAt,
+  updatedAt,
+};
