@@ -3,13 +3,14 @@ import {
   Form,
   useActionData,
   useSearchParams,
-  useNavigation,
   useFetcher,
   useLocation,
   useNavigate,
 } from "react-router";
 import * as Dialog from "@app/components/dialog";
+import * as AlertDialog from "@app/components/alert-dialog";
 import { toast } from "react-toastify";
+import { MdLockOutline } from "react-icons/md";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
@@ -20,6 +21,7 @@ import { Button } from "@app/components/button";
 import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
@@ -30,8 +32,13 @@ import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
+  const isExistingIssue = Boolean(issue?.id);
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [isDirty, setIsDirty] = useState(!isExistingIssue);
+  const [titleValue, setTitleValue] = useState(issue?.name || "");
+  const [titleTouched, setTitleTouched] = useState(false);
+  const [showUnsavedCloseDialog, setShowUnsavedCloseDialog] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -41,32 +48,53 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const actionData = useActionData() as IssueActionData;
   const fetcher = useFetcher();
   const params = useSearchParams();
-  const transition = useNavigation();
   const location = useLocation();
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
   const userIsNotReporter = user.id !== reporter.id;
+  const isSubmitting = fetcher.state !== "idle";
+  const primaryActionLabel = isExistingIssue ? "Save" : "Create";
+  const unsavedCommentsCount = comments.filter((comment) =>
+    comment.id.startsWith("temp-")
+  ).length;
+
+  const titleError =
+    titleTouched || actionData?.errors?.name
+      ? titleValue.length === 0 || textAreOnlySpaces(titleValue)
+        ? actionData?.errors?.name || "Title is required"
+        : undefined
+      : undefined;
+
+  const markDirty = useCallback(() => {
+    setIsDirty(true);
+  }, []);
 
   const postData = useCallback(
     (formTarget: HTMLFormElement) => {
-      const isExistingIssue = Boolean(issue?.id);
+      setTitleTouched(true);
+      if (titleValue.length === 0 || textAreOnlySpaces(titleValue)) {
+        return;
+      }
+
       const formData = new FormData(formTarget);
       const action = isExistingIssue ? "update" : "create";
       formData.set("comments", JSON.stringify(comments));
       formData.set("_action", action);
 
+      setIsDirty(false);
       fetcher.submit(formData, {
         method: "post",
       });
     },
-    [comments, fetcher, issue?.id]
+    [comments, fetcher, isExistingIssue, titleValue]
   );
 
   const handleProgrammaticSubmit = useCallback((): void => {
+    if (userIsNotReporter || isSubmitting) return;
     if (formRef.current) {
       postData(formRef.current);
     }
-  }, [postData]);
+  }, [isSubmitting, postData, userIsNotReporter]);
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -83,19 +111,37 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     postData(e.currentTarget);
   };
 
-  const handleProgrammaticClose = () => {
+  const closePanel = () => {
     setIsOpen(false);
   };
 
+  const handleProgrammaticClose = () => {
+    if (isDirty && !userIsNotReporter) {
+      setShowUnsavedCloseDialog(true);
+      return;
+    }
+    closePanel();
+  };
+
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    setComments((prev) => [...prev, newComment]);
+    markDirty();
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
+    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    markDirty();
+  };
+
+  const updateComment = (commentId: CommentId, message: string): void => {
+    setComments((prev) =>
+      prev.map((comment) =>
+        comment.id === commentId
+          ? { ...comment, message, updatedAt: Date.now() }
+          : comment
+      )
     );
-    setComments(updatedComments);
+    markDirty();
   };
 
   useEffect(() => {
@@ -126,6 +172,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       );
       if (formAction === "create") {
         toast.success("Issue created successfully");
+      } else if (formAction === "update") {
+        toast.success("Issue updated successfully");
       }
       wasSubmitting.current = false;
     }
@@ -147,28 +195,86 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                   userIsNotReporter ||
                   defaultIssuesIds.includes(issue?.id || "")
                 }
+                onClose={handleProgrammaticClose}
               />
+              {userIsNotReporter && (
+                <div
+                  className="mt-4 flex items-center gap-2 rounded bg-background-warning px-3 py-2 text-sm text-font-warning"
+                  role="status"
+                >
+                  <MdLockOutline size={18} aria-hidden />
+                  <span>
+                    Only the reporter can edit this issue. You can still add
+                    comments.
+                  </span>
+                </div>
+              )}
+              {isDirty && !userIsNotReporter && (
+                <div
+                  className="mt-4 flex items-center justify-between gap-3 rounded bg-background-info px-3 py-2 text-sm text-font-info"
+                  role="status"
+                >
+                  <span>You have unsaved changes</span>
+                  <span className="font-primary-light text-2xs text-opacity-80">
+                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to{" "}
+                    {primaryActionLabel.toLowerCase()}
+                  </span>
+                </div>
+              )}
               <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
-                <div className="grid grid-cols-5 gap-16">
-                  <section className="col-span-3">
+                <div className="grid grid-cols-1 gap-10 md:grid-cols-5 md:gap-16">
+                  <section className="md:col-span-3">
                     <div className="my-5 -ml-3 mb-6">
                       <Dialog.Title asChild>
                         <Title
                           initTitle={issue?.name || ""}
                           readOnly={userIsNotReporter}
-                          error={actionData?.errors?.name}
+                          error={titleError}
+                          onValueChange={(value) => {
+                            setTitleValue(value);
+                            markDirty();
+                          }}
+                          onTouched={() => setTitleTouched(true)}
+                          readOnlyReason="Only the reporter can edit the title"
                         />
                       </Dialog.Title>
                     </div>
-                    <p className="font-primary-black text-font">Description</p>
+                    <div className="mb-1 flex items-center gap-2">
+                      <p className="font-primary-black text-font">
+                        Description
+                      </p>
+                      {!userIsNotReporter && (
+                        <span className="font-primary-light text-2xs text-font-subtlest">
+                          Optional
+                        </span>
+                      )}
+                    </div>
                     <div className="-ml-3 mb-6">
                       <Description
                         initDescription={issue?.description || ""}
                         readOnly={userIsNotReporter}
+                        onValueChange={markDirty}
+                        readOnlyReason="Only the reporter can edit the description"
                       />
                     </div>
                     <div>
-                      <p className="font-primary-black text-font">Comments</p>
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <p className="font-primary-black text-font">Comments</p>
+                        {comments.length > 0 && (
+                          <span className="rounded-full bg-background-neutral px-2 py-0.5 text-2xs text-font-subtlest">
+                            {comments.length}
+                          </span>
+                        )}
+                      </div>
+                      {unsavedCommentsCount > 0 && !userIsNotReporter && (
+                        <p className="mt-1 font-primary-light text-2xs text-font-warning">
+                          {unsavedCommentsCount === 1
+                            ? "1 new comment"
+                            : `${unsavedCommentsCount} new comments`}{" "}
+                          will be saved when you{" "}
+                          {primaryActionLabel.toLowerCase()} the issue.
+                        </p>
+                      )}
                       <div>
                         <CreateComment addComment={addComment} />
                       </div>
@@ -178,28 +284,37 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              updateComment={updateComment}
                             />
                           </li>
                         ))}
                       </ul>
                     </div>
                   </section>
-                  <section className="col-span-2 space-y-10">
+                  <section className="space-y-10 md:col-span-2">
                     <div>
                       <p className="mb-1">Status</p>
                       <SelectStatus
                         initStatus={issue?.categoryType || initStatus}
+                        disabled={userIsNotReporter}
+                        onValueChange={markDirty}
                       />
                     </div>
                     <div>
                       <p className="mb-1">Priority</p>
                       <SelectPriority
                         initPriority={issue?.priority.id || "low"}
+                        disabled={userIsNotReporter}
+                        onValueChange={markDirty}
                       />
                     </div>
                     <div>
-                      <p className="mb-1">Asignee</p>
-                      <SelectAsignee initAsignee={issue?.asignee || user} />
+                      <p className="mb-1">Assignee</p>
+                      <SelectAsignee
+                        initAsignee={issue?.asignee || user}
+                        disabled={userIsNotReporter}
+                        onValueChange={markDirty}
+                      />
                     </div>
                     <div>
                       <p className="mb-1">Reporter</p>
@@ -218,29 +333,34 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     </div>
                   </section>
                 </div>
-                <div className="mt-6 grid grid-cols-3 items-end">
-                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
+                <div className="mt-6 grid grid-cols-1 items-end gap-4 sm:grid-cols-3">
+                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:justify-self-start">
+                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to{" "}
+                    {primaryActionLabel.toLowerCase()}
                   </span>
                   <div className="flex justify-center">
                     <Button
                       type="submit"
                       size="lg"
                       className="w-fit"
-                      disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
+                      disabled={
+                        isSubmitting ||
+                        userIsNotReporter ||
+                        (!isDirty && isExistingIssue)
+                      }
+                      aria-label={`${primaryActionLabel} issue`}
                     >
-                      {transition.state !== "idle" ? (
+                      {isSubmitting ? (
                         <>
-                          Submmiting
+                          Saving
                           <Spinner />
                         </>
                       ) : (
-                        "Accept"
+                        primaryActionLabel
                       )}
                     </Button>
                   </div>
-                  <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:justify-self-end">
                     Press <Kbd>Esc</Kbd> to close
                   </span>
                 </div>
@@ -249,6 +369,36 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
           </Dialog.Overlay>
         </Dialog.Portal>
       </Dialog.Root>
+      <AlertDialog.Root
+        open={showUnsavedCloseDialog}
+        onOpenChange={setShowUnsavedCloseDialog}
+      >
+        <AlertDialog.Portal container={portalContainer}>
+          <AlertDialog.Overlay />
+          <AlertDialog.Content>
+            <AlertDialog.Title>Discard unsaved changes?</AlertDialog.Title>
+            <AlertDialog.Description>
+              You have unsaved changes on this issue. If you leave now, those
+              changes will be lost.
+            </AlertDialog.Description>
+            <div className="mt-8 flex w-full justify-end gap-4">
+              <AlertDialog.Cancel aria-label="Keep editing">
+                Keep editing
+              </AlertDialog.Cancel>
+              <AlertDialog.Action
+                type="button"
+                aria-label="Discard changes"
+                onClick={() => {
+                  setShowUnsavedCloseDialog(false);
+                  closePanel();
+                }}
+              >
+                Discard
+              </AlertDialog.Action>
+            </div>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
       {/* To avoid hydration issues because a missmatch with the server*/}
       <div
         ref={setPortalContainer}

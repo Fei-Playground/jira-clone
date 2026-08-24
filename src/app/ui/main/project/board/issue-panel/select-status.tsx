@@ -2,9 +2,14 @@ import { useState } from "react";
 import cx from "classix";
 import { CategoryId, CategoryType } from "@domain/category";
 import { useProjectStore } from "@app/ui/main/project";
+import { Tooltip } from "@app/components/tooltip";
 import * as Select from "@app/components/select";
 
-export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
+export const SelectStatus = ({
+  initStatus,
+  disabled,
+  onValueChange: onValueChangeProp,
+}: Props): JSX.Element => {
   const projectStore = useProjectStore();
   const categories = projectStore.project.categories;
   const initCategory = categories.find(
@@ -23,16 +28,20 @@ export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
 
   const onValueChange = (value: CategoryId): void => {
     setSelectedValue(value);
+    onValueChangeProp?.(value);
   };
 
-  return (
+  const select = (
     <Select.Root
       name="status"
       defaultValue={defaultValue}
       onValueChange={onValueChange}
+      disabled={disabled}
     >
       <Select.Trigger
         aria-label="Open status select"
+        disabled={disabled}
+        title={disabled ? "Only the reporter can change status" : undefined}
         className={cx(
           "!text-font-inverse hover:!opacity-80",
           selectedStatus === "TODO" &&
@@ -40,11 +49,12 @@ export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
           selectedStatus === "IN_PROGRESS" &&
             "hover:bg-background-accent-blue-bolder-hovered !bg-background-accent-blue-bolder",
           selectedStatus === "DONE" &&
-            "hover:bg-background-accent-green-bolder-hovered !bg-background-accent-green-bolder"
+            "hover:bg-background-accent-green-bolder-hovered !bg-background-accent-green-bolder",
+          disabled && "cursor-not-allowed opacity-60 hover:!opacity-60"
         )}
       >
         <Select.Value className="pt-1" />
-        <Select.TriggerIcon />
+        {!disabled && <Select.TriggerIcon />}
       </Select.Trigger>
       <Select.Content>
         <Select.ScrollUpButton />
@@ -73,8 +83,20 @@ export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
       </Select.Content>
     </Select.Root>
   );
+
+  if (disabled) {
+    return (
+      <Tooltip title="Only the reporter can change status" show>
+        {select}
+      </Tooltip>
+    );
+  }
+
+  return select;
 };
 
 interface Props {
   initStatus: CategoryType;
+  disabled?: boolean;
+  onValueChange?: (value: CategoryId) => void;
 }

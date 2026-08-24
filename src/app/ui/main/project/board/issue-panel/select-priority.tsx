@@ -1,31 +1,44 @@
 import { useState } from "react";
+import cx from "classix";
 import { PriorityId, prioritiesMock } from "@domain/priority";
 import { PriorityIcon } from "@app/components/priority-icon";
+import { Tooltip } from "@app/components/tooltip";
 import * as Select from "@app/components/select";
 
-export const SelectPriority = ({ initPriority }: Props): JSX.Element => {
+export const SelectPriority = ({
+  initPriority,
+  disabled,
+  onValueChange: onValueChangeProp,
+}: Props): JSX.Element => {
   const [selectValue, setSelectValue] = useState<PriorityId>(initPriority);
 
   const onValueChange = (value: string) => {
     const priority = value as PriorityId;
     setSelectValue(priority);
+    onValueChangeProp?.(priority);
   };
 
-  return (
+  const select = (
     <Select.Root
       name="priority"
       defaultValue={initPriority}
       onValueChange={onValueChange}
+      disabled={disabled}
     >
       <Select.Trigger
         aria-label="Open priority select"
-        className="text-xs uppercase"
+        disabled={disabled}
+        title={disabled ? "Only the reporter can change priority" : undefined}
+        className={cx(
+          "text-xs uppercase",
+          disabled && "cursor-not-allowed opacity-60"
+        )}
       >
         <div className="mr-2">
           <PriorityIcon priority={selectValue} />
         </div>
         <Select.Value />
-        <Select.TriggerIcon />
+        {!disabled && <Select.TriggerIcon />}
       </Select.Trigger>
       <Select.Content>
         <Select.ScrollUpButton />
@@ -47,8 +60,20 @@ export const SelectPriority = ({ initPriority }: Props): JSX.Element => {
       </Select.Content>
     </Select.Root>
   );
+
+  if (disabled) {
+    return (
+      <Tooltip title="Only the reporter can change priority" show>
+        {select}
+      </Tooltip>
+    );
+  }
+
+  return select;
 };
 
 interface Props {
   initPriority: PriorityId;
+  disabled?: boolean;
+  onValueChange?: (value: PriorityId) => void;
 }
