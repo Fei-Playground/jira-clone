@@ -12,22 +12,25 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
     textareaClassName,
     onFocus,
     onBlur,
+    onKeyDown,
+    onSelect,
+    onTextareaRef,
   } = props;
 
   const [textareaHeight, setTextareaHeight] = useState<number>(40);
-  const textareaRef = useRef<HTMLParagraphElement>(null);
+  const mirrorRef = useRef<HTMLParagraphElement>(null);
 
   const handleOnFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     const target = e.currentTarget;
     const length = target.value.length;
     // Place cursor at the end of the current text
     target.setSelectionRange(length, length);
-    if (onFocus) onFocus();
+    if (onFocus) onFocus(e);
   };
 
   const handleTitleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
-    const value = e.currentTarget.value;
-    setValue(value);
+    const next = e.currentTarget.value;
+    setValue(next);
   };
 
   const valueIsNotOnlySpaces = (): boolean => {
@@ -35,14 +38,15 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
   };
 
   useLayoutEffect(() => {
-    if (!textareaRef.current) return;
+    if (!mirrorRef.current) return;
 
-    setTextareaHeight(textareaRef.current.scrollHeight);
+    setTextareaHeight(mirrorRef.current.scrollHeight);
   }, [value]);
 
   return (
     <div className="relative">
       <textarea
+        ref={onTextareaRef}
         name={name}
         className={cx(
           "box-border w-full resize-none overflow-y-hidden rounded-md border-none bg-background-input p-3 text-font outline-2 hover:bg-background-input-hovered focus-visible:bg-background-input-pressed",
@@ -54,11 +58,15 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
         readOnly={readOnly}
         onFocus={handleOnFocus}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
+        onSelect={onSelect}
+        onClick={onSelect}
+        onKeyUp={onSelect}
         style={{ height: `${textareaHeight}px` }}
         autoFocus={autofocus}
       />
       <p
-        ref={textareaRef}
+        ref={mirrorRef}
         className={cx(
           "absolute left-0 top-0 -z-10 box-border overflow-y-hidden p-3 opacity-0",
           textareaClassName
@@ -78,6 +86,9 @@ interface TitleProps {
   autofocus?: boolean;
   readOnly?: boolean;
   textareaClassName?: string;
-  onFocus?: () => void;
-  onBlur?: () => void;
+  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onSelect?: (e: React.SyntheticEvent<HTMLTextAreaElement>) => void;
+  onTextareaRef?: (node: HTMLTextAreaElement | null) => void;
 }
