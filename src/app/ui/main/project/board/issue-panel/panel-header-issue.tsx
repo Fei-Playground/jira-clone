@@ -1,4 +1,4 @@
-import { Form, Link, useLocation } from "react-router";
+import { Form } from "react-router";
 import * as AlertDialog from "@app/components/alert-dialog";
 import cx from "classix";
 import { MdDeleteOutline } from "react-icons/md";
@@ -9,10 +9,8 @@ import { TaskIcon } from "@app/components/icons";
 export const PanelHeaderIssue = ({
   id,
   deleteDisabled,
+  onClose,
 }: PanelHeaderIssueProps): JSX.Element => {
-  const location = useLocation();
-  const previousUrl = location.pathname.split("/issue")[0];
-
   return (
     <div className="flex">
       <span className="flex flex-grow items-center">
@@ -22,13 +20,14 @@ export const PanelHeaderIssue = ({
         <span className="ml-1 text-font-subtlest text-opacity-80">{id}</span>
       </span>
       <DeleteIssueModalDialog disabled={deleteDisabled} />
-      <Link
-        to={previousUrl}
-        className="ml-3 flex cursor-pointer rounded border-none p-0.5 text-icon flex-center hover:bg-background-neutral"
+      <button
+        type="button"
+        onClick={onClose}
+        className="ml-3 flex cursor-pointer rounded border-none bg-transparent p-0.5 text-icon flex-center hover:bg-background-neutral"
         aria-label="Close issue panel"
       >
         <IoCloseOutline size={32} />
-      </Link>
+      </button>
     </div>
   );
 };
@@ -36,6 +35,7 @@ export const PanelHeaderIssue = ({
 interface PanelHeaderIssueProps {
   id: IssueId;
   deleteDisabled?: boolean;
+  onClose: () => void;
 }
 
 const DeleteIssueModalDialog = ({

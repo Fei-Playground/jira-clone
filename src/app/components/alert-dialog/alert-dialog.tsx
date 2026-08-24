@@ -19,7 +19,7 @@ export const Title = twix(
 );
 export const Description = twix(
   AlertDialog.Description,
-  "mt-8 flex w-full justify-end gap-4"
+  "font-primary-light text-font-subtle"
 );
 export const Cancel = ({ ...rest }: ButtonProps): JSX.Element => (
   <AlertDialog.Cancel asChild>
@@ -29,7 +29,9 @@ export const Cancel = ({ ...rest }: ButtonProps): JSX.Element => (
   </AlertDialog.Cancel>
 );
 export const Action = ({ children, ...rest }: ButtonProps): JSX.Element => (
-  <Button {...rest} color="danger">
-    {children}
-  </Button>
+  <AlertDialog.Action asChild>
+    <Button {...rest} color="danger">
+      {children}
+    </Button>
+  </AlertDialog.Action>
 );

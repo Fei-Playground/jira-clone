@@ -1,10 +1,16 @@
 import { useState } from "react";
+import cx from "classix";
 import { User, UserId } from "@domain/user";
 import { useProjectStore } from "@app/ui/main/project";
 import { UserAvatar } from "@app/components/user-avatar";
+import { Tooltip } from "@app/components/tooltip";
 import * as Select from "@app/components/select";
 
-export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
+export const SelectAsignee = ({
+  initAsignee,
+  disabled,
+  onValueChange: onValueChangeProp,
+}: Props): JSX.Element => {
   const projectStore = useProjectStore();
   const users = projectStore.project.users;
 
@@ -17,21 +23,28 @@ export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
 
     if (asignee) {
       setSelectedValue(asignee);
+      onValueChangeProp?.(asignee);
     }
   };
 
-  return (
+  const select = (
     <Select.Root
       name="asignee"
       defaultValue={initAsignee.id}
       onValueChange={onValueChange}
+      disabled={disabled}
     >
-      <Select.Trigger aria-label="Open asignee select">
+      <Select.Trigger
+        aria-label="Open asignee select"
+        disabled={disabled}
+        title={disabled ? "Only the reporter can change assignee" : undefined}
+        className={cx(disabled && "cursor-not-allowed opacity-60")}
+      >
         <div className="mr-2">
           <UserAvatar {...selectedValue} size={32} />
         </div>
         <Select.Value />
-        <Select.TriggerIcon />
+        {!disabled && <Select.TriggerIcon />}
       </Select.Trigger>
       <Select.Content>
         <Select.ScrollUpButton />
@@ -49,8 +62,20 @@ export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
       </Select.Content>
     </Select.Root>
   );
+
+  if (disabled) {
+    return (
+      <Tooltip title="Only the reporter can change assignee" show>
+        {select}
+      </Tooltip>
+    );
+  }
+
+  return select;
 };
 
 interface Props {
   initAsignee: User;
+  disabled?: boolean;
+  onValueChange?: (value: User) => void;
 }
