@@ -5,6 +5,8 @@ import {
   commentMock3,
   commentMock4,
   commentMock5,
+  commentMock6,
+  commentMock7,
 } from "@domain/comment";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
@@ -49,7 +51,7 @@ export const inProgressIssuesMock1: Issue[] = [
       "This will be reflected on the UI (e. g. which user created and issue or wrote a comment). A user can only see the projects they are assigned to. You can try this by creating a new project at the /projects page. To logout, go to the avatar dropdown (top right).",
     reporter: userMock2, // Woody
     asignee: usersMock[2], // Buzz Lightyear
-    comments: [commentMock1, commentMock2],
+    comments: [commentMock1, commentMock2, commentMock6],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
@@ -78,7 +80,7 @@ export const doneIssuesMock1: Issue[] = [
       'E. g., try Shift + N on the board page to create a new issue. By default, it will be created under the category "TO DO". Another common key combination is using Shift + S to save changes (try it on this very issue!).',
     reporter: userMock1,
     asignee: userMock1,
-    comments: [commentMock3],
+    comments: [commentMock3, commentMock7],
     priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
