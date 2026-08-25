@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
-import { todoIssuesMock1 } from "@domain/issue";
+import { todoIssuesMock1, inProgressIssuesMock1 } from "@domain/issue";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,19 +24,17 @@ const meta: Meta<typeof IssuePanel> = {
 export default meta;
 type Story = StoryObj<typeof IssuePanel>;
 
-const issue = todoIssuesMock1[0];
+const issueWithThreads = inProgressIssuesMock1[1];
+const issueDefault = todoIssuesMock1[0];
 
 export const Default: Story = {
   args: {
-    issue: issue,
+    issue: issueDefault,
   },
 };
 
 export const WithComments: Story = {
   args: {
-    issue: {
-      ...issue,
-      comments: issue.comments,
-    },
+    issue: issueWithThreads,
   },
 };

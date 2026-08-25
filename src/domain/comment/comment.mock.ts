@@ -13,10 +13,28 @@ export const commentMock1: Comment = {
   updatedAt,
 };
 
+export const commentMock1Reply: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  parentId: commentMock1.id,
+  user: userMock1, // Daniel Serrano
+  message: "Good catch — I'll note those permission rules in the project docs.",
+  createdAt,
+  updatedAt,
+};
+
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
   message: "And only the original poster of a comment can edit or delete it!",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock2Reply: Comment = {
+  id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  parentId: commentMock2.id,
+  user: usersMock[3], // Jessie
+  message: "Thanks — that keeps accidental edits from other teammates away.",
   createdAt,
   updatedAt,
 };
@@ -35,6 +53,15 @@ export const commentMock4: Comment = {
   user: userMock1, // Daniel Serrano
   message:
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock4Reply: Comment = {
+  id: "c3d4e5f6-a7b8-9012-cdef-123456789012",
+  parentId: commentMock4.id,
+  user: usersMock[6], // Ms. Potato
+  message: "Just tried it — the not-found page looks clear.",
   createdAt,
   updatedAt,
 };
