@@ -8,7 +8,7 @@ const meta: Meta<typeof SelectStatus> = {
   title: "Pages/Main/Project/Board/IssuePanel/SelectStatus",
   component: SelectStatus,
   parameters: {
-    layout: "centered",
+    layout: "padded",
   },
   argTypes: {
     initStatus: {
@@ -31,6 +31,16 @@ const meta: Meta<typeof SelectStatus> = {
 
 export default meta;
 type Story = StoryObj<typeof SelectStatus>;
+
+export const AllStatuses: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-start gap-3">
+      <SelectStatus initStatus={"TODO" as CategoryType} />
+      <SelectStatus initStatus={"IN_PROGRESS" as CategoryType} />
+      <SelectStatus initStatus={"DONE" as CategoryType} />
+    </div>
+  ),
+};
 
 export const Todo: Story = {
   args: {
