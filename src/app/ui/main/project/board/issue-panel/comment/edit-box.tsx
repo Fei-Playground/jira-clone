@@ -1,14 +1,16 @@
 import { useState } from "react";
 import cx from "classix";
-import { TextareaAutosize } from "@app/components/textarea-autosize";
+import { MentionTextarea } from "@app/components/mention-textarea";
 import { Button } from "@app/components/button";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
+import { User } from "@domain/user";
 
 export const EditBox = ({
   defaultMessage,
   autofocus,
   save,
   cancel,
+  users = [],
 }: EditBoxProps): JSX.Element => {
   const [message, setMessage] = useState<string>(defaultMessage);
   const [initError, setInitError] = useState<boolean>(false);
@@ -46,13 +48,14 @@ export const EditBox = ({
 
   return (
     <div className="w-full">
-      <TextareaAutosize
+      <MentionTextarea
         name="comment"
         value={message}
         setValue={setMessage}
         placeholder={placeholder}
         onFocus={onFocus}
         autofocus={autofocus}
+        users={users}
         textareaClassName={cx(
           "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
           isError &&
@@ -92,4 +95,5 @@ interface EditBoxProps {
   autofocus?: boolean;
   save: (commentText: string) => void;
   cancel?: () => void;
+  users?: User[];
 }

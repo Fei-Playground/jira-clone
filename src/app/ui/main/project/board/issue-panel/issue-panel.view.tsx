@@ -14,6 +14,7 @@ import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project/project.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
 import { Button } from "@app/components/button";
@@ -36,6 +37,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     null
   );
   const { user } = useUserStore();
+  const { project } = useProjectStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
   const actionData = useActionData() as IssueActionData;
@@ -52,7 +54,22 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       const isExistingIssue = Boolean(issue?.id);
       const formData = new FormData(formTarget);
       const action = isExistingIssue ? "update" : "create";
-      formData.set("comments", JSON.stringify(comments));
+
+      // Flatten nested comment tree into a single array for database upsert
+      // Each comment maintains its parentId for reconstruction on read
+      const flattenComments = (commentList: Comment[]): Comment[] => {
+        const result: Comment[] = [];
+        commentList.forEach((comment) => {
+          result.push(comment);
+          if (comment.replies && comment.replies.length > 0) {
+            result.push(...flattenComments(comment.replies));
+          }
+        });
+        return result;
+      };
+
+      const flatComments = flattenComments(comments);
+      formData.set("comments", JSON.stringify(flatComments));
       formData.set("_action", action);
 
       fetcher.submit(formData, {
@@ -92,10 +109,50 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
-    );
-    setComments(updatedComments);
+    // Filter recursively to remove comment from any level of the tree
+    const removeFromList = (list: Comment[]): Comment[] => {
+      return list
+        .filter((comment) => comment.id !== commentId)
+        .map((comment) => ({
+          ...comment,
+          replies: comment.replies
+            ? removeFromList(comment.replies)
+            : undefined,
+        }));
+    };
+    setComments(removeFromList(comments));
+  };
+
+  const addReply = (parentId: CommentId, message: string): void => {
+    const newReply: Comment = {
+      id: "temp-" + Date.now(),
+      user,
+      message,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      parentId,
+    };
+
+    // Traverse comment tree recursively to find parent and append reply
+    const addReplyToList = (list: Comment[]): Comment[] => {
+      return list.map((comment) => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply],
+          };
+        }
+        if (comment.replies) {
+          return {
+            ...comment,
+            replies: addReplyToList(comment.replies),
+          };
+        }
+        return comment;
+      });
+    };
+
+    setComments(addReplyToList(comments));
   };
 
   useEffect(() => {
@@ -170,7 +227,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <CreateComment
+                          addComment={addComment}
+                          users={project.users}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
                         {comments.map((comment) => (
@@ -178,6 +238,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              addReply={addReply}
+                              users={project.users}
                             />
                           </li>
                         ))}

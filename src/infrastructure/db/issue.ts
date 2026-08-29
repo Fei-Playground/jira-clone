@@ -17,9 +17,21 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
       reporter: true,
       category: true,
       priority: true,
+      // Load top-level comments (parentId=null) with nested replies
       comments: {
+        where: {
+          parentId: null,
+        },
         include: {
           user: true,
+          replies: {
+            include: {
+              user: true,
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
         },
         orderBy: {
           createdAt: "asc",
@@ -44,11 +56,23 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
       ...comment,
       createdAt: comment.createdAt.getTime(),
       updatedAt: comment.updatedAt.getTime(),
+      parentId: comment.parentId || undefined,
       user: dnull({
         ...comment.user,
         createdAt: comment.user.createdAt.getTime(),
         updatedAt: comment.user.updatedAt.getTime(),
       }),
+      replies: comment.replies?.map((reply) => ({
+        ...reply,
+        createdAt: reply.createdAt.getTime(),
+        updatedAt: reply.updatedAt.getTime(),
+        parentId: reply.parentId || undefined,
+        user: dnull({
+          ...reply.user,
+          createdAt: reply.user.createdAt.getTime(),
+          updatedAt: reply.user.updatedAt.getTime(),
+        }),
+      })),
     })),
     createdAt: issueDb.createdAt.getTime(),
     updatedAt: issueDb.updatedAt.getTime(),
@@ -74,10 +98,14 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
       priorityId: issue.priority,
       comments: {
         create: issue.comments.map((comment) => {
+          // Build comment with optional parentId reference for replies
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            ...(comment.parentId && {
+              parent: { connect: { id: comment.parentId } },
+            }),
           };
 
           return {
@@ -103,11 +131,15 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       priority: undefined,
       priorityId: issue.priority,
       comments: {
+        // Upsert flattened comment list; parentId links maintain tree structure
         upsert: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
             id: comment.id,
             message: comment.message,
             user: { connect: { id: comment.user.id } },
+            ...(comment.parentId && {
+              parent: { connect: { id: comment.parentId } },
+            }),
           };
 
           return {
