@@ -28,16 +28,21 @@ import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
+import { Attachments } from "./attachments";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  // commentMessage and replyingToId manage the create comment form state when replying to a comment
+  const [commentMessage, setCommentMessage] = useState<string>("");
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
   const { user } = useUserStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
+  const createCommentRef = useRef<HTMLTextAreaElement>(null);
   const actionData = useActionData() as IssueActionData;
   const fetcher = useFetcher();
   const params = useSearchParams();
@@ -78,6 +83,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     [handleProgrammaticSubmit]
   );
 
+  // Form submission handler that serializes comments to FormData
   const handleFormSumbit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     postData(e.currentTarget);
@@ -87,15 +93,55 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setIsOpen(false);
   };
 
+  // addComment handles both top-level comments and nested replies
+  // If replying to another comment, adds as a nested reply; otherwise adds as a top-level comment
   const addComment = (newComment: Comment): void => {
-    setComments([...comments, newComment]);
+    if (replyingToId) {
+      addReplyToComment(replyingToId, newComment);
+      setReplyingToId(null);
+    } else {
+      setComments([...comments, newComment]);
+    }
   };
 
+  // Removes a top-level comment from the list
   const removeComment = (commentId: CommentId): void => {
     const updatedComments = comments.filter(
       (comment) => comment.id !== commentId
     );
     setComments(updatedComments);
+  };
+
+  // Adds a reply to a specific parent comment, creating nested comment structure
+  const addReplyToComment = (
+    parentCommentId: CommentId,
+    reply: Comment
+  ): void => {
+    const updatedComments = comments.map((comment) => {
+      if (comment.id === parentCommentId) {
+        return {
+          ...comment,
+          replies: [...(comment.replies || []), reply],
+        };
+      }
+      return comment;
+    });
+    setComments(updatedComments);
+  };
+
+  // Initiates reply mode: sets parent id, adds @mention, and focuses the input at mention end
+  // Uses setTimeout to ensure DOM is updated before focusing (ref must be available)
+  const handleReply = (firstName: string, parentCommentId: CommentId) => {
+    setReplyingToId(parentCommentId);
+    const mention = `@${firstName} `;
+    setCommentMessage(mention);
+    setTimeout(() => {
+      if (createCommentRef.current) {
+        createCommentRef.current.focus();
+        const length = mention.length;
+        createCommentRef.current.setSelectionRange(length, length);
+      }
+    }, 0);
   };
 
   useEffect(() => {
@@ -113,6 +159,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     }
   }, [isOpen, navigate, location.pathname]);
 
+  // Track submission state to show success toast only on completion
   const wasSubmitting = useRef(false);
   useEffect(() => {
     const submitting = fetcher.state !== "idle";
@@ -167,10 +214,21 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         readOnly={userIsNotReporter}
                       />
                     </div>
+                    {/* Attachments section for issue files */}
+                    <div className="mb-6">
+                      <Attachments />
+                    </div>
+                    {/* Comments section with create form and comment list */}
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        {/* Create form maintains message state for reply mentions */}
+                        <CreateComment
+                          ref={createCommentRef}
+                          addComment={addComment}
+                          message={commentMessage}
+                          setMessage={setCommentMessage}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
                         {comments.map((comment) => (
@@ -178,6 +236,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              onReply={handleReply}
                             />
                           </li>
                         ))}
@@ -249,7 +308,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
           </Dialog.Overlay>
         </Dialog.Portal>
       </Dialog.Root>
-      {/* To avoid hydration issues because a missmatch with the server*/}
+      {/* Portal container for dialog - positioned absolutely to avoid hydration mismatches */}
       <div
         ref={setPortalContainer}
         className="fixed left-0 top-0 z-50 h-full w-full"
