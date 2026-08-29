@@ -52,7 +52,14 @@ type LoaderData = {
   users: User[];
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }) => {
+  const userSession = await getUserSession(request);
+  const userId = userSession.getUser();
+
+  if (userId) {
+    return redirect("/projects");
+  }
+
   const users = await getUsers();
   return json<LoaderData>({ users });
 };
@@ -70,7 +77,7 @@ export const action: ActionFunction = async ({ request }) => {
       headers: { "Set-Cookie": await userSession.commit() },
     });
   }
-  console.error("Unknown action", _action);
+  return json({ error: "Unknown action" }, { status: 400 });
 };
 
 export default function LoginRoute() {
