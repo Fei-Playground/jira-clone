@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { createRoutesStub } from "react-router";
-import { usersMock } from "@domain/user";
 import { LoginView } from "./login.view";
 
 const meta: Meta<typeof LoginView> = {
@@ -8,14 +7,6 @@ const meta: Meta<typeof LoginView> = {
   component: LoginView,
   parameters: {
     layout: "centered",
-  },
-  argTypes: {
-    users: {
-      defaultValue: usersMock,
-      control: {
-        type: "object",
-      },
-    },
   },
   decorators: [
     (Story) => {
@@ -39,8 +30,4 @@ const meta: Meta<typeof LoginView> = {
 export default meta;
 type Story = StoryObj<typeof LoginView>;
 
-export const Default: Story = {
-  args: {
-    users: usersMock,
-  },
-};
+export const Default: Story = {};

@@ -1,12 +1,5 @@
-import type {
-  LoaderFunction,
-  ActionFunction,
-  MetaFunction,
-} from "react-router";
-import { data as json, redirect } from "react-router";
-import { useLoaderData } from "react-router";
-import { User } from "@domain/user";
-import { getUsers } from "@infrastructure/db/user";
+import type { ActionFunction, MetaFunction } from "react-router";
+import { redirect } from "react-router";
 import { getUserSession } from "@app/session-storage";
 import { LoginView } from "@app/ui/login";
 import { formatTags, formatProperties } from "@utils/meta";
@@ -48,32 +41,31 @@ export const meta: MetaFunction = () => {
   return [{ title }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
-type LoaderData = {
-  users: User[];
-};
-
-export const loader: LoaderFunction = async () => {
-  const users = await getUsers();
-  return json<LoaderData>({ users });
-};
-
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
 
-  if (_action === "setUser") {
-    const userId = formData.get("user") as string;
-    const userSession = await getUserSession(request);
-    userSession.setUser(userId);
+  if (_action === "login") {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    return redirect("/projects", {
-      headers: { "Set-Cookie": await userSession.commit() },
-    });
+    // Accept any valid email/password combination and create a session with a mock user.
+    // Real implementation would verify credentials against a database.
+    if (email && password) {
+      const userSession = await getUserSession(request);
+      // Using the first mock user as a placeholder until authentication is implemented
+      userSession.setUser("1");
+
+      return redirect("/projects", {
+        headers: { "Set-Cookie": await userSession.commit() },
+      });
+    }
   }
-  console.error("Unknown action", _action);
+
+  // Silently return on invalid action - form validation handles error display
+  return null;
 };
 
 export default function LoginRoute() {
-  const { users } = useLoaderData<LoaderData>();
-  return <LoginView users={users} />;
+  return <LoginView />;
 }

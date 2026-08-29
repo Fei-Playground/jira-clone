@@ -1,67 +1,114 @@
 import { useState } from "react";
 import { Form } from "react-router";
-import { User, UserId, userMock1 } from "@domain/user";
 import { Button } from "@app/components/button";
-import { UserAvatar } from "@app/components/user-avatar";
-import * as Select from "@app/components/select";
+import { Input } from "@app/components/input";
+import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 
-export const LoginView = ({ users }: Props) => {
-  const [selectedValue, setSelectedValue] = useState<User>(userMock1);
+// Minimum password length for security
+const MIN_PASSWORD_LENGTH = 6;
 
-  const onValueChange = (userId: UserId) => {
-    const foundUser = users.find((user) => user.id === userId);
+// Basic email validation pattern
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (foundUser) {
-      setSelectedValue(foundUser);
+export const LoginView = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+
+  const validateEmail = (value: string): boolean => {
+    if (!value || textAreOnlySpaces(value)) {
+      setEmailError("Email is required");
+      return false;
+    }
+    if (!EMAIL_REGEX.test(value)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  const validatePassword = (value: string): boolean => {
+    if (!value || textAreOnlySpaces(value)) {
+      setPasswordError("Password is required");
+      return false;
+    }
+    if (value.length < MIN_PASSWORD_LENGTH) {
+      setPasswordError(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
+      );
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    // Clear errors on change if there was an existing error
+    if (emailError) {
+      validateEmail(value);
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    // Clear errors on change if there was an existing error
+    if (passwordError) {
+      validatePassword(value);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    // Prevent form submission if validation fails
+    if (!isEmailValid || !isPasswordValid) {
+      e.preventDefault();
     }
   };
 
   return (
     <div className="mx-auto max-w-[400px] pt-[10vh]">
-      <h1 className="font-primary-black text-5xl text-font">
-        Select login user
-      </h1>
+      <h1 className="font-primary-black text-5xl text-font-danger">Login</h1>
       <h2 className="mb-8 mt-3 font-primary-light text-lg text-font-subtle">
-        There is no authentication involved. You can login with any user you
-        want! Keep in mind you can only access the projects the user is member
-        of. Try to create issues and comments with different users to see how it
-        reflects in the UI and database. You can logout on the user avatar.
+        Enter your email and password to access your account
       </h2>
-      <Form method="post" className="mx-auto w-[300px]">
-        <Select.Root
-          name="user"
-          defaultValue={userMock1.id}
-          onValueChange={onValueChange}
-        >
-          <Select.Trigger
-            className="flex w-full justify-between"
-            aria-label="Open user select"
-          >
-            <div className="flex items-center gap-2">
-              <UserAvatar {...selectedValue} />
-              <Select.Value />
-            </div>
-            <Select.TriggerIcon />
-          </Select.Trigger>
-          <Select.Content>
-            <Select.ScrollUpButton />
-            <Select.Viewport>
-              {users.map((user, index) => (
-                <Select.Item key={index} value={user.id}>
-                  <Select.ItemIndicator />
-                  <UserAvatar {...user} />
-                  <Select.ItemText>{user.name}</Select.ItemText>
-                </Select.Item>
-              ))}
-              <Select.Separator />
-            </Select.Viewport>
-            <Select.ScrollDownButton />
-          </Select.Content>
-        </Select.Root>
+      <Form method="post" className="mx-auto w-[300px]" onSubmit={handleSubmit}>
+        <Input
+          type="email"
+          name="email"
+          id="email"
+          label="Email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={handleEmailChange}
+          onBlur={() => validateEmail(email)}
+          error={emailError}
+          autoComplete="email"
+          containerClassName="mb-4"
+        />
+        <Input
+          type="password"
+          name="password"
+          id="password"
+          label="Password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={handlePasswordChange}
+          onBlur={() => validatePassword(password)}
+          error={passwordError}
+          autoComplete="current-password"
+          containerClassName="mb-4"
+        />
         <Button
           type="submit"
           name="_action"
-          value="setUser"
+          value="login"
           aria-label="Login"
           className="mt-2 w-full"
         >
@@ -71,7 +118,3 @@ export const LoginView = ({ users }: Props) => {
     </div>
   );
 };
-
-interface Props {
-  users: User[];
-}
