@@ -1,9 +1,10 @@
 import type { LoaderFunction, MetaFunction } from "react-router";
-import { data as json, redirect } from "react-router";
+import { data as json, redirect, useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Project, ProjectId } from "@domain/project";
 import { getProject } from "@infrastructure/db/project";
 import { AnalyticsView } from "@app/ui/main/project/analytics";
+import { ProjectContextProvider } from "@app/ui/main/project/project.store";
 import { Error500 } from "@app/components/error-500";
 import { formatTags, formatProperties } from "@utils/meta";
 
@@ -83,5 +84,10 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function AnalyticsRoute() {
-  return <AnalyticsView />;
+  const { project } = useLoaderData() as LoaderData;
+  return (
+    <ProjectContextProvider project={project}>
+      <AnalyticsView />
+    </ProjectContextProvider>
+  );
 }

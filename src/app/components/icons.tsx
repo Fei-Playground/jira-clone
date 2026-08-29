@@ -1,4 +1,10 @@
 import { FaCheckSquare } from "react-icons/fa";
+import {
+  HiOutlineDocumentText,
+  HiOutlineClock,
+  HiOutlineExclamationTriangle,
+  HiCheckCircle,
+} from "react-icons/hi2";
 import cx from "classix";
 
 export const TaskIcon = ({
@@ -12,6 +18,34 @@ export const TaskIcon = ({
       size={size}
     />
   </span>
+);
+
+export const DocumentIcon = ({
+  size = 24,
+  className = "",
+}: IconProps): JSX.Element => (
+  <HiOutlineDocumentText size={size} className={cx(className)} />
+);
+
+export const CheckCircleIcon = ({
+  size = 24,
+  className = "",
+}: IconProps): JSX.Element => (
+  <HiCheckCircle size={size} className={cx(className)} />
+);
+
+export const ClockIcon = ({
+  size = 24,
+  className = "",
+}: IconProps): JSX.Element => (
+  <HiOutlineClock size={size} className={cx(className)} />
+);
+
+export const ExclamationIcon = ({
+  size = 24,
+  className = "",
+}: IconProps): JSX.Element => (
+  <HiOutlineExclamationTriangle size={size} className={cx(className)} />
 );
 
 interface IconProps {

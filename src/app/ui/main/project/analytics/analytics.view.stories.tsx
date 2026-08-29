@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { AnalyticsView } from "./analytics.view";
+import { ProjectContextProvider } from "@app/ui/main/project/project.store";
+import { projectMock1 } from "@domain/project";
 import "react-toastify/dist/ReactToastify.css";
 
 const meta: Meta<typeof AnalyticsView> = {
@@ -11,12 +13,16 @@ const meta: Meta<typeof AnalyticsView> = {
   },
   decorators: [
     (Story) => {
-      return withRemixStub(withMainContext(Story));
+      return (
+        <ProjectContextProvider project={projectMock1}>
+          {withRemixStub(withMainContext(Story))}
+        </ProjectContextProvider>
+      );
     },
   ],
 };
 
 export default meta;
-type Story = StoryObj<typeof AnalyticsView>;
+type StoryType = StoryObj<typeof AnalyticsView>;
 
-export const Default: Story = {};
+export const Default: StoryType = {};
