@@ -1,5 +1,7 @@
 # Jira clone v2.0
 
+A simplified Jira-style project management app for boards, issues, and projects.
+
 A simplified Jira clone application with some custom modifications made with Remix Run. This is a personal project for practicing skills and it is not intended to work as a real Jira application. It is still in early development and some features and improves are coming.
 
 For pragmatic purposes, many features are not included. Others have been modified according to my tastes. The application should serve the basic functionalities of a project management software. I have taken inspiration from the actual [Jira website](https://www.atlassian.com/es/software/jira), as well as from [Trello](https://trello.com/). Also, [Ivor's Jira clone](https://github.com/oldboyxx/jira_clone) has been a great inspiration for me (I have to admit I like his designs more than Jira's originals). I only took ideas and resources (fonts and icons) from the original projects, all developments have being from scratch and by myself.
@@ -22,7 +24,7 @@ For pragmatic purposes, many features are not included. Others have been modifie
    - [Infrastructure](#infrastructure)
    - [UI](#ui)
 4. [Conventions](#conventions)
-5. [Technologies](#technologies)
+5. [Tech stack](#tech-stack)
 6. [Goals](#goals)
 
 ## Setup<a name="overview"></a>
@@ -188,6 +190,18 @@ For react components, on the other hand, I prefer the standard [Pascal Case](htt
 In the case of componentes, to avoid using the same name I add the suffix "Props" to refere to that component's props.
 
 > **_E.g._** IssueCard -> IssueCardProps
+
+## Tech stack<a name="tech-stack"></a>
+
+- **React Router** – full-stack React framework (SSR)
+- **React** & **TypeScript** – UI and type safety
+- **Prisma** & **SQLite** – ORM and database
+- **Tailwind CSS** – styling
+- **Vite** – build tooling
+- **Playwright** & **Vitest** – end-to-end and unit testing
+- **Storybook** – component development and docs
+
+To run tests locally: `npm run test`.
 
 ## Goals<a name="goals"></a>
 
