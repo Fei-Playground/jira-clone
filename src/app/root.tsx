@@ -1,3 +1,4 @@
+// TODO: routing should be revisited later
 import { CSSProperties, useEffect } from "react";
 import type { LoaderFunction, MetaFunction } from "react-router";
 import {
