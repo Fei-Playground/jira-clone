@@ -27,6 +27,7 @@ import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
+import { SelectDates } from "./select-dates";
 import { Spinner } from "./spinner";
 
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
@@ -212,6 +213,14 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         />
                         <p className="m-0">{reporter.name}</p>
                       </div>
+                    </div>
+                    <div>
+                      <p className="mb-1">Schedule</p>
+                      <SelectDates
+                        issue={issue}
+                        readOnly={userIsNotReporter}
+                        error={actionData?.errors?.dates}
+                      />
                     </div>
                     <div>
                       <CreatedUpdatedAt issue={issue} />

@@ -71,6 +71,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 export type ActionData = {
   errors: {
     name?: string;
+    dates?: string;
   };
 };
 
@@ -92,6 +93,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     const priority = formData.get("priority") as PriorityId;
     const asigneeId = formData.get("asignee") as UserId;
     const reporterId = formData.get("reporter") as UserId;
+    const startDateRaw = (formData.get("startDate") as string) || "";
+    const endDateRaw = (formData.get("endDate") as string) || "";
+    const startDate = startDateRaw
+      ? new Date(`${startDateRaw}T00:00:00`)
+      : null;
+    const endDate = endDateRaw ? new Date(`${endDateRaw}T00:00:00`) : null;
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
@@ -103,11 +110,20 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      startDate,
+      endDate,
     };
 
     if (!name || textAreOnlySpaces(name)) {
       return json<ActionData>(
         { errors: { name: "Title is required" } },
+        { status: 400 }
+      );
+    }
+
+    if (startDate && endDate && endDate.getTime() < startDate.getTime()) {
+      return json<ActionData>(
+        { errors: { dates: "End date must be on or after start date" } },
         { status: 400 }
       );
     }
