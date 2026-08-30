@@ -1,3 +1,4 @@
+// TODO: revisit routing structure later
 import { CSSProperties, useEffect } from "react";
 import type { LoaderFunction, MetaFunction } from "react-router";
 import {
