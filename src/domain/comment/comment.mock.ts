@@ -13,10 +13,28 @@ export const commentMock1: Comment = {
   updatedAt,
 };
 
+export const commentMock1Reply: Comment = {
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  parentId: commentMock1.id,
+  user: userMock1, // Daniel Serrano
+  message: "Thanks for clarifying — that matches what I was seeing on the board.",
+  createdAt,
+  updatedAt,
+};
+
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
   message: "And only the original poster of a comment can edit or delete it!",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock2Reply: Comment = {
+  id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+  parentId: commentMock2.id,
+  user: usersMock[3], // Jessie
+  message: "Right — everyone else can still reply though.",
   createdAt,
   updatedAt,
 };

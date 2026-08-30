@@ -1,7 +1,9 @@
 import { userMock1, userMock2, usersMock } from "@domain/user";
 import {
   commentMock1,
+  commentMock1Reply,
   commentMock2,
+  commentMock2Reply,
   commentMock3,
   commentMock4,
   commentMock5,
@@ -49,7 +51,7 @@ export const inProgressIssuesMock1: Issue[] = [
       "This will be reflected on the UI (e. g. which user created and issue or wrote a comment). A user can only see the projects they are assigned to. You can try this by creating a new project at the /projects page. To logout, go to the avatar dropdown (top right).",
     reporter: userMock2, // Woody
     asignee: usersMock[2], // Buzz Lightyear
-    comments: [commentMock1, commentMock2],
+    comments: [commentMock1, commentMock1Reply, commentMock2, commentMock2Reply],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
