@@ -52,6 +52,8 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     })),
     createdAt: issueDb.createdAt.getTime(),
     updatedAt: issueDb.updatedAt.getTime(),
+    startDate: issueDb.startDate?.getTime(),
+    endDate: issueDb.endDate?.getTime(),
   };
 
   return issue;
@@ -65,13 +67,20 @@ export type CreateIssueInputData = {
   asigneeId: UserId;
   reporterId: UserId;
   comments: Comment[];
+  startDate?: Date | null;
+  endDate?: Date | null;
 };
 export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId> => {
   const newIssue = await db.issue.create({
     data: {
-      ...issue,
-      priority: undefined,
+      name: issue.name,
+      description: issue.description,
+      categoryId: issue.categoryId,
+      asigneeId: issue.asigneeId,
+      reporterId: issue.reporterId,
       priorityId: issue.priority,
+      startDate: issue.startDate ?? null,
+      endDate: issue.endDate ?? null,
       comments: {
         create: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
@@ -99,9 +108,14 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       id: issue.id,
     },
     data: {
-      ...issue,
-      priority: undefined,
+      name: issue.name,
+      description: issue.description,
+      categoryId: issue.categoryId,
+      asigneeId: issue.asigneeId,
+      reporterId: issue.reporterId,
       priorityId: issue.priority,
+      startDate: issue.startDate ?? null,
+      endDate: issue.endDate ?? null,
       comments: {
         upsert: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {

@@ -72,6 +72,9 @@ const createCategoryIfNotExists = async (
 };
 
 const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Promise<IssueDB> => {
+  const startDate = issue.startDate ? new Date(issue.startDate) : undefined;
+  const endDate = issue.endDate ? new Date(issue.endDate) : undefined;
+
   return db.issue.upsert({
     where: { id: issue.id },
     create: {
@@ -82,6 +85,8 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
       asignee: { connect: { id: issue.asignee.id } },
       reporter: { connect: { id: issue.reporter.id } },
       priority: { connect: { id: issue.priority.id } },
+      startDate,
+      endDate,
       comments: {
         create: issue.comments.map((comment) => ({
           id: comment.id,
@@ -90,7 +95,10 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
         })),
       },
     },
-    update: {},
+    update: {
+      startDate,
+      endDate,
+    },
   });
 };
 
@@ -119,28 +127,27 @@ const seedPriorities = async () => {
 const seedProjects = async () => {
   for (const project of projectsMock) {
     const projectDb = await createProjectIfNotExists(project);
+    const projectExisted = recordAlreadyExists(projectDb);
 
-    if (recordAlreadyExists(projectDb)) {
-      console.info(`Project already exists: ${project.name}. Skipping...`);
-      continue;
+    if (projectExisted) {
+      console.info(`Project already exists: ${project.name}. Updating issue dates...`);
+    } else {
+      console.info(`Created PROJECT: ${project.name}`);
     }
-    console.info(`Created PROJECT: ${project.name}`);
 
     for (const category of project.categories) {
       const categoryDb = await createCategoryIfNotExists(category, projectDb.id);
-      if (recordAlreadyExists(categoryDb)) {
-        console.info(`Category already exists: ${category.name}. Skipping...`);
-        continue;
+      if (!projectExisted && !recordAlreadyExists(categoryDb)) {
+        console.info(`Created CATEGORY: ${category.name}`);
       }
-      console.info(`Created CATEGORY: ${category.name}`);
 
       for (const issue of category.issues) {
         const issueDb = await createIssueIfNotExists(issue, categoryDb.id);
         if (recordAlreadyExists(issueDb)) {
-          console.info(`Issue already exists: ${issue.name}. Skipping...`);
-          continue;
+          console.info(`Updated ISSUE dates: ${issue.name}`);
+        } else {
+          console.info(`Created ISSUE: ${issue.name}`);
         }
-        console.info(`Created ISSUE: ${issue.name}`);
       }
     }
   }

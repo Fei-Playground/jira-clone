@@ -55,6 +55,8 @@ model Issue {
   comments    Comment[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  startDate   DateTime?
+  endDate     DateTime?
   priority    Priority  @relation(fields: [priorityId], references: [id])
   priorityId  String
 }
