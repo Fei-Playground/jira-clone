@@ -8,7 +8,7 @@ const meta: Meta<typeof SelectStatus> = {
   title: "Pages/Main/Project/Board/IssuePanel/SelectStatus",
   component: SelectStatus,
   parameters: {
-    layout: "centered",
+    layout: "padded",
   },
   argTypes: {
     initStatus: {
@@ -21,7 +21,7 @@ const meta: Meta<typeof SelectStatus> = {
   decorators: [
     (Story) => (
       <ProjectContextProvider project={projectMock1}>
-        <div className="p-4">
+        <div className="flex justify-center p-8">
           <Story />
         </div>
       </ProjectContextProvider>
@@ -31,6 +31,17 @@ const meta: Meta<typeof SelectStatus> = {
 
 export default meta;
 type Story = StoryObj<typeof SelectStatus>;
+
+/** All three softened badge tints side-by-side for comparison. */
+export const AllStatuses: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      <SelectStatus initStatus={"TODO" as CategoryType} />
+      <SelectStatus initStatus={"IN_PROGRESS" as CategoryType} />
+      <SelectStatus initStatus={"DONE" as CategoryType} />
+    </div>
+  ),
+};
 
 export const Todo: Story = {
   args: {
