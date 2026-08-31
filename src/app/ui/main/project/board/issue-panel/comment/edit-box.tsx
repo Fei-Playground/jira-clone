@@ -42,7 +42,7 @@ export const EditBox = ({
   const isError = initError && !messageIsValid();
   const placeholder = isError
     ? "Message cannot be empty"
-    : "Add your comment...";
+    : "Add your comment… Supports **bold**, *italic*, `code`, and [links](url)";
 
   return (
     <div className="w-full">

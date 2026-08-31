@@ -118,6 +118,22 @@ export const action: ActionFunction = async ({ request, params }) => {
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
+    const dueDateRaw = (formData.get("dueDate") as string) || "";
+    const dueDate = dueDateRaw
+      ? new Date(`${dueDateRaw}T12:00:00`).getTime()
+      : null;
+    const estimate =
+      ((formData.get("estimate") as string) || "").trim() || null;
+    const timeLogged =
+      ((formData.get("timeLogged") as string) || "").trim() || null;
+    const watchersRaw = (formData.get("watchers") as string) || "[]";
+    let watcherIds: UserId[] = [];
+    try {
+      watcherIds = JSON.parse(watchersRaw) as UserId[];
+    } catch {
+      watcherIds = [];
+    }
+    const actorId = (formData.get("actorId") as UserId) || reporterId;
     const issueInputData: UpdateIssueInputData = {
       id,
       name,
@@ -127,6 +143,11 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      dueDate,
+      estimate,
+      timeLogged,
+      watcherIds,
+      actorId,
     };
 
     if (!name || textAreOnlySpaces(name)) {
@@ -141,7 +162,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (_action === "delete") {
-    console.log("DELETING ISSUE");
     await deleteIssue(id);
     emitter.emit(EVENTS.ISSUE_DELETED, Date.now());
   }

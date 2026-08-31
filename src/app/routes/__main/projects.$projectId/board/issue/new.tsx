@@ -95,6 +95,21 @@ export const action: ActionFunction = async ({ request, params }) => {
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
+    const dueDateRaw = (formData.get("dueDate") as string) || "";
+    const dueDate = dueDateRaw
+      ? new Date(`${dueDateRaw}T12:00:00`).getTime()
+      : null;
+    const estimate =
+      ((formData.get("estimate") as string) || "").trim() || null;
+    const timeLogged =
+      ((formData.get("timeLogged") as string) || "").trim() || null;
+    const watchersRaw = (formData.get("watchers") as string) || "[]";
+    let watcherIds: UserId[] = [];
+    try {
+      watcherIds = JSON.parse(watchersRaw) as UserId[];
+    } catch {
+      watcherIds = [];
+    }
     const issueInputData: CreateIssueInputData = {
       name,
       description,
@@ -103,6 +118,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      dueDate,
+      estimate,
+      timeLogged,
+      watcherIds,
     };
 
     if (!name || textAreOnlySpaces(name)) {

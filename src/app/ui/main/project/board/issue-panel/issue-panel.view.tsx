@@ -26,6 +26,10 @@ import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
+import { DueDateField } from "./due-date-field";
+import { EstimateField } from "./estimate-field";
+import { WatchersField } from "./watchers-field";
+import { ActivityTimeline } from "./activity-timeline";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
 
@@ -46,6 +50,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
   const userIsNotReporter = user.id !== reporter.id;
+  const isSubmitting = fetcher.state !== "idle" || transition.state !== "idle";
 
   const postData = useCallback(
     (formTarget: HTMLFormElement) => {
@@ -54,12 +59,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       const action = isExistingIssue ? "update" : "create";
       formData.set("comments", JSON.stringify(comments));
       formData.set("_action", action);
+      formData.set("actorId", user.id);
 
       fetcher.submit(formData, {
         method: "post",
       });
     },
-    [comments, fetcher, issue?.id]
+    [comments, fetcher, issue?.id, user.id]
   );
 
   const handleProgrammaticSubmit = useCallback((): void => {
@@ -124,12 +130,23 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       const formAction = (fetcher.formData as FormData | undefined)?.get(
         "_action"
       );
-      if (formAction === "create") {
+      const data = fetcher.data as IssueActionData | undefined;
+      if (data?.errors) {
+        toast.error(data.errors.name || "Could not save issue. Try again.");
+      } else if (formAction === "create") {
         toast.success("Issue created successfully");
+      } else if (formAction === "update") {
+        toast.success("Issue updated");
       }
       wasSubmitting.current = false;
     }
   }, [fetcher.state, fetcher.data, fetcher.formData]);
+
+  useEffect(() => {
+    if (actionData?.errors?.name) {
+      toast.error(actionData.errors.name);
+    }
+  }, [actionData]);
 
   return (
     <>
@@ -140,7 +157,15 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
               onEscapeKeyDown={handleProgrammaticClose}
               onPointerDownOutside={handleProgrammaticClose}
               className={isOpen ? "" : "translate-y-[10px] opacity-0"}
+              aria-describedby="issue-panel-description"
             >
+              <Dialog.Description
+                id="issue-panel-description"
+                className="sr-only"
+              >
+                Issue details panel. Edit fields and press Shift+S to save, or
+                Escape to close.
+              </Dialog.Description>
               <PanelHeaderIssue
                 id={issue?.id || "Create new issue"}
                 deleteDisabled={
@@ -148,102 +173,168 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                   defaultIssuesIds.includes(issue?.id || "")
                 }
               />
-              <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
-                <div className="grid grid-cols-5 gap-16">
-                  <section className="col-span-3">
-                    <div className="my-5 -ml-3 mb-6">
-                      <Dialog.Title asChild>
-                        <Title
-                          initTitle={issue?.name || ""}
+              <Form
+                method="post"
+                onSubmit={handleFormSumbit}
+                ref={formRef}
+                aria-busy={isSubmitting}
+              >
+                <fieldset
+                  disabled={isSubmitting}
+                  className="min-w-0 border-0 p-0"
+                >
+                  <div className="grid grid-cols-1 gap-10 md:grid-cols-5 md:gap-16">
+                    <section
+                      className="md:col-span-3"
+                      aria-label="Issue content"
+                    >
+                      <div className="my-5 -ml-3 mb-6">
+                        <Dialog.Title asChild>
+                          <Title
+                            initTitle={issue?.name || ""}
+                            readOnly={userIsNotReporter}
+                            error={actionData?.errors?.name}
+                          />
+                        </Dialog.Title>
+                      </div>
+                      <p
+                        id="description-label"
+                        className="font-primary-black text-font"
+                      >
+                        Description
+                      </p>
+                      <div className="-ml-3 mb-6">
+                        <Description
+                          initDescription={issue?.description || ""}
                           readOnly={userIsNotReporter}
-                          error={actionData?.errors?.name}
                         />
-                      </Dialog.Title>
-                    </div>
-                    <p className="font-primary-black text-font">Description</p>
-                    <div className="-ml-3 mb-6">
-                      <Description
-                        initDescription={issue?.description || ""}
+                      </div>
+                      <div>
+                        <p
+                          id="comments-heading"
+                          className="font-primary-black text-font"
+                        >
+                          Comments
+                        </p>
+                        <div>
+                          <CreateComment addComment={addComment} />
+                        </div>
+                        {comments.length === 0 ? (
+                          <p
+                            className="mt-6 rounded-md bg-background-neutral px-4 py-6 text-center text-sm text-font-subtlest"
+                            role="status"
+                          >
+                            No comments yet. Start the conversation!
+                          </p>
+                        ) : (
+                          <ul
+                            className="mt-8 space-y-6"
+                            aria-labelledby="comments-heading"
+                          >
+                            {comments.map((comment) => (
+                              <li key={comment.id}>
+                                <ViewComment
+                                  comment={comment}
+                                  removeComment={removeComment}
+                                />
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      {issue && (
+                        <div className="mt-10">
+                          <ActivityTimeline
+                            activities={issue.activities || []}
+                          />
+                        </div>
+                      )}
+                    </section>
+                    <section
+                      className="space-y-8 md:col-span-2 md:space-y-10"
+                      aria-label="Issue details"
+                    >
+                      <div>
+                        <p id="status-label" className="mb-1">
+                          Status
+                        </p>
+                        <SelectStatus
+                          initStatus={issue?.categoryType || initStatus}
+                        />
+                      </div>
+                      <div>
+                        <p id="priority-label" className="mb-1">
+                          Priority
+                        </p>
+                        <SelectPriority
+                          initPriority={issue?.priority.id || "low"}
+                        />
+                      </div>
+                      <div>
+                        <p id="assignee-label" className="mb-1">
+                          Assignee
+                        </p>
+                        <SelectAsignee initAsignee={issue?.asignee || user} />
+                      </div>
+                      <DueDateField
+                        initDueDate={issue?.dueDate}
                         readOnly={userIsNotReporter}
                       />
-                    </div>
-                    <div>
-                      <p className="font-primary-black text-font">Comments</p>
+                      <EstimateField
+                        initEstimate={issue?.estimate}
+                        initTimeLogged={issue?.timeLogged}
+                        readOnly={userIsNotReporter}
+                      />
+                      <WatchersField initWatchers={issue?.watchers || []} />
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <p id="reporter-label" className="mb-1">
+                          Reporter
+                        </p>
+                        <div
+                          className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5"
+                          aria-labelledby="reporter-label"
+                        >
+                          <UserAvatar {...reporter} />
+                          <input
+                            type="hidden"
+                            name="reporter"
+                            value={reporter.id}
+                          />
+                          <p className="m-0">{reporter.name}</p>
+                        </div>
                       </div>
-                      <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </section>
-                  <section className="col-span-2 space-y-10">
-                    <div>
-                      <p className="mb-1">Status</p>
-                      <SelectStatus
-                        initStatus={issue?.categoryType || initStatus}
-                      />
-                    </div>
-                    <div>
-                      <p className="mb-1">Priority</p>
-                      <SelectPriority
-                        initPriority={issue?.priority.id || "low"}
-                      />
-                    </div>
-                    <div>
-                      <p className="mb-1">Asignee</p>
-                      <SelectAsignee initAsignee={issue?.asignee || user} />
-                    </div>
-                    <div>
-                      <p className="mb-1">Reporter</p>
-                      <div className="mt-1 flex w-fit items-center gap-2 rounded-full bg-background-neutral py-1 pb-1 pl-1 pr-3.5">
-                        <UserAvatar {...reporter} />
-                        <input
-                          type="hidden"
-                          name="reporter"
-                          value={reporter.id}
-                        />
-                        <p className="m-0">{reporter.name}</p>
+                      <div>
+                        <CreatedUpdatedAt issue={issue} />
                       </div>
-                    </div>
-                    <div>
-                      <CreatedUpdatedAt issue={issue} />
-                    </div>
-                  </section>
-                </div>
-                <div className="mt-6 grid grid-cols-3 items-end">
-                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
-                  </span>
-                  <div className="flex justify-center">
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-fit"
-                      disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
-                    >
-                      {transition.state !== "idle" ? (
-                        <>
-                          Submmiting
-                          <Spinner />
-                        </>
-                      ) : (
-                        "Accept"
-                      )}
-                    </Button>
+                    </section>
                   </div>
-                  <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Esc</Kbd> to close
-                  </span>
-                </div>
+                  <div className="mt-6 grid grid-cols-1 items-end gap-3 sm:grid-cols-3">
+                    <span className="order-2 font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:order-none">
+                      Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
+                    </span>
+                    <div className="order-1 flex justify-center sm:order-none">
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="w-fit"
+                        disabled={isSubmitting}
+                        aria-label="Accept changes"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            Submitting
+                            <Spinner />
+                          </>
+                        ) : (
+                          "Accept"
+                        )}
+                      </Button>
+                    </div>
+                    <span className="order-3 justify-self-center font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:justify-self-end">
+                      Press <Kbd>Esc</Kbd> to close
+                    </span>
+                  </div>
+                </fieldset>
               </Form>
             </Dialog.Content>
           </Dialog.Overlay>
