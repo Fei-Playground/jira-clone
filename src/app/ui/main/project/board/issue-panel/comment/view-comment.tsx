@@ -5,7 +5,7 @@ import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
-import { formatDateTime } from "@utils/formatDateTime";
+import { formatRelativeTime } from "@utils/formatDateTime";
 
 export const ViewComment = ({
   comment,
@@ -76,7 +76,7 @@ export const ViewComment = ({
         </p>
         <span className="font-primary-light text-xs">
           {comment.createdAt ? (
-            formatDateTime(comment.createdAt)
+            formatRelativeTime(comment.createdAt)
           ) : (
             <i>Date undefined</i>
           )}
