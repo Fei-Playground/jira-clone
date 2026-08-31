@@ -6,6 +6,7 @@ import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
 import { formatDateTime } from "@utils/formatDateTime";
+import { MarkdownText } from "@utils/markdown";
 
 export const ViewComment = ({
   comment,
@@ -39,7 +40,7 @@ export const ViewComment = ({
 
   const idleComment = (
     <div className="font-primary-light">
-      <p>{message}</p>
+      <MarkdownText text={message} className="leading-6 text-font" />
       <div
         className={cx(
           "mt-3 text-font-subtlest",
@@ -47,18 +48,22 @@ export const ViewComment = ({
         )}
       >
         <button
+          type="button"
           onClick={edit}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className="font-primary-light text-xs hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-border-brand"
           aria-label="Edit comment"
         >
           Edit
         </button>
-        <span className="mx-2">{"·"}</span>
+        <span className="mx-2" aria-hidden>
+          {"·"}
+        </span>
         <button
+          type="button"
           onClick={remove}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className="font-primary-light text-xs hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-border-brand"
           aria-label="Delete comment"
         >
           Delete

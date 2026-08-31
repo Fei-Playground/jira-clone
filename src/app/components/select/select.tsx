@@ -16,7 +16,8 @@ export const Trigger = twix(
   cx(
     "flex cursor-pointer items-center rounded border-none px-2 py-1.5",
     "bg-background-neutral hover:bg-background-neutral-hovered active:bg-background-neutral-pressed",
-    "font-primary-bold text-sm text-font"
+    "font-primary-bold text-sm text-font",
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-border-brand"
   )
 );
 
