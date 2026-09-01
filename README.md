@@ -1,3 +1,27 @@
+## Running the tests
+
+This project uses [Playwright](https://playwright.dev/) for end-to-end tests and [Vitest](https://vitest.dev/) for unit/component tests.
+
+**Run end-to-end tests (Playwright):**
+```
+npm run test
+```
+Executes the full Playwright test suite against the app.
+
+**Run tests with coverage (Vitest):**
+```
+npm run test-coverage
+```
+Runs Vitest in single-pass mode and generates a coverage report.
+
+**Run all checks at once (type-check + lint + e2e tests):**
+```
+npm run test-all
+```
+Sequentially runs TypeScript type checking (`tsc`), ESLint linting, and the Playwright test suite — useful for CI or a full pre-push verification.
+
+---
+
 # Jira clone v2.0
 
 A simplified Jira clone application with some custom modifications made with Remix Run. This is a personal project for practicing skills and it is not intended to work as a real Jira application. It is still in early development and some features and improves are coming.
