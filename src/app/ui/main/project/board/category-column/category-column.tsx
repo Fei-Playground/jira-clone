@@ -23,7 +23,8 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search } = useProjectStore();
+  const { search, selectedIssueIds, setSelectedIssueIds, isSelectMode } =
+    useProjectStore();
   const emptyCategory = category.issues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
@@ -66,6 +67,14 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       return issue.name.toLowerCase().includes(search);
     });
 
+  const toggleSelectIssue = (issueId: IssueId) => {
+    setSelectedIssueIds((prev) =>
+      prev.includes(issueId)
+        ? prev.filter((id) => id !== issueId)
+        : [...prev, issueId]
+    );
+  };
+
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
       const { issueId } = fetcher.data;
@@ -88,14 +97,14 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       <div
         className={cx(
           "absolute z-50 box-border h-[100%] w-[100%] rounded p-1.5 duration-200",
-          isDragging ? "visible" : "hidden",
+          isDragging && !isSelectMode ? "visible" : "hidden",
           isOver || "bg-background-drop"
         )}
       >
         <div
           className={cx(
             "relative h-full w-full rounded border-[3px]",
-            isDragging ? "visible" : "hidden",
+            isDragging && !isSelectMode ? "visible" : "hidden",
             isOver
               ? "border-solid border-border-success"
               : "flex items-center justify-center border-dashed border-border-brand"
@@ -114,7 +123,6 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         </span>
         <Link
           to={issueLink}
-          className="text-font-subtlest/60 flex cursor-pointer rounded border-none p-1 hover:bg-background-neutral"
           aria-label={`Add new ${category.name} issue`}
         >
           <AiOutlinePlus size={24} />
@@ -134,6 +142,8 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
                       issue={issue}
                       categoryId={category.id}
                       isSubmitting={submittingIssues.includes(issue.id)}
+                      isSelected={selectedIssueIds.includes(issue.id)}
+                      onToggleSelect={toggleSelectIssue}
                       handleDragging={handleDragging}
                     />
                   </li>

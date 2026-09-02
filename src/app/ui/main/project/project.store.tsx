@@ -6,11 +6,16 @@ import {
   SetStateAction,
 } from "react";
 import { Project } from "@domain/project";
+import { IssueId } from "@domain/issue";
 
 interface ProjectStore {
   project: Project;
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
+  selectedIssueIds: IssueId[];
+  setSelectedIssueIds: Dispatch<SetStateAction<IssueId[]>>;
+  isSelectMode: boolean;
+  setIsSelectMode: Dispatch<SetStateAction<boolean>>;
 }
 
 const ProjectContext = createContext<ProjectStore | undefined>(undefined);
@@ -23,9 +28,21 @@ export const ProjectContextProvider = ({
   children: JSX.Element;
 }): JSX.Element => {
   const [search, setSearch] = useState("");
+  const [selectedIssueIds, setSelectedIssueIds] = useState<IssueId[]>([]);
+  const [isSelectMode, setIsSelectMode] = useState(false);
 
   return (
-    <ProjectContext.Provider value={{ project, search, setSearch }}>
+    <ProjectContext.Provider
+      value={{
+        project,
+        search,
+        setSearch,
+        selectedIssueIds,
+        setSelectedIssueIds,
+        isSelectMode,
+        setIsSelectMode,
+      }}
+    >
       {children}
     </ProjectContext.Provider>
   );

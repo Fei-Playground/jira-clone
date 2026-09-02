@@ -143,6 +143,21 @@ export const updateIssueCategory = async ({ issueId, categoryId }: UpdateIssueCa
   });
 };
 
+export type BulkUpdateIssueCategoryData = {
+  issueIds: IssueId[];
+  categoryId: CategoryId;
+};
+
+export const bulkUpdateIssueCategory = async ({
+  issueIds,
+  categoryId,
+}: BulkUpdateIssueCategoryData) => {
+  await db.issue.updateMany({
+    where: { id: { in: issueIds } },
+    data: { categoryId },
+  });
+};
+
 export const deleteIssue = async (issueId: IssueId) => {
   await db.issue.delete({
     where: {

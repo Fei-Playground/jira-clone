@@ -14,6 +14,7 @@ import { getProject } from "@infrastructure/db/project";
 import {
   updateIssueCategory,
   UpdateIssueCategoryData,
+  bulkUpdateIssueCategory,
 } from "@infrastructure/db/issue";
 import { Error500 } from "@app/components/error-500";
 import { BoardView } from "@app/ui/main/project/board";
@@ -113,6 +114,23 @@ export const action: ActionFunction = async ({ request }) => {
       return json({ error: errorMsg }, { status: 500 });
     }
   }
+  if (_action === "bulkUpdateIssueCategory") {
+    const categoryId = formData.get("categoryId") as CategoryId;
+    const issueIds = formData.getAll("issueIds") as IssueId[];
+
+    try {
+      await bulkUpdateIssueCategory({ issueIds, categoryId });
+      emitter.emit(EVENTS.ISSUE_CHANGED, Date.now());
+      return json(null, { status: 201 });
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Could not bulk update issue categories";
+      return json({ error: errorMsg }, { status: 500 });
+    }
+  }
+
   console.error("Unknown action", _action);
 };
 

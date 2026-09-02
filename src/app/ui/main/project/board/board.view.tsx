@@ -1,8 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, Dispatch, SetStateAction } from "react";
 import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import cx from "classix";
+import { MdChecklist } from "react-icons/md";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
@@ -11,7 +13,8 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
-import { ProjectContextProvider } from "../project.store";
+import { BulkActionsBar } from "./bulk-actions-bar";
+import { ProjectContextProvider, useProjectStore } from "../project.store";
 import { EVENTS } from "@app/events";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
@@ -26,6 +29,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-2 inline">
+            <SelectToggle />
+          </div>
         </section>
         <DndProvider backend={HTML5Backend}>
           <Categories categories={project.categories} />
@@ -39,6 +45,36 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 interface Props {
   project: Project;
 }
+
+const SelectToggle = (): JSX.Element => {
+  const { isSelectMode, setIsSelectMode, selectedIssueIds, setSelectedIssueIds } =
+    useProjectStore();
+
+  const handleToggle = () => {
+    if (isSelectMode) {
+      setSelectedIssueIds([]);
+    }
+    setIsSelectMode((prev) => !prev);
+  };
+
+  return (
+    <button
+      onClick={handleToggle}
+      className={cx(
+        "flex cursor-pointer items-center justify-center rounded border-none px-3 py-1.5 text-xs",
+        isSelectMode
+          ? "bg-background-brand-bold text-font-inverse hover:bg-background-brand-bold-hovered active:bg-background-brand-bold-pressed"
+          : "bg-background-brand-subtlest text-font-brand hover:bg-background-brand-subtlest-hovered active:bg-background-brand-subtlest-pressed"
+      )}
+      aria-label={isSelectMode ? "Exit select mode" : "Enter select mode"}
+    >
+      <MdChecklist size={16} className="mr-1.5" />
+      {isSelectMode
+        ? `Select (${selectedIssueIds.length})`
+        : "Select"}
+    </button>
+  );
+};
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -100,6 +136,10 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
           />
         ))}
       </div>
+      <BulkActionsBar
+        categories={categories}
+        setSubmittingIssues={setSubmittingIssues}
+      />
     </section>
   );
 };
