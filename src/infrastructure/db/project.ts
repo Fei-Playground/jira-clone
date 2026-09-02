@@ -3,7 +3,6 @@ import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
-import { Priority } from "@domain/priority";
 import { Sort } from "@domain/filter";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
@@ -15,19 +14,9 @@ export const getProject = async (
   type PrismaSortType = Prisma.Enumerable<Prisma.IssueOrderByWithRelationInput>;
 
   const sortIssuesBy = options?.sortIssuesBy;
-  const sortByDate: PrismaSortType = {
+  const orderBy: PrismaSortType = {
     createdAt: "desc",
   };
-  const sortByPriority: PrismaSortType = {
-    priority: {
-      order: "desc",
-    },
-  };
-
-  // prettier-ignore
-  const orderBy: PrismaSortType = sortIssuesBy === "date" 
-    ? [sortByDate, sortByPriority] 
-    : [sortByPriority, sortByDate];
 
   const projectDb = await db.project.findUnique({
     where: {
@@ -45,7 +34,6 @@ export const getProject = async (
             select: {
               id: true,
               name: true,
-              priority: true,
               createdAt: true,
               reporter: true,
               asignee: true,
@@ -75,7 +63,6 @@ export const getProject = async (
       issues: category.issues.map((issue) => ({
         id: issue.id,
         name: issue.name,
-        priority: issue.priority as Priority,
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
         comments: [],

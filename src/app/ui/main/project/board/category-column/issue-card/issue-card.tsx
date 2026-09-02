@@ -4,9 +4,7 @@ import cx from "classix";
 import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
-import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
-import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export interface DropItem {
@@ -57,7 +55,6 @@ export const IssueCard = ({
       <IssueCardContent
         link={issueLink}
         name={issue.name}
-        priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
       />
@@ -75,7 +72,6 @@ interface Props {
 export const IssueCardContent = ({
   link,
   name,
-  priorityId,
   idPrefix,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
@@ -89,14 +85,13 @@ export const IssueCardContent = ({
     <Link to={link}>
       <>
         <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center pt-4">
           <span className="flex items-center">
             <TaskIcon size={18} />
             <span className="ml-1.5 text-2xs text-font-subtlest">
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
         </div>
       </>
     </Link>
@@ -106,7 +101,6 @@ export const IssueCardContent = ({
 interface IssueCardContentProps {
   link: string;
   name: string;
-  priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
 }

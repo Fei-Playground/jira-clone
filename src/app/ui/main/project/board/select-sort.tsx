@@ -1,7 +1,6 @@
 import { Form, useSubmit } from "react-router";
 import * as Select from "@radix-ui/react-select";
 import { FaSortAmountDownAlt } from "react-icons/fa";
-import { HiFlag } from "react-icons/hi";
 import { BsClockHistory } from "react-icons/bs";
 import { Sort, sortList, DEFAULT_SORT } from "@domain/filter";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -10,11 +9,7 @@ export const SelectSort = (): JSX.Element => {
   const submit = useSubmit();
   const sortBy = useSortBy() || DEFAULT_SORT;
 
-  const SortIcon = ({ sort }: { sort: Sort }): JSX.Element =>
-    // prettier-ignore
-    sort === "priority" 
-      ? <HiFlag size={16} /> 
-      : <BsClockHistory size={16} />;
+  const SortIcon = (): JSX.Element => <BsClockHistory size={16} />;
 
   const handleSubmit = (value: string): void => {
     submit({ sortBy: value });
@@ -41,7 +36,7 @@ export const SelectSort = (): JSX.Element => {
                 value={sort.id}
                 className="flex cursor-pointer items-center justify-start gap-2 rounded border-none px-2 py-2 text-xs uppercase leading-none text-font-brand outline-none hover:bg-background-brand-subtlest-hovered focus:bg-background-brand-subtlest-hovered active:bg-background-brand-subtlest-pressed"
               >
-                <SortIcon sort={sort.id} />
+                <SortIcon />
                 <Select.ItemText>{sort.label}</Select.ItemText>
               </Select.Item>
             ))}

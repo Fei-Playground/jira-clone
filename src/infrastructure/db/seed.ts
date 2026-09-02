@@ -3,13 +3,11 @@ import {
   User as UserDB,
   Category as CategoryDB,
   Issue as IssueDB,
-  Priority as PriorityDB,
 } from "@prisma/client";
 import { User, usersMock, getRandomPastelColor } from "@domain/user";
 import { Project, ProjectId, projectsMock } from "@domain/project";
 import { Category, CategoryId } from "@domain/category";
 import { Issue } from "@domain/issue";
-import { Priority, prioritiesMock } from "@domain/priority";
 import { db } from "./db.server";
 
 // Leaving the update empty will not update the record if it already exists
@@ -21,18 +19,6 @@ const createUserIfNotExists = async (user: User): Promise<UserDB> => {
       name: user.name,
       image: user.image,
       color: user.color || getRandomPastelColor(),
-    },
-    update: {},
-  });
-};
-
-const createPriorityIfNotExists = async (priority: Priority): Promise<PriorityDB> => {
-  return db.priority.upsert({
-    where: { id: priority.id },
-    create: {
-      id: priority.id,
-      name: priority.name,
-      order: priority.order,
     },
     update: {},
   });
@@ -81,7 +67,6 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
       category: { connect: { id: categoryId } },
       asignee: { connect: { id: issue.asignee.id } },
       reporter: { connect: { id: issue.reporter.id } },
-      priority: { connect: { id: issue.priority.id } },
       comments: {
         create: issue.comments.map((comment) => ({
           id: comment.id,
@@ -101,17 +86,6 @@ const seedUsers = async () => {
       console.info(`User already exists: ${user.name}. Skipping...`);
     } else {
       console.info(`Created USER: ${user.name}`);
-    }
-  }
-};
-
-const seedPriorities = async () => {
-  for (const priority of prioritiesMock) {
-    const priorityDb = await createPriorityIfNotExists(priority);
-    if (recordAlreadyExists(priorityDb)) {
-      console.info(`Priority already exists: ${priority.name}. Skipping...`);
-    } else {
-      console.info(`Created PRIORITY: ${priority.name}`);
     }
   }
 };
@@ -148,7 +122,6 @@ const seedProjects = async () => {
 
 const seedDb = async () => {
   await seedUsers();
-  await seedPriorities();
   await seedProjects();
 };
 

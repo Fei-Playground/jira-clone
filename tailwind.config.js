@@ -38,11 +38,6 @@ module.exports = {
         subtle: "var(--color-icon-subtle)",
         inverse: "var(--color-icon-inverse)",
         disabled: "var(--color-icon-disabled)",
-        accent: {
-          green: "var(--color-icon-accent-green)",
-          yellow: "var(--color-icon-accent-yellow)",
-          red: "var(--color-icon-accent-red)",
-        },
       },
       border: {
         DEFAULT: "var(--color-border)",

@@ -6,7 +6,6 @@ import {
   commentMock4,
   commentMock5,
 } from "@domain/comment";
-import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();
@@ -21,7 +20,6 @@ export const todoIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [commentMock4, commentMock5],
-    priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 15:28").valueOf(),
@@ -37,7 +35,6 @@ export const inProgressIssuesMock1: Issue[] = [
     reporter: userMock1, // Daniel Serrano
     asignee: userMock2, // Woody
     comments: [],
-    priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
@@ -50,7 +47,6 @@ export const inProgressIssuesMock1: Issue[] = [
     reporter: userMock2, // Woody
     asignee: usersMock[2], // Buzz Lightyear
     comments: [commentMock1, commentMock2],
-    priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
@@ -66,7 +62,6 @@ export const doneIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
-    priority: priorityLow,
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 10:51").valueOf(),
@@ -79,7 +74,6 @@ export const doneIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [commentMock3],
-    priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 02:04").valueOf(),
@@ -90,13 +84,12 @@ export const doneIssuesMock1: Issue[] = [
 export const todoIssuesMock2: Issue[] = [
   {
     id: "f3efefcf-7859-4241-8b03-4ae815183355",
-    name: "Add and display issue timestamps",
+    name: "Create id for Issue entity",
     description:
       "Id should be create automatically on new Issue(). It must be displayed on issue panel, as well as an updatedAt parameter",
     reporter: userMock1,
     asignee: userMock2,
     comments: [],
-    priority: priorityMedium,
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
@@ -109,7 +102,6 @@ export const todoIssuesMock2: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
-    priority: priorityLow,
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-23 14:28").valueOf(),
@@ -124,7 +116,6 @@ export const inProgressIssuesMock2: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
-    priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,

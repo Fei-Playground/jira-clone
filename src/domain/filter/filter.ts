@@ -1,4 +1,4 @@
-export const sorts = ["date", "priority"] as const;
+export const sorts = ["date"] as const;
 export const DEFAULT_SORT: Sort = "date";
 
 export type Sort = (typeof sorts)[number];
@@ -11,7 +11,6 @@ export type SortList = SortItem[];
 
 export const sortDict: SortDict = {
   date: "Date",
-  priority: "Priority",
 };
 
 export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][]).map(

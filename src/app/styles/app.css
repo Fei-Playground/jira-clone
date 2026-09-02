@@ -186,9 +186,6 @@
   --color-icon-subtle: var(--Neutral700);
   --color-icon-inverse: var(--Neutral0);
   --color-icon-disabled: var(--Neutral400A);
-  --color-icon-accent-green: var(--Green600);
-  --color-icon-accent-yellow: var(--Yellow400);
-  --color-icon-accent-red: var(--Red600);
 
   /* Border */
   --color-border: var(--Neutral300A);
@@ -323,9 +320,6 @@
   --color-icon-subtle: var(--DarkNeutral700);
   --color-icon-inverse: var(--DarkNeutral100);
   --color-icon-disabled: var(--DarkNeutral400A);
-  --color-icon-accent-green: var(--Green500);
-  --color-icon-accent-yellow: var(--Yellow500);
-  --color-icon-accent-red: var(--Red500);
 
   /* Border */
   --color-border: var(--DarkNeutral300A);
@@ -461,9 +455,6 @@
   --color-icon-subtle: var(--DarkNeutral700);
   --color-icon-inverse: var(--DarkNeutral100);
   --color-icon-disabled: var(--DarkNeutral400A);
-  --color-icon-accent-green: var(--Green500);
-  --color-icon-accent-yellow: var(--Yellow500);
-  --color-icon-accent-red: var(--Red500);
 
   /* Border */
   --color-border: var(--DarkNeutral300A);
@@ -599,9 +590,6 @@
   --color-icon-subtle: var(--DarkNeutral700);
   --color-icon-inverse: var(--DarkNeutral100);
   --color-icon-disabled: var(--DarkNeutral400A);
-  --color-icon-accent-green: var(--Green500);
-  --color-icon-accent-yellow: var(--Yellow500);
-  --color-icon-accent-red: var(--Red500);
 
   /* Border */
   --color-border: var(--DarkNeutral300A);
@@ -734,9 +722,6 @@
   --color-icon-subtle: var(--Neutral700);
   --color-icon-inverse: var(--Neutral0);
   --color-icon-disabled: var(--Neutral400A);
-  --color-icon-accent-green: var(--Green600);
-  --color-icon-accent-yellow: var(--Yellow300);
-  --color-icon-accent-red: var(--Red600);
 
   /* Border */
   --color-border: var(--Neutral300A);

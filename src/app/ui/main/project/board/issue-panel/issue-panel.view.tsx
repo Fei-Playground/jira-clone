@@ -24,7 +24,6 @@ import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
 import { SelectStatus } from "./select-status";
-import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
 import { CreatedUpdatedAt } from "./created-updated-at";
 import { Spinner } from "./spinner";
@@ -189,12 +188,6 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <p className="mb-1">Status</p>
                       <SelectStatus
                         initStatus={issue?.categoryType || initStatus}
-                      />
-                    </div>
-                    <div>
-                      <p className="mb-1">Priority</p>
-                      <SelectPriority
-                        initPriority={issue?.priority.id || "low"}
                       />
                     </div>
                     <div>
