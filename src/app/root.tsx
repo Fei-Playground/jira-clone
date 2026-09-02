@@ -94,6 +94,7 @@ export default function AppWithProviders() {
   );
 }
 
+// Renders the root document shell: applies the session theme, wires up toasts and error boundaries, and hosts the routed content via <Outlet />.
 const App = (): JSX.Element => {
   const loaderData = useLoaderData<LoaderData>();
   const { theme: sessionTheme, preference: sessionPreference } = loaderData;
