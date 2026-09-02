@@ -1,3 +1,5 @@
+<!-- This file was updated by a second approval test. -->
+
 # Jira clone v2.0
 
 A simplified Jira clone application with some custom modifications made with Remix Run. This is a personal project for practicing skills and it is not intended to work as a real Jira application. It is still in early development and some features and improves are coming.
