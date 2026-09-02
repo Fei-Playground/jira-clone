@@ -1,3 +1,4 @@
+// Root route module: defines the app shell, metadata, links, and theme loader for the entire application.
 import { CSSProperties, useEffect } from "react";
 import type { LoaderFunction, MetaFunction } from "react-router";
 import {
