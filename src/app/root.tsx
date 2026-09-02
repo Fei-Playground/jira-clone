@@ -119,6 +119,9 @@ const App = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Renders the root HTML document shell: applies the active theme class and
+  // renders metadata/links, the routed page content, scroll restoration,
+  // scripts, and the global toast container.
   return (
     <html lang="en" className={cx("h-full", theme)}>
       <head>
