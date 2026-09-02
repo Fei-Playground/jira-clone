@@ -1,8 +1,24 @@
 import { userMock1, usersMock } from "@domain/user";
-import { Comment } from "./comment";
+import { Comment, CommentReply } from "./comment";
 
 const createdAt = Date.now();
 const updatedAt = Date.now();
+
+const replyMock1: CommentReply = {
+  id: "reply-1a2b3c4d-5678-abcd-ef01-234567890abc",
+  user: usersMock[7], // Little Green Men
+  message: "Good point! I noticed the same thing when switching between users.",
+  createdAt,
+  updatedAt,
+};
+
+const replyMock2: CommentReply = {
+  id: "reply-2b3c4d5e-6789-bcde-f012-345678901bcd",
+  user: userMock1, // Daniel Serrano
+  message: "@Jessie Exactly — it's a permission-based approach. Reporters own their issues.",
+  createdAt,
+  updatedAt,
+};
 
 export const commentMock1: Comment = {
   id: "92149ee5-0459-4286-8323-1542e1295154",
@@ -11,12 +27,13 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [replyMock1, replyMock2],
 };
 
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
-  message: "And only the original poster of a comment can edit or delete it!",
+  message: "@Jessie And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
 };

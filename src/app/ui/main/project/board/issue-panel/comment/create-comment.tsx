@@ -1,11 +1,13 @@
 import { v4 as uuid } from "uuid";
 import { Comment } from "@domain/comment";
+import { User } from "@domain/user";
 import { useUserStore } from "@app/store/user.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { EditBox } from "./edit-box";
 
 export const CreateComment = ({
   addComment,
+  users = [],
 }: CreateCommentProps): JSX.Element => {
   const { user } = useUserStore();
 
@@ -22,11 +24,12 @@ export const CreateComment = ({
   return (
     <div className="mt-4 flex items-start gap-6">
       <UserAvatar {...user} />
-      <EditBox defaultMessage="" save={save} />
+      <EditBox defaultMessage="" save={save} users={users} />
     </div>
   );
 };
 
 interface CreateCommentProps {
   addComment: (comment: Comment) => void;
+  users?: User[];
 }

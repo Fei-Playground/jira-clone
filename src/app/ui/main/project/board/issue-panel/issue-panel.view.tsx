@@ -12,8 +12,9 @@ import * as Dialog from "@app/components/dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
-import { Comment, CommentId } from "@domain/comment";
+import { Comment, CommentId, CommentReply } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
 import { Button } from "@app/components/button";
@@ -36,6 +37,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     null
   );
   const { user } = useUserStore();
+  const { project } = useProjectStore();
+  const projectUsers = project.users;
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
   const actionData = useActionData() as IssueActionData;
@@ -96,6 +99,15 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
       (comment) => comment.id !== commentId
     );
     setComments(updatedComments);
+  };
+
+  const updateCommentReplies = (
+    commentId: CommentId,
+    replies: CommentReply[]
+  ): void => {
+    setComments((prev) =>
+      prev.map((c) => (c.id === commentId ? { ...c, replies } : c))
+    );
   };
 
   useEffect(() => {
@@ -170,7 +182,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <CreateComment
+                          addComment={addComment}
+                          users={projectUsers}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
                         {comments.map((comment) => (
@@ -178,6 +193,8 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              onRepliesChange={updateCommentReplies}
+                              users={projectUsers}
                             />
                           </li>
                         ))}
