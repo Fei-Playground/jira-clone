@@ -14,6 +14,7 @@ import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
+import { useProjectStore } from "@app/ui/main/project/project.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
 import { Button } from "@app/components/button";
@@ -36,6 +37,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     null
   );
   const { user } = useUserStore();
+  const mentionUsers = useProjectStore().project.users;
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
   const actionData = useActionData() as IssueActionData;
@@ -170,7 +172,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     <div>
                       <p className="font-primary-black text-font">Comments</p>
                       <div>
-                        <CreateComment addComment={addComment} />
+                        <CreateComment
+                          addComment={addComment}
+                          mentionUsers={mentionUsers}
+                        />
                       </div>
                       <ul className="mt-8 space-y-6">
                         {comments.map((comment) => (
@@ -178,6 +183,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              mentionUsers={mentionUsers}
                             />
                           </li>
                         ))}

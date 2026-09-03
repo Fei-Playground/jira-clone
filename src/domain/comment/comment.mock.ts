@@ -11,12 +11,29 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-1111-4286-8323-reply0000001",
+      user: usersMock[7], // Little Green Men
+      message: "Good to know! So if I report an issue, only I can change its title later?",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "a1b2c3d4-2222-4286-8323-reply0000002",
+      user: usersMock[3], // Jessie
+      message: "Exactly — the assignee can still update status and priority though.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
-  message: "And only the original poster of a comment can edit or delete it!",
+  message:
+    "And only the original poster of a comment can edit or delete it! @Jessie is that right?",
   createdAt,
   updatedAt,
 };
@@ -28,6 +45,15 @@ export const commentMock3: Comment = {
     "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-3333-4286-8323-reply0000003",
+      user: userMock1, // Daniel Serrano
+      message: "Nice, keyboard shortcuts work on the board too — try Shift+N.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock4: Comment = {
