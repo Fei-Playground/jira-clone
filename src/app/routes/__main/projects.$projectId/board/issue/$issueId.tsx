@@ -21,7 +21,8 @@ import {
   deleteIssue,
   UpdateIssueInputData,
 } from "@infrastructure/db/issue";
-import { deleteComment } from "@infrastructure/db/comment";
+import { deleteComment, getComment } from "@infrastructure/db/comment";
+import { getUserSession } from "@app/session-storage";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
@@ -150,6 +151,25 @@ export const action: ActionFunction = async ({ request, params }) => {
     const commentId = formData.get("commentId") as CommentId;
 
     if (!commentId) return null;
+
+    const userSession = await getUserSession(request);
+    const userId = userSession.getUser();
+
+    if (!userId) {
+      return redirect("/login");
+    }
+
+    const comment = await getComment(commentId);
+
+    if (!comment) {
+      throw new Response("Comment not found", { status: 404 });
+    }
+
+    if (comment.userId !== userId) {
+      throw new Response("You can only delete your own comments", {
+        status: 403,
+      });
+    }
 
     await deleteComment(commentId);
     return redirect(`/projects/${projectId}/board/issue/${id}`, 202);
