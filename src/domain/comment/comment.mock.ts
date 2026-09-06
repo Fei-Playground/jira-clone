@@ -16,9 +16,26 @@ export const commentMock1: Comment = {
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
-  message: "And only the original poster of a comment can edit or delete it!",
+  message:
+    "And only the original poster of a comment can edit or delete it! @Buzz Lightyear can you confirm this is the case?",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-1111-4222-8333-444455556666",
+      user: usersMock[3], // Jessie
+      message: "Good to know — that keeps threads safe from drive-by edits.",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "b2c3d4e5-2222-4333-8444-555566667777",
+      user: userMock1, // Daniel Serrano
+      message: "Exactly. Replying to a comment keeps the context in one place.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock3: Comment = {
