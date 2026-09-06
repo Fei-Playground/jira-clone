@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { userEvent, within } from "storybook/test";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
-import { todoIssuesMock1 } from "@domain/issue";
+import { todoIssuesMock1, inProgressIssuesMock1 } from "@domain/issue";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
 import "react-toastify/dist/ReactToastify.css";
@@ -38,5 +39,26 @@ export const WithComments: Story = {
       ...issue,
       comments: issue.comments,
     },
+  },
+};
+
+const issueWithReplies = inProgressIssuesMock1[1];
+
+export const MentionDropdownOpen: Story = {
+  args: {
+    issue: issueWithReplies,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textboxes = canvas.getAllByPlaceholderText("Add your comment...");
+    const textarea = textboxes[0];
+    await userEvent.click(textarea);
+    await userEvent.type(textarea, "@");
+  },
+};
+
+export const WithReplies: Story = {
+  args: {
+    issue: issueWithReplies,
   },
 };

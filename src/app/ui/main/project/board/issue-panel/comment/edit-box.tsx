@@ -1,8 +1,9 @@
 import { useState } from "react";
 import cx from "classix";
-import { TextareaAutosize } from "@app/components/textarea-autosize";
+import { usersMock } from "@domain/user";
 import { Button } from "@app/components/button";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
+import { MentionTextarea } from "./mention-textarea";
 
 export const EditBox = ({
   defaultMessage,
@@ -46,13 +47,14 @@ export const EditBox = ({
 
   return (
     <div className="w-full">
-      <TextareaAutosize
+      <MentionTextarea
         name="comment"
         value={message}
         setValue={setMessage}
         placeholder={placeholder}
         onFocus={onFocus}
         autofocus={autofocus}
+        users={usersMock}
         textareaClassName={cx(
           "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
           isError &&

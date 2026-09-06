@@ -11,6 +11,22 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-1111-4a1a-9a1a-1a1a1a1a1a1a",
+      user: usersMock[7], // Little Green Men
+      message: "@Jessie Good to know — I was wondering why I couldn't rename this issue.",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "a1b2c3d4-2222-4a2a-9a2a-2a2a2a2a2a2a",
+      user: userMock1, // Daniel Serrano
+      message: "Exactly, it's a permission thing. Only the reporter sees the editable fields.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -19,6 +35,15 @@ export const commentMock2: Comment = {
   message: "And only the original poster of a comment can edit or delete it!",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-3333-4a3a-9a3a-3a3a3a3a3a3a",
+      user: usersMock[5], // Mr. Potato
+      message: "But anyone can reply to it, which is what we just added.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock3: Comment = {
@@ -34,7 +59,7 @@ export const commentMock4: Comment = {
   id: "c0db6d6f-f395-4882-8bf4-e644f0e45460",
   user: userMock1, // Daniel Serrano
   message:
-    "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
+    "@Buzz Lightyear By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
 };
