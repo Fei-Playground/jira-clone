@@ -1,6 +1,8 @@
 import { useState } from "react";
 import cx from "classix";
 import { TextareaAutosize } from "@app/components/textarea-autosize";
+import { MentionTextarea } from "./mention-textarea";
+import { User } from "@domain/user";
 import { Button } from "@app/components/button";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 
@@ -9,6 +11,7 @@ export const EditBox = ({
   autofocus,
   save,
   cancel,
+  mentionUsers,
 }: EditBoxProps): JSX.Element => {
   const [message, setMessage] = useState<string>(defaultMessage);
   const [initError, setInitError] = useState<boolean>(false);
@@ -46,19 +49,36 @@ export const EditBox = ({
 
   return (
     <div className="w-full">
-      <TextareaAutosize
-        name="comment"
-        value={message}
-        setValue={setMessage}
-        placeholder={placeholder}
-        onFocus={onFocus}
-        autofocus={autofocus}
-        textareaClassName={cx(
-          "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
-          isError &&
-            "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
-        )}
-      />
+      {mentionUsers ? (
+        <MentionTextarea
+          name="comment"
+          value={message}
+          setValue={setMessage}
+          placeholder={placeholder}
+          onFocus={onFocus}
+          autofocus={autofocus}
+          users={mentionUsers}
+          textareaClassName={cx(
+            "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
+            isError &&
+              "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
+          )}
+        />
+      ) : (
+        <TextareaAutosize
+          name="comment"
+          value={message}
+          setValue={setMessage}
+          placeholder={placeholder}
+          onFocus={onFocus}
+          autofocus={autofocus}
+          textareaClassName={cx(
+            "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
+            isError &&
+              "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
+          )}
+        />
+      )}
       <div
         className={cx(
           "mt-2 flex gap-2 text-sm",
@@ -92,4 +112,5 @@ interface EditBoxProps {
   autofocus?: boolean;
   save: (commentText: string) => void;
   cancel?: () => void;
+  mentionUsers?: User[];
 }
