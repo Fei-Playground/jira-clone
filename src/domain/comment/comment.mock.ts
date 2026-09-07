@@ -11,6 +11,22 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a3f1c2d4-7b6e-4a58-9c01-2e5d8f6b7a90",
+      user: usersMock[5], // Mr. Potato
+      message: "@Daniel Serrano good to know! I was wondering why I couldn't edit some issues.",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "b7e2d5a8-3c9f-4b61-8d24-6f0a1c3e5b78",
+      user: userMock1, // Daniel Serrano
+      message: "Exactly, it keeps the board consistent for everyone.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
