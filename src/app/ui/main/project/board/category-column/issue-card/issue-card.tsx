@@ -91,24 +91,22 @@ export const IssueCardContent = ({
   >
     <Link to={link}>
       <>
-        <div className="flex items-start justify-between gap-2">
-          <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
-          {commentCount > 0 && (
-            <span
-              className="mt-0.5 flex shrink-0 items-center rounded bg-elevation-surface px-1.5 py-0.5 text-2xs text-font-subtlest"
-              title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
-            >
-              <FaRegCommentAlt size={10} />
-              <span className="ml-1">{commentCount}</span>
-            </span>
-          )}
-        </div>
+        <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
         <div className="flex items-center justify-between pt-4">
           <span className="flex items-center">
             <TaskIcon size={18} />
             <span className="ml-1.5 text-2xs text-font-subtlest">
               {idPrefix}
             </span>
+            {commentCount > 0 && (
+              <span
+                className="ml-2 flex items-center rounded bg-elevation-surface px-1.5 py-0.5 text-2xs text-font-subtlest"
+                title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
+              >
+                <FaRegCommentAlt size={10} />
+                <span className="ml-1">{commentCount}</span>
+              </span>
+            )}
           </span>
           <PriorityIcon priority={priorityId} />
         </div>
