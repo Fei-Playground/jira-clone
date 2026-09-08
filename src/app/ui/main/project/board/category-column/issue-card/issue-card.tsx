@@ -93,18 +93,18 @@ export const IssueCardContent = ({
       <>
         <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
         <div className="flex items-center justify-between pt-4">
-          <span className="flex items-center">
+          <span className="flex items-center gap-1.5">
             <TaskIcon size={18} />
-            <span className="ml-1.5 text-2xs text-font-subtlest">
+            <span className="text-2xs leading-none text-font-subtlest">
               {idPrefix}
             </span>
             {commentCount > 0 && (
               <span
-                className="ml-2 flex items-center rounded bg-background-brand-subtlest px-2 py-1 text-xs text-font-brand"
+                className="ml-0.5 flex items-center gap-1 rounded bg-background-brand-subtlest px-1.5 py-0.5 text-2xs leading-none text-font-brand"
                 title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
               >
-                <FaRegCommentAlt size={12} />
-                <span className="ml-1.5">{commentCount}</span>
+                <FaRegCommentAlt size={10} />
+                <span>{commentCount}</span>
               </span>
             )}
           </span>
