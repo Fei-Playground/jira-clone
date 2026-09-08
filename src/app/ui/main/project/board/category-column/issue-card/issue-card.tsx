@@ -100,11 +100,11 @@ export const IssueCardContent = ({
             </span>
             {commentCount > 0 && (
               <span
-                className="ml-2 flex items-center rounded bg-elevation-surface px-1.5 py-0.5 text-2xs text-font-subtlest"
+                className="ml-2 flex items-center rounded bg-background-brand-subtlest px-2 py-1 text-xs text-font-brand"
                 title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
               >
-                <FaRegCommentAlt size={10} />
-                <span className="ml-1">{commentCount}</span>
+                <FaRegCommentAlt size={12} />
+                <span className="ml-1.5">{commentCount}</span>
               </span>
             )}
           </span>
