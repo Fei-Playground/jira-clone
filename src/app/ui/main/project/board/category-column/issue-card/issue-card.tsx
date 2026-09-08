@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
+import { FaRegCommentAlt } from "react-icons/fa";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
@@ -60,6 +61,7 @@ export const IssueCard = ({
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
+        commentCount={issue.commentCount ?? issue.comments.length}
       />
     </div>
   );
@@ -78,6 +80,7 @@ export const IssueCardContent = ({
   priorityId,
   idPrefix,
   isSubmitting,
+  commentCount = 0,
 }: IssueCardContentProps): JSX.Element => (
   <div
     style={{ minWidth: "200px" }}
@@ -88,7 +91,18 @@ export const IssueCardContent = ({
   >
     <Link to={link}>
       <>
-        <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
+          {commentCount > 0 && (
+            <span
+              className="mt-0.5 flex shrink-0 items-center rounded bg-elevation-surface px-1.5 py-0.5 text-2xs text-font-subtlest"
+              title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
+            >
+              <FaRegCommentAlt size={10} />
+              <span className="ml-1">{commentCount}</span>
+            </span>
+          )}
+        </div>
         <div className="flex items-center justify-between pt-4">
           <span className="flex items-center">
             <TaskIcon size={18} />
@@ -109,6 +123,7 @@ interface IssueCardContentProps {
   priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
+  commentCount?: number;
 }
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";
