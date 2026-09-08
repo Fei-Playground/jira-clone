@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
+import { FaRegCommentAlt } from "react-icons/fa";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
@@ -60,6 +61,7 @@ export const IssueCard = ({
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
+        commentCount={issue.commentCount ?? issue.comments.length}
       />
     </div>
   );
@@ -78,6 +80,7 @@ export const IssueCardContent = ({
   priorityId,
   idPrefix,
   isSubmitting,
+  commentCount = 0,
 }: IssueCardContentProps): JSX.Element => (
   <div
     style={{ minWidth: "200px" }}
@@ -90,11 +93,20 @@ export const IssueCardContent = ({
       <>
         <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
         <div className="flex items-center justify-between pt-4">
-          <span className="flex items-center">
+          <span className="flex items-center gap-1.5">
             <TaskIcon size={18} />
-            <span className="ml-1.5 text-2xs text-font-subtlest">
+            <span className="text-2xs leading-none text-font-subtlest">
               {idPrefix}
             </span>
+            {commentCount > 0 && (
+              <span
+                className="ml-0.5 flex items-center gap-1 rounded bg-background-brand-subtlest px-1.5 py-0.5 text-2xs leading-none text-font-brand"
+                title={`${commentCount} comment${commentCount === 1 ? "" : "s"}`}
+              >
+                <FaRegCommentAlt size={10} />
+                <span>{commentCount}</span>
+              </span>
+            )}
           </span>
           <PriorityIcon priority={priorityId} />
         </div>
@@ -109,6 +121,7 @@ interface IssueCardContentProps {
   priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
+  commentCount?: number;
 }
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";

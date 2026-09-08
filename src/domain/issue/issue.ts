@@ -12,6 +12,7 @@ export interface Issue {
   reporter: User;
   asignee: User;
   comments: Comment[];
+  commentCount?: number;
   priority: Priority;
   createdAt: number;
   updatedAt: number;
