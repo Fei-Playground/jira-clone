@@ -30,6 +30,22 @@ export const commentMock3: Comment = {
   updatedAt,
 };
 
+export const replyMock1: Comment = {
+  id: "f1a2b3c4-1111-4a2b-9c3d-4e5f6a7b8c9d",
+  user: usersMock[1], // Woody
+  message: "Good catch! I just tried it and got the 404 page as expected.",
+  createdAt,
+  updatedAt,
+};
+
+export const replyMock2: Comment = {
+  id: "a9b8c7d6-2222-4b3c-8d4e-5f6a7b8c9d0e",
+  user: usersMock[3], // Jessie
+  message: "Same here, @Daniel Serrano — the error boundary handles it gracefully.",
+  createdAt,
+  updatedAt,
+};
+
 export const commentMock4: Comment = {
   id: "c0db6d6f-f395-4882-8bf4-e644f0e45460",
   user: userMock1, // Daniel Serrano
@@ -37,6 +53,7 @@ export const commentMock4: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [replyMock1, replyMock2],
 };
 
 export const commentMock5: Comment = {
