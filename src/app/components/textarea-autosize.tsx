@@ -12,6 +12,8 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
     textareaClassName,
     onFocus,
     onBlur,
+    onValueChange,
+    onKeyDown,
   } = props;
 
   const [textareaHeight, setTextareaHeight] = useState<number>(40);
@@ -28,6 +30,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
   const handleTitleChange = (e: React.FormEvent<HTMLTextAreaElement>): void => {
     const value = e.currentTarget.value;
     setValue(value);
+    if (onValueChange) onValueChange(value, e.currentTarget.selectionStart);
   };
 
   const valueIsNotOnlySpaces = (): boolean => {
@@ -54,6 +57,7 @@ export const TextareaAutosize = (props: TitleProps): JSX.Element => {
         readOnly={readOnly}
         onFocus={handleOnFocus}
         onBlur={onBlur}
+        onKeyDown={onKeyDown}
         style={{ height: `${textareaHeight}px` }}
         autoFocus={autofocus}
       />
@@ -80,4 +84,6 @@ interface TitleProps {
   textareaClassName?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  onValueChange?: (value: string, caretPosition: number) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
