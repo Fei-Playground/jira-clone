@@ -11,6 +11,15 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-1111-4222-8333-444455556666",
+      user: userMock1, // Daniel Serrano
+      message: "Good point — I'll add a note about that to the onboarding docs.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -25,7 +34,7 @@ export const commentMock3: Comment = {
   id: "ee000718-85e5-44ac-91e2-e29340fb0b61",
   user: usersMock[5], // Mr. Potato
   message:
-    "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard.",
+    "This is not they only accessible feature implemented. By using Radix UI, components like select, dialog or checkboxes are accessible by default, and you can handle them with the keyboard. What do you think, @Buzz Lightyear?",
   createdAt,
   updatedAt,
 };
