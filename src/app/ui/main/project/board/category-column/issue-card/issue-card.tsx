@@ -4,9 +4,11 @@ import cx from "classix";
 import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
+import { User } from "@domain/user";
 import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
+import { UserAvatar } from "@app/components/user-avatar";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export interface DropItem {
@@ -60,6 +62,7 @@ export const IssueCard = ({
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
+        assignee={issue.asignee}
       />
     </div>
   );
@@ -78,6 +81,7 @@ export const IssueCardContent = ({
   priorityId,
   idPrefix,
   isSubmitting,
+  assignee,
 }: IssueCardContentProps): JSX.Element => (
   <div
     style={{ minWidth: "200px" }}
@@ -96,7 +100,22 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <div className="flex items-center gap-1.5">
+            {assignee && (
+              <>
+                <UserAvatar
+                  name={assignee.name}
+                  image={assignee.image}
+                  color={assignee.color}
+                  size={20}
+                />
+                <span className="max-w-[100px] truncate text-2xs text-font-subtlest">
+                  {assignee.name}
+                </span>
+              </>
+            )}
+            <PriorityIcon priority={priorityId} />
+          </div>
         </div>
       </>
     </Link>
@@ -109,6 +128,7 @@ interface IssueCardContentProps {
   priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
+  assignee?: User;
 }
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";
