@@ -92,10 +92,28 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const removeComment = (commentId: CommentId): void => {
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
-    );
-    setComments(updatedComments);
+    const removeFromTree = (list: Comment[]): Comment[] =>
+      list
+        .filter((comment) => comment.id !== commentId)
+        .map((comment) =>
+          comment.replies
+            ? { ...comment, replies: removeFromTree(comment.replies) }
+            : comment
+        );
+    setComments(removeFromTree(comments));
+  };
+
+  const addReply = (parentId: CommentId, reply: Comment): void => {
+    const addToTree = (list: Comment[]): Comment[] =>
+      list.map((comment) => {
+        if (comment.id === parentId) {
+          return { ...comment, replies: [...(comment.replies ?? []), reply] };
+        }
+        return comment.replies
+          ? { ...comment, replies: addToTree(comment.replies) }
+          : comment;
+      });
+    setComments(addToTree(comments));
   };
 
   useEffect(() => {
@@ -178,6 +196,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                             <ViewComment
                               comment={comment}
                               removeComment={removeComment}
+                              addReply={addReply}
                             />
                           </li>
                         ))}
