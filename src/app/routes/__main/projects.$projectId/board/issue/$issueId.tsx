@@ -25,6 +25,7 @@ import { deleteComment } from "@infrastructure/db/comment";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
+import { slugify } from "@utils/slugify";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
@@ -36,7 +37,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const description = issue.description || "No description";
   const image =
     "https://jira-clone.fly.dev/static/images/readme/issue-panel.png";
-  const url = `https://jira-clone.fly.dev/projects/${projectId}/board/issue/${issue.name}`;
+  const url = `https://jira-clone.fly.dev/projects/${projectId}/board/issue/${slugify(issue.name)}`;
 
   const tags = {
     charset: "utf-8",
