@@ -23,6 +23,13 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
+import {
+  CommentFilters,
+  CommentFiltersValue,
+  applyCommentFilters,
+  defaultCommentFilters,
+  getCommentAuthors,
+} from "./comment/comment-filters";
 import { SelectStatus } from "./select-status";
 import { SelectPriority } from "./select-priority";
 import { SelectAsignee } from "./select-asignee";
@@ -32,6 +39,9 @@ import { Spinner } from "./spinner";
 export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<Comment[]>(issue?.comments || []);
+  const [commentFilters, setCommentFilters] = useState<CommentFiltersValue>(
+    defaultCommentFilters
+  );
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
   );
@@ -172,15 +182,22 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       <div>
                         <CreateComment addComment={addComment} />
                       </div>
+                      <CommentFilters
+                        authors={getCommentAuthors(comments)}
+                        value={commentFilters}
+                        onChange={setCommentFilters}
+                      />
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
+                        {applyCommentFilters(comments, commentFilters).map(
+                          (comment) => (
+                            <li key={comment.id}>
+                              <ViewComment
+                                comment={comment}
+                                removeComment={removeComment}
+                              />
+                            </li>
+                          )
+                        )}
                       </ul>
                     </div>
                   </section>
