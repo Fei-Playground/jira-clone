@@ -7,6 +7,7 @@ import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 export const EditBox = ({
   defaultMessage,
   autofocus,
+  placeholder,
   save,
   cancel,
 }: EditBoxProps): JSX.Element => {
@@ -40,9 +41,9 @@ export const EditBox = ({
   const onFocus = () => setIsEditing(true);
 
   const isError = initError && !messageIsValid();
-  const placeholder = isError
+  const placeholderText = isError
     ? "Message cannot be empty"
-    : "Add your comment...";
+    : placeholder || "Add your comment...";
 
   return (
     <div className="w-full">
@@ -50,7 +51,7 @@ export const EditBox = ({
         name="comment"
         value={message}
         setValue={setMessage}
-        placeholder={placeholder}
+        placeholder={placeholderText}
         onFocus={onFocus}
         autofocus={autofocus}
         textareaClassName={cx(
@@ -90,6 +91,7 @@ export const EditBox = ({
 interface EditBoxProps {
   defaultMessage: string;
   autofocus?: boolean;
+  placeholder?: string;
   save: (commentText: string) => void;
   cancel?: () => void;
 }
