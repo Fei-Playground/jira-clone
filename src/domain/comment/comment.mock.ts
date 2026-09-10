@@ -47,3 +47,30 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+export const commentMock6: Comment = {
+  id: "f3b2a1c4-7d8e-4f5a-9b6c-1d2e3f4a5b6c",
+  user: userMock1, // Daniel Serrano
+  message: "Good to know! I tried it and the error page showed up instantly.",
+  parentId: commentMock4.id,
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock7: Comment = {
+  id: "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+  user: usersMock[6], // Ms. Potato
+  message: "Yes, error handling is fully covered on every route.",
+  parentId: commentMock6.id,
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock8: Comment = {
+  id: "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+  user: usersMock[2], // Buzz Lightyear
+  message: "That restriction makes total sense for a team workflow.",
+  parentId: commentMock1.id,
+  createdAt,
+  updatedAt,
+};

@@ -5,6 +5,9 @@ import {
   commentMock3,
   commentMock4,
   commentMock5,
+  commentMock6,
+  commentMock7,
+  commentMock8,
 } from "@domain/comment";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
@@ -20,7 +23,7 @@ export const todoIssuesMock1: Issue[] = [
       'There are two sections on the sidebar that will intentionally throw an error. The section "Server error" will trigger a 500 error response, while "Not found" returns a 404 error. You can check the status response on the browser network tab and see how it is handled on the UI.',
     reporter: userMock1,
     asignee: userMock1,
-    comments: [commentMock4, commentMock5],
+    comments: [commentMock4, commentMock5, commentMock6, commentMock7],
     priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
@@ -49,7 +52,7 @@ export const inProgressIssuesMock1: Issue[] = [
       "This will be reflected on the UI (e. g. which user created and issue or wrote a comment). A user can only see the projects they are assigned to. You can try this by creating a new project at the /projects page. To logout, go to the avatar dropdown (top right).",
     reporter: userMock2, // Woody
     asignee: usersMock[2], // Buzz Lightyear
-    comments: [commentMock1, commentMock2],
+    comments: [commentMock1, commentMock2, commentMock8],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
