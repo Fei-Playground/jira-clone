@@ -23,6 +23,9 @@ type Pages = {
   "/action/set-theme": {
     params: {};
   };
+  "/team": {
+    params: {};
+  };
   "/projects": {
     params: {};
   };
@@ -76,7 +79,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/*";
+    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/team" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/*";
   };
   "routes/index.tsx": {
     id: "routes/index";
@@ -96,7 +99,11 @@ type RouteFiles = {
   };
   "routes/__main.tsx": {
     id: "routes/__main";
-    page: "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
+    page: "/team" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
+  };
+  "routes/__main/team.tsx": {
+    id: "routes/__main/team";
+    page: "/team";
   };
   "routes/__main/projects.tsx": {
     id: "routes/__main/projects";
@@ -147,6 +154,7 @@ type RouteModules = {
   "routes/action/logout": typeof import("./src/app/routes/action/logout.tsx");
   "routes/action/set-theme": typeof import("./src/app/routes/action/set-theme.tsx");
   "routes/__main": typeof import("./src/app/routes/__main.tsx");
+  "routes/__main/team": typeof import("./src/app/routes/__main/team.tsx");
   "routes/__main/projects": typeof import("./src/app/routes/__main/projects.tsx");
   "routes/__main/projects/new": typeof import("./src/app/routes/__main/projects/new.tsx");
   "routes/__main/projects.$projectId": typeof import("./src/app/routes/__main/projects.$projectId.tsx");
