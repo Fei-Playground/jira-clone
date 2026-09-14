@@ -8,7 +8,7 @@ export const PriorityIcon = ({
 }: PriorityIconProps): JSX.Element => (
   <span
     className={cx(
-      "flex",
+      "flex opacity-60",
       priority === "low" && "text-icon-accent-green",
       priority === "medium" && "text-icon-accent-yellow",
       priority === "high" && "text-icon-accent-red"
