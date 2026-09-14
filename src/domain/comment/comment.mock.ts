@@ -16,7 +16,7 @@ export const commentMock1: Comment = {
 export const commentMock2: Comment = {
   id: "3375b7ea-425d-4bd3-a728-c8888b63a7f2",
   user: usersMock[7], // Little Green Men
-  message: "And only the original poster of a comment can edit or delete it!",
+  message: "And only the original poster of a comment can edit or delete it! @Andy Davis",
   createdAt,
   updatedAt,
 };
@@ -42,8 +42,7 @@ export const commentMock4: Comment = {
 export const commentMock5: Comment = {
   id: "6c57eff9-f310-470a-b8e9-0f5234b63f5a",
   user: usersMock[6], // Ms. Potato
-  message:
-    "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
+  message: "@Ms. Potato the 404 error triggers if you modify the URL to a non existing path.",
   createdAt,
   updatedAt,
 };
