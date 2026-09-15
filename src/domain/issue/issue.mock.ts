@@ -11,6 +11,12 @@ import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();
 
+// Gantt scheduling dates are kept relative to "now" so the timeline always
+// includes the current day, unlike the fixed historical createdAt/updatedAt
+// demo values above.
+const DAY_MS = 24 * 60 * 60 * 1000;
+const daysFromNow = (offset: number): number => Date.now() + offset * DAY_MS;
+
 // PROJECT 1
 export const todoIssuesMock1: Issue[] = [
   {
@@ -25,6 +31,8 @@ export const todoIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    startDate: daysFromNow(-9),
+    endDate: daysFromNow(-2),
   },
 ];
 
@@ -41,6 +49,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    startDate: daysFromNow(-2),
+    endDate: daysFromNow(10),
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -54,6 +64,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    startDate: daysFromNow(0),
+    endDate: daysFromNow(14),
   },
 ];
 
@@ -70,6 +82,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    startDate: daysFromNow(-14),
+    endDate: daysFromNow(-5),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -83,6 +97,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    startDate: daysFromNow(-11),
+    endDate: daysFromNow(1),
   },
 ];
 
@@ -100,6 +116,8 @@ export const todoIssuesMock2: Issue[] = [
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    startDate: daysFromNow(5),
+    endDate: daysFromNow(16),
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -113,6 +131,8 @@ export const todoIssuesMock2: Issue[] = [
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-23 14:28").valueOf(),
+    startDate: daysFromNow(7),
+    endDate: daysFromNow(22),
   },
 ];
 
@@ -128,6 +148,8 @@ export const inProgressIssuesMock2: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    startDate: daysFromNow(-4),
+    endDate: daysFromNow(9),
   },
 ];
 

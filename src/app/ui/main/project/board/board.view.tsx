@@ -3,6 +3,8 @@ import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import cx from "classix";
+import { BsKanban, BsBarChartSteps } from "react-icons/bs";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
@@ -11,10 +13,15 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
+import { GanttView } from "./gantt-view";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
+type BoardMode = "kanban" | "gantt";
+
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [mode, setMode] = useState<BoardMode>("kanban");
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,15 +33,82 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-auto">
+            <BoardModeToggle mode={mode} setMode={setMode} />
+          </div>
         </section>
-        <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
-        </DndProvider>
+        {mode === "kanban" ? (
+          <DndProvider backend={HTML5Backend}>
+            <Categories categories={project.categories} />
+          </DndProvider>
+        ) : (
+          <GanttView categories={project.categories} />
+        )}
         <Outlet />
       </div>
     </ProjectContextProvider>
   );
 };
+
+const BoardModeToggle = ({
+  mode,
+  setMode,
+}: BoardModeToggleProps): JSX.Element => (
+  <div
+    role="tablist"
+    aria-label="Board view mode"
+    className="flex items-center gap-1 rounded bg-background-neutral p-1"
+  >
+    <ModeButton
+      isActive={mode === "kanban"}
+      label="Kanban"
+      onClick={() => setMode("kanban")}
+      Icon={BsKanban}
+    />
+    <ModeButton
+      isActive={mode === "gantt"}
+      label="Gantt"
+      onClick={() => setMode("gantt")}
+      Icon={BsBarChartSteps}
+    />
+  </div>
+);
+
+const ModeButton = ({
+  isActive,
+  label,
+  onClick,
+  Icon,
+}: ModeButtonProps): JSX.Element => (
+  <button
+    type="button"
+    role="tab"
+    aria-selected={isActive}
+    aria-label={`Switch to ${label} view`}
+    onClick={onClick}
+    className={cx(
+      "flex cursor-pointer items-center gap-1.5 rounded px-3 py-1.5 text-xs duration-200 ease-in-out",
+      isActive
+        ? "bg-background-brand-bold text-font-inverse"
+        : "text-font-subtle hover:bg-background-neutral-hovered"
+    )}
+  >
+    <Icon size={14} />
+    {label}
+  </button>
+);
+
+interface BoardModeToggleProps {
+  mode: BoardMode;
+  setMode: (mode: BoardMode) => void;
+}
+
+interface ModeButtonProps {
+  isActive: boolean;
+  label: string;
+  onClick: () => void;
+  Icon: typeof BsKanban;
+}
 
 interface Props {
   project: Project;

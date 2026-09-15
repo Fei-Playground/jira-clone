@@ -15,4 +15,7 @@ export interface Issue {
   priority: Priority;
   createdAt: number;
   updatedAt: number;
+  // Scheduling window used to plot the issue on the Gantt timeline
+  startDate?: number;
+  endDate?: number;
 }
