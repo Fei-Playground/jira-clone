@@ -3,11 +3,13 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { FaPowerOff } from "react-icons/fa";
 import cx from "classix";
 import { useUserStore } from "@app/store/user.store";
+import { useTranslation } from "@app/store/locale.store";
 import { UserAvatar } from "@app/components/user-avatar";
 import { Button } from "@app/components/button";
 
 export const UserProfile = (): JSX.Element => {
   const { user } = useUserStore();
+  const { t } = useTranslation();
 
   return (
     <DropdownMenu.Root>
@@ -37,10 +39,10 @@ export const UserProfile = (): JSX.Element => {
                 onClick={(e) => e.stopPropagation()} // To prevent dropdown menu from closing
                 className="w-full"
                 // className="flex w-full items-center gap-2 rounded bg-transparent p-2 text-sm text-font-danger hover:bg-background-danger-hovered active:bg-background-danger-pressed"
-                aria-label="Log out"
+                aria-label={t("userProfile.logOut")}
               >
                 <FaPowerOff />
-                <span>Log out</span>
+                <span>{t("userProfile.logOut")}</span>
               </Button>
             </Form>
           </DropdownMenu.Item>

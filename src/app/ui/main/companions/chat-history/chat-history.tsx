@@ -6,6 +6,7 @@ import { ScrollArea } from "@app/components/scroll-area";
 import { Character } from "@domain/character";
 import { ChatSession } from "@domain/chat-message";
 import { formatDateTime } from "@utils/formatDateTime";
+import { useTranslation } from "@app/store/locale.store";
 
 export const ChatHistory = ({
   isOpen,
@@ -16,6 +17,7 @@ export const ChatHistory = ({
   onSelectSession,
   onNewSession,
 }: ChatHistoryProps): JSX.Element => {
+  const { t, locale } = useTranslation();
   const sorted = [...sessions].sort((a, b) => b.updatedAt - a.updatedAt);
 
   return (
@@ -25,12 +27,13 @@ export const ChatHistory = ({
           <Dialog.Content className="max-w-[520px]">
             <div className="mb-1 flex items-center justify-between">
               <Dialog.Title className="!mb-0">
-                Conversations with {character.name}
+                {t("companions.history.conversationsWith", {
+                  name: character.name,
+                })}
               </Dialog.Title>
             </div>
             <p className="mb-4 text-xs text-font-subtlest">
-              Every conversation is saved separately, so you can pick up an old
-              thread or start something new.
+              {t("companions.history.description")}
             </p>
 
             <Button
@@ -41,10 +44,10 @@ export const ChatHistory = ({
                 onNewSession();
                 onClose();
               }}
-              aria-label="Start a new conversation"
+              aria-label={t("companions.history.startNewConversation")}
             >
               <RiAddLine size={18} />
-              Start a new conversation
+              {t("companions.history.startNewConversation")}
             </Button>
 
             <div className="max-h-[360px]">
@@ -57,7 +60,9 @@ export const ChatHistory = ({
                           onSelectSession(session.id);
                           onClose();
                         }}
-                        aria-label={`Open conversation: ${session.title}`}
+                        aria-label={t("companions.history.openConversation", {
+                          title: session.title,
+                        })}
                         className={cx(
                           "w-full rounded-md p-3 text-left",
                           session.id === activeSessionId
@@ -72,15 +77,17 @@ export const ChatHistory = ({
                           {session.messages[session.messages.length - 1]?.text}
                         </p>
                         <p className="mt-1 text-2xs text-font-subtlest">
-                          {formatDateTime(session.updatedAt)} ·{" "}
-                          {session.messages.length} messages
+                          {formatDateTime(session.updatedAt, locale)} ·{" "}
+                          {t("companions.history.messageCount", {
+                            count: session.messages.length,
+                          })}
                         </p>
                       </button>
                     </li>
                   ))}
                   {sorted.length === 0 && (
                     <li className="p-3 text-sm text-font-subtlest">
-                      No conversations yet — start one above.
+                      {t("companions.history.emptyState")}
                     </li>
                   )}
                 </ul>

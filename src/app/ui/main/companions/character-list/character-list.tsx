@@ -3,6 +3,7 @@ import { RiAddLine, RiSettings3Line } from "react-icons/ri";
 import { Character } from "@domain/character";
 import { ScrollArea } from "@app/components/scroll-area";
 import { Tooltip } from "@app/components/tooltip";
+import { useTranslation } from "@app/store/locale.store";
 import { useCompanionsStore } from "../companions.store";
 
 export const CharacterList = ({
@@ -11,15 +12,18 @@ export const CharacterList = ({
 }: CharacterListProps): JSX.Element => {
   const { characters, selectedCharacterId, selectCharacter } =
     useCompanionsStore();
+  const { t } = useTranslation();
 
   return (
     <aside className="flex h-full w-[280px] min-w-[280px] flex-col border-r border-border bg-elevation-surface-sunken">
       <div className="flex items-center justify-between px-4 py-4">
-        <h2 className="font-primary-black text-lg text-font">Companions</h2>
-        <Tooltip title="Create a new companion">
+        <h2 className="font-primary-black text-lg text-font">
+          {t("companions.sidebar.title")}
+        </h2>
+        <Tooltip title={t("companions.sidebar.createNew")}>
           <button
             onClick={onCreateCharacter}
-            aria-label="Create new companion"
+            aria-label={t("companions.sidebar.createNew")}
             className="flex h-8 w-8 items-center justify-center rounded-full text-icon hover:bg-background-brand-subtlest hover:text-icon-brand"
           >
             <RiAddLine size={20} />
@@ -35,6 +39,10 @@ export const CharacterList = ({
                   character={character}
                   isSelected={character.id === selectedCharacterId}
                   onSelect={() => selectCharacter(character.id)}
+                  chatWithLabel={t("companions.sidebar.chatWith", {
+                    name: character.name,
+                  })}
+                  customLabel={t("companions.sidebar.custom")}
                 />
               </li>
             ))}
@@ -44,11 +52,11 @@ export const CharacterList = ({
       <div className="border-t border-border p-2">
         <button
           onClick={onOpenSettings}
-          aria-label="Open companion settings"
+          aria-label={t("companions.sidebar.settings")}
           className="flex w-full items-center gap-3 rounded p-2 text-sm text-font-subtlest hover:bg-background-neutral"
         >
           <RiSettings3Line size={20} />
-          <span>Settings</span>
+          <span>{t("companions.sidebar.settings")}</span>
         </button>
       </div>
     </aside>
@@ -59,14 +67,18 @@ const CharacterListItem = ({
   character,
   isSelected,
   onSelect,
+  chatWithLabel,
+  customLabel,
 }: {
   character: Character;
   isSelected: boolean;
   onSelect: () => void;
+  chatWithLabel: string;
+  customLabel: string;
 }): JSX.Element => (
   <button
     onClick={onSelect}
-    aria-label={`Chat with ${character.name}`}
+    aria-label={chatWithLabel}
     className={cx(
       "flex w-full items-center gap-3 rounded p-2 text-left",
       isSelected
@@ -89,7 +101,7 @@ const CharacterListItem = ({
         </span>
         {character.isCustom && (
           <span className="shrink-0 rounded bg-background-neutral px-1.5 py-0.5 text-2xs uppercase text-font-subtlest">
-            Custom
+            {customLabel}
           </span>
         )}
       </span>

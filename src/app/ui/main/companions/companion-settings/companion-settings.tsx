@@ -3,39 +3,50 @@ import * as Select from "@app/components/select";
 import { Button } from "@app/components/button";
 import { SelctTheme } from "@app/ui/main/header/select-theme";
 // Note: imported directly since header's barrel only re-exports the Header component.
+import { SelectLocale } from "@app/ui/main/header/select-locale";
+import { useTranslation } from "@app/store/locale.store";
 import { ResponseStyle, useCompanionsStore } from "../companions.store";
-
-const RESPONSE_STYLE_OPTIONS: {
-  value: ResponseStyle;
-  label: string;
-  hint: string;
-}[] = [
-  { value: "concise", label: "Concise", hint: "Short, to-the-point replies" },
-  { value: "balanced", label: "Balanced", hint: "A natural back-and-forth" },
-  {
-    value: "elaborate",
-    label: "Elaborate",
-    hint: "Longer, more descriptive replies",
-  },
-];
 
 export const CompanionSettings = ({
   isOpen,
   onClose,
 }: CompanionSettingsProps): JSX.Element => {
   const { settings, setSettings } = useCompanionsStore();
+  const { t } = useTranslation();
+
+  const RESPONSE_STYLE_OPTIONS: {
+    value: ResponseStyle;
+    label: string;
+    hint: string;
+  }[] = [
+    {
+      value: "concise",
+      label: t("companions.settings.responseStyleConcise"),
+      hint: t("companions.settings.responseStyleConciseHint"),
+    },
+    {
+      value: "balanced",
+      label: t("companions.settings.responseStyleBalanced"),
+      hint: t("companions.settings.responseStyleBalancedHint"),
+    },
+    {
+      value: "elaborate",
+      label: t("companions.settings.responseStyleElaborate"),
+      hint: t("companions.settings.responseStyleElaborateHint"),
+    },
+  ];
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay>
           <Dialog.Content className="max-w-[480px]">
-            <Dialog.Title>Chat settings</Dialog.Title>
+            <Dialog.Title>{t("companions.settings.title")}</Dialog.Title>
 
             <div className="space-y-6">
               <div>
                 <p className="mb-1 font-primary-bold text-sm text-font">
-                  Your display name
+                  {t("companions.settings.displayNameLabel")}
                 </p>
                 <input
                   value={settings.userDisplayName}
@@ -45,17 +56,17 @@ export const CompanionSettings = ({
                       userDisplayName: e.target.value,
                     }))
                   }
-                  aria-label="Your display name"
+                  aria-label={t("companions.settings.displayNameAria")}
                   className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                 />
               </div>
 
               <div>
                 <p className="mb-1 font-primary-bold text-sm text-font">
-                  Response style
+                  {t("companions.settings.responseStyleLabel")}
                 </p>
                 <p className="mb-2 text-xs text-font-subtlest">
-                  Controls how your companions&apos; replies feel.
+                  {t("companions.settings.responseStyleHint")}
                 </p>
                 <Select.Root
                   name="responseStyle"
@@ -67,7 +78,11 @@ export const CompanionSettings = ({
                     }))
                   }
                 >
-                  <Select.Trigger aria-label="Open response style select">
+                  <Select.Trigger
+                    aria-label={t(
+                      "companions.settings.openResponseStyleSelect"
+                    )}
+                  >
                     <Select.Value />
                     <Select.TriggerIcon />
                   </Select.Trigger>
@@ -95,16 +110,16 @@ export const CompanionSettings = ({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-primary-bold text-sm text-font">
-                    Immersive mode
+                    {t("companions.settings.immersiveModeLabel")}
                   </p>
                   <p className="text-xs text-font-subtlest">
-                    Hide timestamps and lean into the roleplay.
+                    {t("companions.settings.immersiveModeHint")}
                   </p>
                 </div>
                 <button
                   role="switch"
                   aria-checked={settings.immersiveMode}
-                  aria-label="Toggle immersive mode"
+                  aria-label={t("companions.settings.toggleImmersiveMode")}
                   onClick={() =>
                     setSettings((prev) => ({
                       ...prev,
@@ -129,15 +144,25 @@ export const CompanionSettings = ({
 
               <div>
                 <p className="mb-2 font-primary-bold text-sm text-font">
-                  Theme
+                  {t("companions.settings.languageLabel")}
+                </p>
+                <SelectLocale />
+              </div>
+
+              <div>
+                <p className="mb-2 font-primary-bold text-sm text-font">
+                  {t("companions.settings.themeLabel")}
                 </p>
                 <SelctTheme />
               </div>
             </div>
 
             <div className="mt-6 flex justify-end">
-              <Button onClick={onClose} aria-label="Close settings">
-                Done
+              <Button
+                onClick={onClose}
+                aria-label={t("companions.settings.closeSettings")}
+              >
+                {t("common.done")}
               </Button>
             </div>
           </Dialog.Content>

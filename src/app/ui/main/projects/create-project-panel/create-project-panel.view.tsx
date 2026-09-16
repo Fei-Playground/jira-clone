@@ -13,12 +13,14 @@ import { Button } from "@app/components/button";
 import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { useTranslation } from "@app/store/locale.store";
 import { CreateProjectPanelHeader } from "./create-project-panel-header";
 
 export const CreateProjectPanelView = ({
   project,
   users,
 }: Props): JSX.Element => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null
@@ -101,7 +103,7 @@ export const CreateProjectPanelView = ({
               )}
             >
               <CreateProjectPanelHeader
-                id={project?.id || "Create new project"}
+                id={project?.id || t("projects.createProjectTitle")}
               />
               <Form method="post" ref={formRef}>
                 <div className="mb-6">
@@ -112,7 +114,9 @@ export const CreateProjectPanelView = ({
                       error={actionData?.errors?.name}
                     />
                   </Dialog.Title>
-                  <p className="font-primary-black">Description</p>
+                  <p className="font-primary-black">
+                    {t("projects.descriptionLabel")}
+                  </p>
                   <div className="-ml-3 mb-5">
                     <Description initDescription={project?.description || ""} />
                   </div>
@@ -151,7 +155,8 @@ export const CreateProjectPanelView = ({
                 </div>
                 <div className="mt-6 grid grid-cols-3 items-end justify-center">
                   <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
+                    {t("common.pressPrefix")} <Kbd>Shift</Kbd> + <Kbd>S</Kbd>{" "}
+                    {t("common.toAccept")}
                   </span>
                   <div className="flex justify-center">
                     <Button
@@ -161,20 +166,21 @@ export const CreateProjectPanelView = ({
                       value="upsert"
                       className="w-fit gap-2 px-8 py-2 font-primary-bold text-lg"
                       disabled={fetcher.state !== "idle"}
-                      aria-label="Accept changes"
+                      aria-label={t("projects.acceptChanges")}
                     >
                       {fetcher.state !== "idle" ? (
                         <>
-                          Submmiting
+                          {t("projects.submitting")}
                           <Spinner />
                         </>
                       ) : (
-                        "Accept"
+                        t("projects.accept")
                       )}
                     </Button>
                   </div>
                   <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
-                    Press <Kbd>Esc</Kbd> to close
+                    {t("common.pressPrefix")} <Kbd>Esc</Kbd>{" "}
+                    {t("common.toClose")}
                   </span>
                 </div>
               </Form>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Character } from "@domain/character";
+import { useTranslation } from "@app/store/locale.store";
 import { CharacterList } from "./character-list";
 import { ChatWindow } from "./chat-window";
 import { CharacterEditor } from "./character-editor";
@@ -30,6 +31,7 @@ const CompanionsLayout = (): JSX.Element => {
     updateCharacter,
     deleteCharacter,
   } = useCompanionsStore();
+  const { t } = useTranslation();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(
@@ -93,7 +95,7 @@ const CompanionsLayout = (): JSX.Element => {
         />
       ) : (
         <div className="flex flex-1 items-center justify-center text-font-subtlest">
-          Create a companion to start chatting.
+          {t("companions.emptyState")}
         </div>
       )}
 

@@ -3,6 +3,8 @@ import * as Dialog from "@app/components/dialog";
 import * as AlertDialog from "@app/components/alert-dialog";
 import { Button } from "@app/components/button";
 import { Character } from "@domain/character";
+import { useTranslation } from "@app/store/locale.store";
+import { TranslationKey } from "@app/locales";
 
 const EMOJI_OPTIONS = [
   "🛰️",
@@ -32,6 +34,7 @@ export const CharacterEditor = ({
   onSave,
   onDelete,
 }: CharacterEditorProps): JSX.Element => {
+  const { t } = useTranslation();
   const [name, setName] = useState(character?.name ?? "");
   const [tagline, setTagline] = useState(character?.tagline ?? "");
   const [personality, setPersonality] = useState(character?.personality ?? "");
@@ -77,12 +80,16 @@ export const CharacterEditor = ({
         <Dialog.Overlay>
           <Dialog.Content className="max-w-[640px]">
             <Dialog.Title>
-              {isEditing ? "Edit companion" : "Create a companion"}
+              {isEditing
+                ? t("companions.editor.editTitle")
+                : t("companions.editor.createTitle")}
             </Dialog.Title>
 
             <div className="grid grid-cols-[96px_1fr] gap-6">
               <div>
-                <p className="mb-2 text-xs text-font-subtlest">Avatar</p>
+                <p className="mb-2 text-xs text-font-subtlest">
+                  {t("companions.editor.avatarLabel")}
+                </p>
                 <span
                   className="mb-3 flex h-16 w-16 items-center justify-center rounded-full text-3xl"
                   style={{ backgroundColor: avatarColor }}
@@ -94,7 +101,9 @@ export const CharacterEditor = ({
                     <button
                       key={emoji}
                       onClick={() => setAvatarEmoji(emoji)}
-                      aria-label={`Choose avatar ${emoji}`}
+                      aria-label={t("companions.editor.chooseAvatar", {
+                        emoji,
+                      })}
                       className="flex h-7 w-7 items-center justify-center rounded hover:bg-background-neutral"
                     >
                       {emoji}
@@ -106,7 +115,7 @@ export const CharacterEditor = ({
                     <button
                       key={color}
                       onClick={() => setAvatarColor(color)}
-                      aria-label={`Choose color ${color}`}
+                      aria-label={t("companions.editor.chooseColor", { color })}
                       style={{ backgroundColor: color }}
                       className="h-5 w-5 rounded-full outline outline-2 outline-offset-1 outline-transparent hover:outline-border-brand"
                     />
@@ -115,21 +124,21 @@ export const CharacterEditor = ({
               </div>
 
               <div className="space-y-4">
-                <Field label="Name">
+                <Field label={t("companions.editor.nameLabel")}>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Nova"
-                    aria-label="Companion name"
+                    placeholder={t("companions.editor.namePlaceholder")}
+                    aria-label={t("companions.editor.companionName")}
                     className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                   />
                 </Field>
-                <Field label="Tagline">
+                <Field label={t("companions.editor.taglineLabel")}>
                   <input
                     value={tagline}
                     onChange={(e) => setTagline(e.target.value)}
-                    placeholder="A one-line hook"
-                    aria-label="Companion tagline"
+                    placeholder={t("companions.editor.taglinePlaceholder")}
+                    aria-label={t("companions.editor.companionTagline")}
                     className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                   />
                 </Field>
@@ -137,32 +146,32 @@ export const CharacterEditor = ({
             </div>
 
             <div className="mt-4 space-y-4">
-              <Field label="Personality">
+              <Field label={t("companions.editor.personalityLabel")}>
                 <textarea
                   value={personality}
                   onChange={(e) => setPersonality(e.target.value)}
-                  placeholder="Describe how they talk and act..."
-                  aria-label="Companion personality"
+                  placeholder={t("companions.editor.personalityPlaceholder")}
+                  aria-label={t("companions.editor.companionPersonality")}
                   rows={2}
                   className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                 />
               </Field>
-              <Field label="Scenario">
+              <Field label={t("companions.editor.scenarioLabel")}>
                 <textarea
                   value={scenario}
                   onChange={(e) => setScenario(e.target.value)}
-                  placeholder="Set the scene for the conversation..."
-                  aria-label="Companion scenario"
+                  placeholder={t("companions.editor.scenarioPlaceholder")}
+                  aria-label={t("companions.editor.companionScenario")}
                   rows={2}
                   className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                 />
               </Field>
-              <Field label="Greeting message">
+              <Field label={t("companions.editor.greetingLabel")}>
                 <textarea
                   value={greeting}
                   onChange={(e) => setGreeting(e.target.value)}
-                  placeholder="What they say when a chat starts..."
-                  aria-label="Companion greeting"
+                  placeholder={t("companions.editor.greetingPlaceholder")}
+                  aria-label={t("companions.editor.companionGreeting")}
                   rows={2}
                   className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
                 />
@@ -178,6 +187,7 @@ export const CharacterEditor = ({
                       onDelete(character.id);
                       resetAndClose();
                     }}
+                    t={t}
                   />
                 )}
               </div>
@@ -186,16 +196,18 @@ export const CharacterEditor = ({
                   color="neutral"
                   variant="subtlest"
                   onClick={resetAndClose}
-                  aria-label="Cancel"
+                  aria-label={t("companions.editor.cancel")}
                 >
-                  Cancel
+                  {t("companions.editor.cancel")}
                 </Button>
                 <Button
                   onClick={handleSave}
                   disabled={!isValid}
-                  aria-label="Save companion"
+                  aria-label={t("companions.editor.saveCompanion")}
                 >
-                  {isEditing ? "Save changes" : "Create companion"}
+                  {isEditing
+                    ? t("companions.editor.saveChanges")
+                    : t("companions.editor.createCompanion")}
                 </Button>
               </div>
             </div>
@@ -225,30 +237,40 @@ const Field = ({
 const DeleteCharacterAction = ({
   characterName,
   onConfirm,
+  t,
 }: {
   characterName: string;
   onConfirm: () => void;
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }): JSX.Element => (
   <AlertDialog.Root>
     <AlertDialog.Trigger asChild>
-      <Button color="danger" variant="text" aria-label="Delete companion">
-        Delete companion
+      <Button
+        color="danger"
+        variant="text"
+        aria-label={t("companions.editor.deleteCompanion")}
+      >
+        {t("companions.editor.deleteCompanion")}
       </Button>
     </AlertDialog.Trigger>
     <AlertDialog.Portal>
       <AlertDialog.Overlay />
       <AlertDialog.Content>
-        <AlertDialog.Title>Delete {characterName}?</AlertDialog.Title>
+        <AlertDialog.Title>
+          {t("companions.editor.deleteTitle", { name: characterName })}
+        </AlertDialog.Title>
         <p className="text-sm text-font-subtlest">
-          This removes the companion and all of its conversations. This
-          can&apos;t be undone.
+          {t("companions.editor.deleteDescription")}
         </p>
         <AlertDialog.Description>
-          <AlertDialog.Cancel aria-label="Cancel delete">
-            Cancel
+          <AlertDialog.Cancel aria-label={t("companions.editor.cancelDelete")}>
+            {t("companions.editor.cancel")}
           </AlertDialog.Cancel>
-          <AlertDialog.Action onClick={onConfirm} aria-label="Confirm delete">
-            Delete
+          <AlertDialog.Action
+            onClick={onConfirm}
+            aria-label={t("companions.editor.confirmDelete")}
+          >
+            {t("common.delete")}
           </AlertDialog.Action>
         </AlertDialog.Description>
       </AlertDialog.Content>

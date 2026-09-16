@@ -5,16 +5,21 @@ import { HiFlag } from "react-icons/hi";
 import { BsClockHistory } from "react-icons/bs";
 import { Sort, sortList, DEFAULT_SORT } from "@domain/filter";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { useTranslation } from "@app/store/locale.store";
 
 export const SelectSort = (): JSX.Element => {
   const submit = useSubmit();
-  const sortBy = useSortBy() || DEFAULT_SORT;
+  const sortBy = (useSortBy() || DEFAULT_SORT) as Sort;
+  const { t } = useTranslation();
 
   const SortIcon = ({ sort }: { sort: Sort }): JSX.Element =>
     // prettier-ignore
     sort === "priority" 
       ? <HiFlag size={16} /> 
       : <BsClockHistory size={16} />;
+
+  const sortLabel = (sort: Sort): string =>
+    sort === "priority" ? t("board.sort.priority") : t("board.sort.date");
 
   const handleSubmit = (value: string): void => {
     submit({ sortBy: value });
@@ -25,12 +30,14 @@ export const SelectSort = (): JSX.Element => {
       <Select.Root defaultValue={sortBy} onValueChange={handleSubmit}>
         <Select.Trigger
           className="flex cursor-pointer items-center justify-center rounded border-none bg-background-brand-subtlest px-3 py-1.5 text-xs text-font-brand hover:bg-background-brand-subtlest-hovered active:bg-background-brand-subtlest-pressed"
-          aria-label="Open sort issues select"
+          aria-label={t("board.openSortSelect")}
         >
           <div className="mr-2 flex items-center">
             <FaSortAmountDownAlt size={14} />
           </div>
-          <Select.Value>Sort by {sortBy}</Select.Value>
+          <Select.Value>
+            {t("board.sortBy", { sort: sortLabel(sortBy) })}
+          </Select.Value>
         </Select.Trigger>
         <Select.Content className="select-none rounded bg-elevation-surface-overlay p-1.5 shadow-blue">
           <Select.ScrollUpButton />
@@ -42,7 +49,7 @@ export const SelectSort = (): JSX.Element => {
                 className="flex cursor-pointer items-center justify-start gap-2 rounded border-none px-2 py-2 text-xs uppercase leading-none text-font-brand outline-none hover:bg-background-brand-subtlest-hovered focus:bg-background-brand-subtlest-hovered active:bg-background-brand-subtlest-pressed"
               >
                 <SortIcon sort={sort.id} />
-                <Select.ItemText>{sort.label}</Select.ItemText>
+                <Select.ItemText>{sortLabel(sort.id)}</Select.ItemText>
               </Select.Item>
             ))}
           </Select.Viewport>

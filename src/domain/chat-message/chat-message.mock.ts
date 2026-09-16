@@ -1,6 +1,8 @@
 import { v4 as uuid } from "uuid";
 import { CharacterId, charactersMock } from "@domain/character";
+import { Locale } from "@app/locales";
 import { ChatMessage, ChatSession } from "./chat-message";
+import { scriptedReplyPoolZh } from "./chat-message.i18n";
 
 const [nova, sable, wisp, , chefBasil, captainMarlow, unit7] = charactersMock;
 
@@ -148,11 +150,17 @@ const scriptedReplyPool: Record<CharacterId, string[]> = {
   ],
 };
 
-export const getScriptedReply = (characterId: CharacterId, turnIndex: number): string => {
-  const pool = scriptedReplyPool[characterId] ?? [
-    "That's interesting — tell me more.",
-    "I see. Go on.",
-  ];
+export const getScriptedReply = (
+  characterId: CharacterId,
+  turnIndex: number,
+  locale: Locale = Locale.EN
+): string => {
+  const localizedPool = locale === Locale.ZH ? scriptedReplyPoolZh : scriptedReplyPool;
+  const fallbackPool =
+    locale === Locale.ZH
+      ? ["这很有意思——多说说。", "我明白了。继续说。"]
+      : ["That's interesting — tell me more.", "I see. Go on."];
+  const pool = localizedPool[characterId] ?? fallbackPool;
   return pool[turnIndex % pool.length];
 };
 

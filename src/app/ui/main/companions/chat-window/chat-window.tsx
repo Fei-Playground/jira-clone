@@ -6,6 +6,8 @@ import { ChatSession } from "@domain/chat-message";
 import { ScrollArea } from "@app/components/scroll-area";
 import { Tooltip } from "@app/components/tooltip";
 import { formatDateTime } from "@utils/formatDateTime";
+import { useTranslation } from "@app/store/locale.store";
+import { Locale } from "@app/locales";
 import { useCompanionsStore } from "../companions.store";
 
 export const ChatWindow = ({
@@ -15,6 +17,7 @@ export const ChatWindow = ({
   onEditCharacter,
 }: ChatWindowProps): JSX.Element => {
   const { sendMessage, settings } = useCompanionsStore();
+  const { t, locale } = useTranslation();
   const [draft, setDraft] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -61,19 +64,19 @@ export const ChatWindow = ({
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Tooltip title="Edit companion">
+          <Tooltip title={t("companions.chatWindow.editCompanion")}>
             <button
               onClick={onEditCharacter}
-              aria-label="Edit companion"
+              aria-label={t("companions.chatWindow.editCompanion")}
               className="flex h-9 w-9 items-center justify-center rounded-full text-icon hover:bg-background-neutral"
             >
               <RiEditLine size={18} />
             </button>
           </Tooltip>
-          <Tooltip title="Conversation history">
+          <Tooltip title={t("companions.chatWindow.conversationHistory")}>
             <button
               onClick={onOpenHistory}
-              aria-label="Open conversation history"
+              aria-label={t("companions.chatWindow.openConversationHistory")}
               className="flex h-9 w-9 items-center justify-center rounded-full text-icon hover:bg-background-neutral"
             >
               <RiHistoryLine size={18} />
@@ -93,6 +96,7 @@ export const ChatWindow = ({
                 isUser={message.sender === "user"}
                 character={character}
                 userDisplayName={settings.userDisplayName}
+                locale={locale}
               />
             ))}
             {isTyping && <TypingIndicator character={character} />}
@@ -107,9 +111,11 @@ export const ChatWindow = ({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={`Message ${character.name}...`}
+            placeholder={t("companions.chatWindow.messagePlaceholder", {
+              name: character.name,
+            })}
             rows={1}
-            aria-label="Message input"
+            aria-label={t("companions.chatWindow.messageInput")}
             className={cx(
               "box-border max-h-40 min-h-[44px] w-full resize-none rounded-md border-none bg-background-input p-3",
               "font-primary text-sm outline outline-2 outline-border-input",
@@ -119,7 +125,7 @@ export const ChatWindow = ({
           <button
             onClick={handleSend}
             disabled={!draft.trim()}
-            aria-label="Send message"
+            aria-label={t("companions.chatWindow.sendMessage")}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-background-brand-bold text-font-inverse hover:bg-background-brand-bold-hovered disabled:cursor-not-allowed disabled:opacity-60"
           >
             <RiSendPlaneFill size={18} />
@@ -175,12 +181,14 @@ const MessageBubble = ({
   isUser,
   character,
   userDisplayName,
+  locale,
 }: {
   text: string;
   createdAt: number;
   isUser: boolean;
   character: Character;
   userDisplayName: string;
+  locale: Locale;
 }): JSX.Element => (
   <div className={cx("flex items-end gap-2.5", isUser && "flex-row-reverse")}>
     {isUser ? (
@@ -203,7 +211,7 @@ const MessageBubble = ({
           isUser ? "text-font-inverse opacity-70" : "text-font-subtlest"
         )}
       >
-        {formatDateTime(createdAt)}
+        {formatDateTime(createdAt, locale)}
       </p>
     </div>
   </div>

@@ -3,11 +3,17 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
   Dispatch,
   SetStateAction,
 } from "react";
 import { v4 as uuid } from "uuid";
-import { Character, CharacterId, charactersMock } from "@domain/character";
+import {
+  Character,
+  CharacterId,
+  charactersMock,
+  getCharacterText,
+} from "@domain/character";
 import {
   ChatSession,
   ChatSessionId,
@@ -15,7 +21,9 @@ import {
   createUserMessage,
   createCharacterMessage,
   getScriptedReply,
+  getSessionText,
 } from "@domain/chat-message";
+import { useTranslation } from "@app/store/locale.store";
 
 export type ResponseStyle = "balanced" | "concise" | "elaborate";
 
@@ -54,6 +62,7 @@ export const CompanionsContextProvider = ({
 }: {
   children: JSX.Element;
 }): JSX.Element => {
+  const { t, locale } = useTranslation();
   const [characters, setCharacters] = useState<Character[]>(charactersMock);
   const [sessions, setSessions] = useState<ChatSession[]>(chatSessionsMock);
   const [selectedCharacterId, setSelectedCharacterId] =
@@ -63,8 +72,48 @@ export const CompanionsContextProvider = ({
       chatSessionsMock.find((s) => s.characterId === charactersMock[0]?.id)
         ?.id ?? null
   );
-  const [settings, setSettings] =
-    useState<CompanionsSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<CompanionsSettings>({
+    ...DEFAULT_SETTINGS,
+    userDisplayName: t("companions.settings.defaultDisplayName"),
+  });
+
+  // Re-localize the built-in companions' persona text (name/tagline/
+  // personality/scenario/greeting/tags) whenever the language changes.
+  // Custom companions the user wrote themselves are left untouched —
+  // that's their own content, not something we translate for them.
+  const localizedCharacters = useMemo(
+    () =>
+      characters.map((character) => {
+        if (character.isCustom) return character;
+        const localizedText = getCharacterText(character.id, locale);
+        return localizedText ? { ...character, ...localizedText } : character;
+      }),
+    [characters, locale]
+  );
+
+  // Re-localize the seeded demo transcripts (title + each message's text)
+  // whenever the language changes, the same way personas are re-localized
+  // above. Sessions the user actually chatted in (new messages appended)
+  // are left as-is — only the pristine seed data tracks the language.
+  const localizedSessions = useMemo(
+    () =>
+      sessions.map((session) => {
+        const localizedText = getSessionText(session.id, locale);
+        if (!localizedText) return session;
+        if (localizedText.messages.length !== session.messages.length) {
+          return session;
+        }
+        return {
+          ...session,
+          title: localizedText.title,
+          messages: session.messages.map((message, index) => ({
+            ...message,
+            text: localizedText.messages[index] ?? message.text,
+          })),
+        };
+      }),
+    [sessions, locale]
+  );
 
   const selectCharacter = useCallback(
     (characterId: CharacterId) => {
@@ -90,13 +139,13 @@ export const CompanionsContextProvider = ({
 
   const startNewSession = useCallback(
     (characterId: CharacterId) => {
-      const character = characters.find((c) => c.id === characterId);
+      const character = localizedCharacters.find((c) => c.id === characterId);
       if (!character) return;
 
       const newSession: ChatSession = {
         id: uuid(),
         characterId,
-        title: "New conversation",
+        title: t("companions.history.newConversation"),
         createdAt: Date.now(),
         updatedAt: Date.now(),
         messages: [createCharacterMessage(character.greeting)],
@@ -105,7 +154,7 @@ export const CompanionsContextProvider = ({
       setSelectedCharacterId(characterId);
       setActiveSessionId(newSession.id);
     },
-    [characters]
+    [localizedCharacters, t]
   );
 
   const sendMessage = useCallback(
@@ -121,7 +170,7 @@ export const CompanionsContextProvider = ({
                 messages: [...session.messages, userMessage],
                 updatedAt: Date.now(),
                 title:
-                  session.title === "New conversation"
+                  session.title === t("companions.history.newConversation")
                     ? text.slice(0, 40)
                     : session.title,
               }
@@ -139,7 +188,8 @@ export const CompanionsContextProvider = ({
             ).length;
             const replyText = getScriptedReply(
               session.characterId,
-              turnIndex - 1
+              turnIndex - 1,
+              locale
             );
             return {
               ...session,
@@ -153,7 +203,7 @@ export const CompanionsContextProvider = ({
         );
       }, 900);
     },
-    [activeSessionId, selectedCharacterId]
+    [activeSessionId, selectedCharacterId, t, locale]
   );
 
   const addCharacter = useCallback(
@@ -168,7 +218,7 @@ export const CompanionsContextProvider = ({
       const newSession: ChatSession = {
         id: uuid(),
         characterId: newCharacter.id,
-        title: "New conversation",
+        title: t("companions.history.newConversation"),
         createdAt: Date.now(),
         updatedAt: Date.now(),
         messages: [createCharacterMessage(newCharacter.greeting)],
@@ -177,7 +227,7 @@ export const CompanionsContextProvider = ({
       setSelectedCharacterId(newCharacter.id);
       setActiveSessionId(newSession.id);
     },
-    []
+    [t]
   );
 
   const updateCharacter = useCallback((updated: Character) => {
@@ -202,8 +252,8 @@ export const CompanionsContextProvider = ({
   );
 
   const value: CompanionsStore = {
-    characters,
-    sessions,
+    characters: localizedCharacters,
+    sessions: localizedSessions,
     selectedCharacterId,
     activeSessionId,
     settings,

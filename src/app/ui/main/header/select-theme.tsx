@@ -10,10 +10,12 @@ import {
   getSystemTheme,
   DEFAULT_THEME,
 } from "@app/store/theme.store";
+import { useTranslation } from "@app/store/locale.store";
 import { Tooltip } from "@app/components/tooltip";
 
 export const SelctTheme = (): JSX.Element => {
   const { theme, setTheme, preference } = useTheme();
+  const { t } = useTranslation();
 
   const themeOptions: {
     value: Theme | Preference.SYSTEM;
@@ -22,32 +24,32 @@ export const SelctTheme = (): JSX.Element => {
   }[] = [
     {
       value: Theme.LIGHT,
-      label: "Light",
+      label: t("header.themeLight"),
       image: "/images/theme/light.png",
     },
     {
       value: Theme.DARK,
-      label: "Dark",
+      label: t("header.themeDark"),
       image: "/images/theme/dark.png",
     },
     {
       value: Theme.LAVA,
-      label: "Lava",
+      label: t("header.themeLava"),
       image: "/images/theme/lava.png",
     },
     {
       value: Theme.LIME,
-      label: "Lime",
+      label: t("header.themeLime"),
       image: "/images/theme/lime.png",
     },
     {
       value: Theme.BARBIE,
-      label: "Barbie",
+      label: t("header.themeBarbie"),
       image: "/images/theme/barbie.png",
     },
     {
       value: Preference.SYSTEM,
-      label: "System",
+      label: t("header.themeSystem"),
       image: "/images/theme/system.png",
     },
   ];
@@ -66,9 +68,9 @@ export const SelctTheme = (): JSX.Element => {
 
   return (
     <DropdownMenu.Root>
-      <Tooltip title="Select theme">
+      <Tooltip title={t("header.selectTheme")}>
         <DropdownMenu.Trigger
-          aria-label="Open theme select"
+          aria-label={t("header.openThemeSelect")}
           className="group flex h-[30px] w-[30px] rounded-full outline outline-2 outline-icon flex-center hover:bg-background-brand-subtlest hover:outline-border-brand"
         >
           {theme === Theme.LIGHT ? (
@@ -85,7 +87,7 @@ export const SelctTheme = (): JSX.Element => {
           className="z-50 origin-top-right rounded bg-elevation-surface-overlay p-3 text-font shadow-md radix-side-bottom:animate-slide-down radix-side-top:animate-slide-up"
         >
           <DropdownMenu.Label className="select-none pb-2 text-lg">
-            Select theme
+            {t("header.selectTheme")}
           </DropdownMenu.Label>
           <DropdownMenu.RadioGroup
             value={currentValue || DEFAULT_THEME}

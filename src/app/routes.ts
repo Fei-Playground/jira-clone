@@ -5,6 +5,7 @@ export default [
   route("login", "routes/login.tsx"),
   route("action/logout", "routes/action/logout.tsx"),
   route("action/set-theme", "routes/action/set-theme.tsx"),
+  route("action/set-locale", "routes/action/set-locale.tsx"),
 
   layout("routes/__main.tsx", [
     route("companions", "routes/__main/companions.tsx"),

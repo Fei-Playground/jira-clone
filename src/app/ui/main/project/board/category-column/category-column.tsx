@@ -9,6 +9,7 @@ import { Issue, IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { useTranslation } from "@app/store/locale.store";
 import { IssueCard, DropItem, DRAG_ISSUE_CARD } from "./issue-card";
 
 export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
@@ -24,6 +25,13 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const fetcher = useFetcher();
   const sortBy = useSortBy();
   const { search } = useProjectStore();
+  const { t } = useTranslation();
+  const categoryLabel =
+    category.type === "TODO"
+      ? t("board.category.TODO")
+      : category.type === "IN_PROGRESS"
+        ? t("board.category.IN_PROGRESS")
+        : t("board.category.DONE");
   const emptyCategory = category.issues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
@@ -102,20 +110,22 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
           )}
         >
           {!isOver && (
-            <span className="rounded bg-elevation-surface px-1">DROP HERE</span>
+            <span className="rounded bg-elevation-surface px-1">
+              {t("board.dropHere")}
+            </span>
           )}
         </div>
       </div>
       {/* Column header */}
       <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
         <span className="flex gap-2">
-          <span>{category.name}</span>
+          <span>{categoryLabel}</span>
           {!emptyCategory && <span>( {category.issues.length} )</span>}
         </span>
         <Link
           to={issueLink}
           className="text-font-subtlest/60 flex cursor-pointer rounded border-none p-1 hover:bg-background-neutral"
-          aria-label={`Add new ${category.name} issue`}
+          aria-label={t("board.addNewIssue", { category: categoryLabel })}
         >
           <AiOutlinePlus size={24} />
         </Link>
@@ -126,7 +136,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
           <ScrollArea>
             <ul className="mt-1 max-w-[260px] px-3 pb-1">
               {emptyCategory ? (
-                <EmptyCategory />
+                <EmptyCategory label={t("board.noIssuesFound")} />
               ) : (
                 filteredIssues().map((issue, index) => (
                   <li key={index} className="mb-2">
@@ -155,9 +165,9 @@ interface CategoryColumnProps {
   handleDragging: (isDragging: boolean) => void;
 }
 
-const EmptyCategory = (): JSX.Element => (
+const EmptyCategory = ({ label }: { label: string }): JSX.Element => (
   <li className="mt-4 flex flex-col items-center text-font-subtlest">
     <RxValueNone size={36} />
-    <p className="mt-4 font-primary-light text-xs uppercase">No issues found</p>
+    <p className="mt-4 font-primary-light text-xs uppercase">{label}</p>
   </li>
 );
