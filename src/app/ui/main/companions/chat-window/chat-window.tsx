@@ -52,12 +52,7 @@ export const ChatWindow = ({
     <div className="flex h-full flex-1 flex-col">
       <header className="flex items-center justify-between border-b border-border px-6 py-4">
         <div className="flex items-center gap-3">
-          <span
-            className="flex h-10 w-10 items-center justify-center rounded-full text-lg"
-            style={{ backgroundColor: character.avatarColor }}
-          >
-            {character.avatarEmoji}
-          </span>
+          <CharacterAvatar character={character} size={44} />
           <div>
             <p className="font-primary-bold text-font">{character.name}</p>
             <p className="line-clamp-1 text-xs text-font-subtlest">
@@ -135,6 +130,45 @@ export const ChatWindow = ({
   );
 };
 
+const CharacterAvatar = ({
+  character,
+  size = 32,
+}: {
+  character: Character;
+  size?: number;
+}): JSX.Element => (
+  <span
+    className="flex shrink-0 items-center justify-center rounded-full text-base shadow-sm ring-2 ring-white/20"
+    style={{
+      width: size,
+      height: size,
+      background: `linear-gradient(145deg, ${character.avatarColor}, ${character.avatarColor}cc)`,
+    }}
+  >
+    {character.avatarEmoji}
+  </span>
+);
+
+const UserAvatarBubble = ({
+  displayName,
+  size = 32,
+}: {
+  displayName: string;
+  size?: number;
+}): JSX.Element => (
+  <span
+    className="flex shrink-0 items-center justify-center rounded-full font-primary-bold text-sm text-font-inverse shadow-sm"
+    style={{
+      width: size,
+      height: size,
+      background:
+        "linear-gradient(145deg, var(--color-background-brand-bold), var(--color-background-brand-boldest))",
+    }}
+  >
+    {displayName.slice(0, 1).toUpperCase()}
+  </span>
+);
+
 const MessageBubble = ({
   text,
   createdAt,
@@ -148,25 +182,18 @@ const MessageBubble = ({
   character: Character;
   userDisplayName: string;
 }): JSX.Element => (
-  <div className={cx("flex items-end gap-2", isUser && "flex-row-reverse")}>
-    <span
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm"
-      style={{
-        backgroundColor: isUser
-          ? "var(--color-background-neutral-bold)"
-          : character.avatarColor,
-      }}
-    >
-      {isUser
-        ? userDisplayName.slice(0, 1).toUpperCase()
-        : character.avatarEmoji}
-    </span>
+  <div className={cx("flex items-end gap-2.5", isUser && "flex-row-reverse")}>
+    {isUser ? (
+      <UserAvatarBubble displayName={userDisplayName} />
+    ) : (
+      <CharacterAvatar character={character} />
+    )}
     <div
       className={cx(
-        "max-w-[65%] rounded-lg px-4 py-2.5 text-sm",
+        "max-w-[65%] px-4 py-2.5 text-sm shadow-sm",
         isUser
-          ? "bg-background-brand-bold text-font-inverse"
-          : "bg-elevation-surface-raised text-font shadow-xs"
+          ? "rounded-2xl rounded-br-md bg-gradient-to-br from-background-brand-bold to-background-brand-boldest text-font-inverse"
+          : "rounded-2xl rounded-bl-md border border-border bg-elevation-surface-raised text-font"
       )}
     >
       <p className="whitespace-pre-wrap font-primary leading-6">{text}</p>
@@ -187,14 +214,9 @@ const TypingIndicator = ({
 }: {
   character: Character;
 }): JSX.Element => (
-  <div className="flex items-end gap-2">
-    <span
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm"
-      style={{ backgroundColor: character.avatarColor }}
-    >
-      {character.avatarEmoji}
-    </span>
-    <div className="flex items-center gap-1 rounded-lg bg-elevation-surface-raised px-4 py-3 shadow-xs">
+  <div className="flex items-end gap-2.5">
+    <CharacterAvatar character={character} />
+    <div className="flex items-center gap-1 rounded-2xl rounded-bl-md border border-border bg-elevation-surface-raised px-4 py-3 shadow-sm">
       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-font-subtlest" />
       <span
         className="h-1.5 w-1.5 animate-pulse rounded-full bg-font-subtlest"

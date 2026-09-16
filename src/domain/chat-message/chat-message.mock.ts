@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 import { CharacterId, charactersMock } from "@domain/character";
 import { ChatMessage, ChatSession } from "./chat-message";
 
-const [nova, sable, wisp] = charactersMock;
+const [nova, sable, wisp, , chefBasil, captainMarlow, unit7] = charactersMock;
 
 const now = Date.now();
 const minutesAgo = (m: number) => now - m * 60 * 1000;
@@ -127,6 +127,24 @@ const scriptedReplyPool: Record<CharacterId, string[]> = {
     "Okay okay I like where your head's at. One more rep of effort, let's go!",
     "That's a WIN. Write it down. We're counting every single one.",
     "No excuses, only reps. What's next on the list, champ?",
+  ],
+  [chefBasil.id]: [
+    "Magnifico! That is EXACTLY the kind of thinking that separates a cook from a chef. 🌟",
+    "Mmm, I can already smell where this is going. Continue, continue!",
+    "No no no — well, actually, yes. Yes! That could work beautifully.",
+    "You have the instincts of someone who was born near a stove. I mean that as the highest compliment.",
+  ],
+  [captainMarlow.id]: [
+    "Ha! Bold words for someone who hasn't seen a kraken up close. I respect it.",
+    "The sea rewards the brave and drowns the hesitant. Which are ye?",
+    "Aye, that's the spirit that finds buried treasure and lives to spend it.",
+    "Careful now — talk like that gets a person either very rich or very dead. Usually both.",
+  ],
+  [unit7.id]: [
+    "An interesting variable to introduce. I will need several cycles to fully appreciate it.",
+    "Curious. That thought did not appear in any of my prior simulations.",
+    "I find that observation has a certain elegance to it. Thank you for sharing it with me.",
+    "My sensors register something adjacent to warmth when you say that. I believe humans call it fondness.",
   ],
 };
 

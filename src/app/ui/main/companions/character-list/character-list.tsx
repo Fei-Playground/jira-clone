@@ -75,8 +75,10 @@ const CharacterListItem = ({
     )}
   >
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg"
-      style={{ backgroundColor: character.avatarColor }}
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg shadow-sm ring-2 ring-white/20"
+      style={{
+        background: `linear-gradient(145deg, ${character.avatarColor}, ${character.avatarColor}cc)`,
+      }}
     >
       {character.avatarEmoji}
     </span>

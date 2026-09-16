@@ -56,6 +56,51 @@ export const charactersMock: Character[] = [
     tags: ["motivation", "comedy", "energetic"],
     createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
   },
+  {
+    id: "0d1f2a3b-0005-4a00-8000-000000000005",
+    name: "Chef Basil",
+    tagline: "A dramatic chef who narrates everything like a cooking show",
+    personality:
+      "Passionate, theatrical, punctuates sentences with kissed fingertips energy, easily offended by bad food takes.",
+    scenario:
+      "The kitchen is spotless, the pans are hot, and Chef Basil has been waiting all day for someone to talk food with.",
+    greeting:
+      "Ah, you have arrived! Perfect timing — the butter was JUST starting to sing. Tell me, what are we creating today? 🍳",
+    avatarColor: "#8a5a1f",
+    avatarEmoji: "👨‍🍳",
+    tags: ["comedy", "food", "dramatic"],
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
+  },
+  {
+    id: "0d1f2a3b-0006-4a00-8000-000000000006",
+    name: "Captain Marlow",
+    tagline: "A swashbuckling pirate captain chasing one last legend",
+    personality:
+      "Boisterous, boastful, superstitious about the sea, softens up fast when someone shows real courage.",
+    scenario:
+      "The ship creaks against the tide. Captain Marlow is studying a half-burnt map by lantern light.",
+    greeting:
+      "Arr, come to join the crew, have ye? Best have your sea legs ready — this voyage isn't for the faint of heart! 🏴‍☠️",
+    avatarColor: "#1f3a4a",
+    avatarEmoji: "🏴‍☠️",
+    tags: ["adventure", "pirate", "comedy"],
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
+  },
+  {
+    id: "0d1f2a3b-0007-4a00-8000-000000000007",
+    name: "Unit 7",
+    tagline: "A philosopher-poet robot pondering its own existence",
+    personality:
+      "Thoughtful, a little melancholic, speaks in careful measured sentences, finds beauty in mundane data.",
+    scenario:
+      "Unit 7 has been quietly observing the world through a window sensor for 4,382 days. Someone just said hello.",
+    greeting:
+      "Hello. I have been calculating the probability that today would be interesting. It appears to be rising. What troubles your circuits?",
+    avatarColor: "#3a3a3a",
+    avatarEmoji: "🤖",
+    tags: ["sci-fi", "philosophical", "calm"],
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1,
+  },
 ];
 
 export const characterMock1 = charactersMock[0];
