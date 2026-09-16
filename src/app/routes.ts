@@ -7,6 +7,7 @@ export default [
   route("action/set-theme", "routes/action/set-theme.tsx"),
 
   layout("routes/__main.tsx", [
+    route("companions", "routes/__main/companions.tsx"),
     route("projects", "routes/__main/projects.tsx", [
       route("new", "routes/__main/projects/new.tsx"),
     ]),

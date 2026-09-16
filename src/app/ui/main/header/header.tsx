@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import cx from "classix";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
+import { RiChatSmile2Line } from "react-icons/ri";
 import { Tooltip } from "@app/components/tooltip";
 import { SelctTheme } from "./select-theme";
 import { UserProfile } from "./user-profile";
@@ -22,6 +23,15 @@ export const Header = (): JSX.Element => {
         </Link>
       </section>
       <section className="flex items-center gap-4">
+        <Tooltip title="Companions">
+          <Link
+            to="/companions"
+            aria-label="Go to companions chat"
+            className={iconBaseClass}
+          >
+            <RiChatSmile2Line size={22} />
+          </Link>
+        </Tooltip>
         <Tooltip title="About">
           <button
             aria-label="About this website"
