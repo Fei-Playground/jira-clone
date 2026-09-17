@@ -22,8 +22,10 @@ import {
   createCharacterMessage,
   getScriptedReply,
   getSessionText,
+  LoreInjectionSnapshot,
 } from "@domain/chat-message";
 import { useTranslation } from "@app/store/locale.store";
+import { useLorebookStore } from "./lorebook.store";
 
 export type ResponseStyle = "balanced" | "concise" | "elaborate";
 
@@ -47,6 +49,11 @@ interface CompanionsStore {
   addCharacter: (character: Omit<Character, "id" | "createdAt">) => void;
   updateCharacter: (character: Character) => void;
   deleteCharacter: (characterId: CharacterId) => void;
+  authorNoteBySessionId: Record<ChatSessionId, ChatSession["authorNote"]>;
+  setAuthorNote: (
+    sessionId: ChatSessionId,
+    note: { text: string; depth: number; updatedAt: number } | undefined
+  ) => void;
 }
 
 const CompanionsContext = createContext<CompanionsStore | undefined>(undefined);
@@ -157,10 +164,34 @@ export const CompanionsContextProvider = ({
     [localizedCharacters, t]
   );
 
+  const { matchEntriesForText } = useLorebookStore();
+
   const sendMessage = useCallback(
     (text: string) => {
       if (!activeSessionId || !selectedCharacterId) return;
-      const userMessage = createUserMessage(text);
+      const currentSession = sessions.find((s) => s.id === activeSessionId);
+      const character = localizedCharacters.find(
+        (c) => c.id === selectedCharacterId
+      );
+      const lorebookIds =
+        currentSession?.lorebookIds ?? character?.lorebookIds ?? [];
+      const recentMessages = (currentSession?.messages ?? [])
+        .slice(-6)
+        .map((m) => m.text);
+      const matched =
+        lorebookIds.length > 0
+          ? matchEntriesForText({ lorebookIds, text, recentMessages })
+          : [];
+      const loreInjections: LoreInjectionSnapshot[] = matched.map((m) => ({
+        entryId: m.entry.id,
+        entryName: m.entry.name,
+        content: m.entry.content,
+        matchedKeyword: m.matchedKeyword,
+      }));
+      const userMessage = {
+        ...createUserMessage(text),
+        loreInjections: loreInjections.length > 0 ? loreInjections : undefined,
+      };
 
       setSessions((prev) =>
         prev.map((session) =>
@@ -203,7 +234,29 @@ export const CompanionsContextProvider = ({
         );
       }, 900);
     },
-    [activeSessionId, selectedCharacterId, t, locale]
+    [
+      activeSessionId,
+      selectedCharacterId,
+      t,
+      locale,
+      sessions,
+      localizedCharacters,
+      matchEntriesForText,
+    ]
+  );
+
+  const setAuthorNote = useCallback(
+    (
+      sessionId: ChatSessionId,
+      note: { text: string; depth: number; updatedAt: number } | undefined
+    ) => {
+      setSessions((prev) =>
+        prev.map((session) =>
+          session.id === sessionId ? { ...session, authorNote: note } : session
+        )
+      );
+    },
+    []
   );
 
   const addCharacter = useCallback(
@@ -265,6 +318,8 @@ export const CompanionsContextProvider = ({
     addCharacter,
     updateCharacter,
     deleteCharacter,
+    authorNoteBySessionId: {},
+    setAuthorNote,
   };
 
   return (

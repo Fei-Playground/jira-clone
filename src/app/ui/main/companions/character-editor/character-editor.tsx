@@ -2,9 +2,20 @@ import { useState } from "react";
 import * as Dialog from "@app/components/dialog";
 import * as AlertDialog from "@app/components/alert-dialog";
 import { Button } from "@app/components/button";
-import { Character } from "@domain/character";
+import { Character, CharacterImage } from "@domain/character";
 import { useTranslation } from "@app/store/locale.store";
 import { TranslationKey } from "@app/locales";
+import { useLorebookStore } from "../lorebook.store";
+import { ExportCharacterCardButton } from "../character-card-io";
+import { CharacterPreview } from "../character-preview";
+import {
+  CharacterEditorTabs,
+  CharacterEditorTab,
+} from "./character-editor-tabs";
+import { TabAppearance } from "./tab-appearance";
+import { TabRelationship } from "./tab-relationship";
+import { TabImages } from "./tab-images";
+import { TabLorebooks } from "./tab-lorebooks";
 
 const EMOJI_OPTIONS = [
   "🛰️",
@@ -35,6 +46,9 @@ export const CharacterEditor = ({
   onDelete,
 }: CharacterEditorProps): JSX.Element => {
   const { t } = useTranslation();
+  const { lorebooks } = useLorebookStore();
+  const [activeTab, setActiveTab] = useState<CharacterEditorTab>("basics");
+
   const [name, setName] = useState(character?.name ?? "");
   const [tagline, setTagline] = useState(character?.tagline ?? "");
   const [personality, setPersonality] = useState(character?.personality ?? "");
@@ -47,6 +61,26 @@ export const CharacterEditor = ({
     character?.avatarColor ?? COLOR_OPTIONS[0]
   );
 
+  const [appearance, setAppearance] = useState(character?.appearance ?? "");
+  const [speechStyle, setSpeechStyle] = useState(character?.speechStyle ?? "");
+  const [exampleDialogue, setExampleDialogue] = useState(
+    character?.exampleDialogue ?? ""
+  );
+  const [initialRelationship, setInitialRelationship] = useState(
+    character?.initialRelationship ?? ""
+  );
+  const [defaultAuthorNote, setDefaultAuthorNote] = useState(
+    character?.defaultAuthorNote ?? ""
+  );
+  const [images, setImages] = useState<CharacterImage[]>(
+    character?.images ?? []
+  );
+  const [selectedLorebookIds, setSelectedLorebookIds] = useState<string[]>(
+    character?.lorebookIds ?? []
+  );
+  const [previewCreatedAt] = useState(() => Date.now());
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
   const isEditing = Boolean(character);
   const isValid = name.trim().length > 0 && greeting.trim().length > 0;
 
@@ -54,22 +88,49 @@ export const CharacterEditor = ({
     onClose();
   };
 
+  const buildCharacterPatch = (): Partial<Character> & { name: string } => ({
+    ...(character ?? {}),
+    name: name.trim(),
+    tagline: tagline.trim(),
+    personality: personality.trim(),
+    scenario: scenario.trim(),
+    greeting: greeting.trim(),
+    avatarEmoji,
+    avatarColor,
+    tags: character?.tags ?? [],
+    appearance: appearance.trim() || undefined,
+    speechStyle: speechStyle.trim() || undefined,
+    exampleDialogue: exampleDialogue.trim() || undefined,
+    initialRelationship: initialRelationship.trim() || undefined,
+    defaultAuthorNote: defaultAuthorNote.trim() || undefined,
+    images: images.length > 0 ? images : undefined,
+    lorebookIds:
+      selectedLorebookIds.length > 0 ? selectedLorebookIds : undefined,
+  });
+
   const handleSave = () => {
     if (!isValid) return;
-
-    onSave({
-      ...(character ?? {}),
-      name: name.trim(),
-      tagline: tagline.trim(),
-      personality: personality.trim(),
-      scenario: scenario.trim(),
-      greeting: greeting.trim(),
-      avatarEmoji,
-      avatarColor,
-      tags: character?.tags ?? [],
-    });
+    onSave(buildCharacterPatch());
     resetAndClose();
   };
+
+  const characterPatch = buildCharacterPatch();
+  const previewCharacterForExport: Character = {
+    id: character?.id ?? "preview",
+    createdAt: character?.createdAt ?? previewCreatedAt,
+    isCustom: character?.isCustom,
+    ...characterPatch,
+    tagline: characterPatch.tagline ?? "",
+    personality: characterPatch.personality ?? "",
+    scenario: characterPatch.scenario ?? "",
+    greeting: characterPatch.greeting ?? "",
+    tags: characterPatch.tags ?? [],
+    avatarColor: characterPatch.avatarColor ?? COLOR_OPTIONS[0],
+    avatarEmoji: characterPatch.avatarEmoji ?? EMOJI_OPTIONS[0],
+  };
+  const boundLorebooks = lorebooks.filter((book) =>
+    selectedLorebookIds.includes(book.id)
+  );
 
   return (
     <Dialog.Root
@@ -78,108 +139,164 @@ export const CharacterEditor = ({
     >
       <Dialog.Portal>
         <Dialog.Overlay>
-          <Dialog.Content className="max-w-[640px]">
+          <Dialog.Content className="max-w-[760px]">
             <Dialog.Title>
               {isEditing
                 ? t("companions.editor.editTitle")
                 : t("companions.editor.createTitle")}
             </Dialog.Title>
 
-            <div className="grid grid-cols-[96px_1fr] gap-6">
-              <div>
-                <p className="mb-2 text-xs text-font-subtlest">
-                  {t("companions.editor.avatarLabel")}
-                </p>
-                <span
-                  className="mb-3 flex h-16 w-16 items-center justify-center rounded-full text-3xl"
-                  style={{ backgroundColor: avatarColor }}
-                >
-                  {avatarEmoji}
-                </span>
-                <div className="grid grid-cols-5 gap-1">
-                  {EMOJI_OPTIONS.map((emoji) => (
-                    <button
-                      key={emoji}
-                      onClick={() => setAvatarEmoji(emoji)}
-                      aria-label={t("companions.editor.chooseAvatar", {
-                        emoji,
-                      })}
-                      className="flex h-7 w-7 items-center justify-center rounded hover:bg-background-neutral"
-                    >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {COLOR_OPTIONS.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setAvatarColor(color)}
-                      aria-label={t("companions.editor.chooseColor", { color })}
-                      style={{ backgroundColor: color }}
-                      className="h-5 w-5 rounded-full outline outline-2 outline-offset-1 outline-transparent hover:outline-border-brand"
-                    />
-                  ))}
-                </div>
-              </div>
+            <div className="flex gap-6">
+              <CharacterEditorTabs
+                activeTab={activeTab}
+                onChange={setActiveTab}
+                labels={{
+                  basics: t("companions.card.tabBasics"),
+                  persona: t("companions.card.tabPersona"),
+                  relationship: t("companions.card.tabRelationship"),
+                  images: t("companions.card.tabImages"),
+                  lorebooks: t("companions.card.tabLorebooks"),
+                }}
+              />
 
-              <div className="space-y-4">
-                <Field label={t("companions.editor.nameLabel")}>
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={t("companions.editor.namePlaceholder")}
-                    aria-label={t("companions.editor.companionName")}
-                    className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
-                  />
-                </Field>
-                <Field label={t("companions.editor.taglineLabel")}>
-                  <input
-                    value={tagline}
-                    onChange={(e) => setTagline(e.target.value)}
-                    placeholder={t("companions.editor.taglinePlaceholder")}
-                    aria-label={t("companions.editor.companionTagline")}
-                    className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
-                  />
-                </Field>
-              </div>
-            </div>
+              <div className="min-h-[360px] flex-1">
+                {activeTab === "basics" && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-[96px_1fr] gap-6">
+                      <div>
+                        <p className="mb-2 text-xs text-font-subtlest">
+                          {t("companions.editor.avatarLabel")}
+                        </p>
+                        <span
+                          className="mb-3 flex h-16 w-16 items-center justify-center rounded-full text-3xl"
+                          style={{ backgroundColor: avatarColor }}
+                        >
+                          {avatarEmoji}
+                        </span>
+                        <div className="grid grid-cols-5 gap-1">
+                          {EMOJI_OPTIONS.map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => setAvatarEmoji(emoji)}
+                              aria-label={t("companions.editor.chooseAvatar", {
+                                emoji,
+                              })}
+                              className="flex h-7 w-7 items-center justify-center rounded hover:bg-background-neutral"
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {COLOR_OPTIONS.map((color) => (
+                            <button
+                              key={color}
+                              onClick={() => setAvatarColor(color)}
+                              aria-label={t("companions.editor.chooseColor", {
+                                color,
+                              })}
+                              style={{ backgroundColor: color }}
+                              className="h-5 w-5 rounded-full outline outline-2 outline-offset-1 outline-transparent hover:outline-border-brand"
+                            />
+                          ))}
+                        </div>
+                      </div>
 
-            <div className="mt-4 space-y-4">
-              <Field label={t("companions.editor.personalityLabel")}>
-                <textarea
-                  value={personality}
-                  onChange={(e) => setPersonality(e.target.value)}
-                  placeholder={t("companions.editor.personalityPlaceholder")}
-                  aria-label={t("companions.editor.companionPersonality")}
-                  rows={2}
-                  className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
-                />
-              </Field>
-              <Field label={t("companions.editor.scenarioLabel")}>
-                <textarea
-                  value={scenario}
-                  onChange={(e) => setScenario(e.target.value)}
-                  placeholder={t("companions.editor.scenarioPlaceholder")}
-                  aria-label={t("companions.editor.companionScenario")}
-                  rows={2}
-                  className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
-                />
-              </Field>
-              <Field label={t("companions.editor.greetingLabel")}>
-                <textarea
-                  value={greeting}
-                  onChange={(e) => setGreeting(e.target.value)}
-                  placeholder={t("companions.editor.greetingPlaceholder")}
-                  aria-label={t("companions.editor.companionGreeting")}
-                  rows={2}
-                  className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
-                />
-              </Field>
+                      <div className="space-y-4">
+                        <Field label={t("companions.editor.nameLabel")}>
+                          <input
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder={t("companions.editor.namePlaceholder")}
+                            aria-label={t("companions.editor.companionName")}
+                            className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
+                          />
+                        </Field>
+                        <Field label={t("companions.editor.taglineLabel")}>
+                          <input
+                            value={tagline}
+                            onChange={(e) => setTagline(e.target.value)}
+                            placeholder={t(
+                              "companions.editor.taglinePlaceholder"
+                            )}
+                            aria-label={t("companions.editor.companionTagline")}
+                            className="w-full rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
+                          />
+                        </Field>
+                      </div>
+                    </div>
+
+                    <Field label={t("companions.editor.personalityLabel")}>
+                      <textarea
+                        value={personality}
+                        onChange={(e) => setPersonality(e.target.value)}
+                        placeholder={t(
+                          "companions.editor.personalityPlaceholder"
+                        )}
+                        aria-label={t("companions.editor.companionPersonality")}
+                        rows={2}
+                        className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
+                      />
+                    </Field>
+                    <Field label={t("companions.editor.scenarioLabel")}>
+                      <textarea
+                        value={scenario}
+                        onChange={(e) => setScenario(e.target.value)}
+                        placeholder={t("companions.editor.scenarioPlaceholder")}
+                        aria-label={t("companions.editor.companionScenario")}
+                        rows={2}
+                        className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
+                      />
+                    </Field>
+                    <Field label={t("companions.editor.greetingLabel")}>
+                      <textarea
+                        value={greeting}
+                        onChange={(e) => setGreeting(e.target.value)}
+                        placeholder={t("companions.editor.greetingPlaceholder")}
+                        aria-label={t("companions.editor.companionGreeting")}
+                        rows={2}
+                        className="w-full resize-none rounded-md border-none bg-background-input p-2.5 text-sm outline outline-2 outline-border-input hover:bg-background-input-hovered focus:outline-border-brand"
+                      />
+                    </Field>
+                  </div>
+                )}
+
+                {activeTab === "persona" && (
+                  <TabAppearance
+                    appearance={appearance}
+                    setAppearance={setAppearance}
+                    speechStyle={speechStyle}
+                    setSpeechStyle={setSpeechStyle}
+                    exampleDialogue={exampleDialogue}
+                    setExampleDialogue={setExampleDialogue}
+                  />
+                )}
+
+                {activeTab === "relationship" && (
+                  <TabRelationship
+                    initialRelationship={initialRelationship}
+                    setInitialRelationship={setInitialRelationship}
+                    defaultAuthorNote={defaultAuthorNote}
+                    setDefaultAuthorNote={setDefaultAuthorNote}
+                  />
+                )}
+
+                {activeTab === "images" && (
+                  <TabImages images={images} setImages={setImages} />
+                )}
+
+                {activeTab === "lorebooks" && (
+                  <TabLorebooks
+                    lorebooks={lorebooks}
+                    selectedLorebookIds={selectedLorebookIds}
+                    setSelectedLorebookIds={setSelectedLorebookIds}
+                  />
+                )}
+              </div>
             </div>
 
             <div className="mt-6 flex items-center justify-between">
-              <div>
+              <div className="flex items-center gap-2">
                 {isEditing && character && !isDefaultCharacter(character) && (
                   <DeleteCharacterAction
                     characterName={character.name}
@@ -189,6 +306,24 @@ export const CharacterEditor = ({
                     }}
                     t={t}
                   />
+                )}
+                {isValid && (
+                  <ExportCharacterCardButton
+                    character={previewCharacterForExport}
+                    lorebooks={boundLorebooks}
+                  />
+                )}
+                {isValid && (
+                  <Button
+                    color="neutral"
+                    variant="text"
+                    onClick={() => setIsPreviewOpen(true)}
+                    aria-label={t("companions.preview.openPreview", {
+                      name: previewCharacterForExport.name,
+                    })}
+                  >
+                    {t("companions.preview.title")}
+                  </Button>
                 )}
               </div>
               <div className="flex gap-2">
@@ -214,6 +349,15 @@ export const CharacterEditor = ({
           </Dialog.Content>
         </Dialog.Overlay>
       </Dialog.Portal>
+
+      {isPreviewOpen && (
+        <CharacterPreview
+          character={previewCharacterForExport}
+          lorebooks={boundLorebooks}
+          onClose={() => setIsPreviewOpen(false)}
+          onEdit={() => setIsPreviewOpen(false)}
+        />
+      )}
     </Dialog.Root>
   );
 };

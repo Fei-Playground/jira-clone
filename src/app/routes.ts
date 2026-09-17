@@ -9,6 +9,7 @@ export default [
 
   layout("routes/__main.tsx", [
     route("companions", "routes/__main/companions.tsx"),
+    route("stories", "routes/__main/stories.tsx"),
     route("projects", "routes/__main/projects.tsx", [
       route("new", "routes/__main/projects/new.tsx"),
     ]),

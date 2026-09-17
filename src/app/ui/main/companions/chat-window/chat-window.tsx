@@ -1,25 +1,36 @@
 import { useEffect, useRef, useState } from "react";
 import cx from "classix";
-import { RiSendPlaneFill, RiHistoryLine, RiEditLine } from "react-icons/ri";
+import {
+  RiSendPlaneFill,
+  RiHistoryLine,
+  RiEditLine,
+  RiFileTextLine,
+} from "react-icons/ri";
 import { Character } from "@domain/character";
-import { ChatSession } from "@domain/chat-message";
+import { ChatSession, LoreInjectionSnapshot } from "@domain/chat-message";
 import { ScrollArea } from "@app/components/scroll-area";
 import { Tooltip } from "@app/components/tooltip";
 import { formatDateTime } from "@utils/formatDateTime";
 import { useTranslation } from "@app/store/locale.store";
 import { Locale } from "@app/locales";
 import { useCompanionsStore } from "../companions.store";
+import { AuthorNotePanel } from "../author-note-panel";
+import { LoreInjectionNotice } from "../lore-injection-notice";
+import { HighlightedMessageText } from "../highlighted-message-text";
 
 export const ChatWindow = ({
   character,
   session,
   onOpenHistory,
   onEditCharacter,
+  onOpenPreview,
+  onSendOverride,
 }: ChatWindowProps): JSX.Element => {
-  const { sendMessage, settings } = useCompanionsStore();
+  const { sendMessage, settings, setAuthorNote } = useCompanionsStore();
   const { t, locale } = useTranslation();
   const [draft, setDraft] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [isAuthorNoteOpen, setIsAuthorNoteOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const messages = session?.messages ?? [];
@@ -39,7 +50,11 @@ export const ChatWindow = ({
   const handleSend = () => {
     const trimmed = draft.trim();
     if (!trimmed || !session) return;
-    sendMessage(trimmed);
+    if (onSendOverride) {
+      onSendOverride(trimmed);
+    } else {
+      sendMessage(trimmed);
+    }
     setDraft("");
     setIsTyping(true);
   };
@@ -54,7 +69,13 @@ export const ChatWindow = ({
   return (
     <div className="flex h-full flex-1 flex-col">
       <header className="flex items-center justify-between border-b border-border px-6 py-4">
-        <div className="flex items-center gap-3">
+        <button
+          onClick={onOpenPreview}
+          aria-label={t("companions.preview.openPreview", {
+            name: character.name,
+          })}
+          className="flex items-center gap-3 rounded p-1 text-left hover:bg-background-neutral"
+        >
           <CharacterAvatar character={character} size={44} />
           <div>
             <p className="font-primary-bold text-font">{character.name}</p>
@@ -62,8 +83,23 @@ export const ChatWindow = ({
               {character.tagline}
             </p>
           </div>
-        </div>
+        </button>
         <div className="flex items-center gap-1">
+          <Tooltip title={t("companions.authorNote.openPanel")}>
+            <button
+              onClick={() => setIsAuthorNoteOpen(true)}
+              aria-label={t("companions.authorNote.openPanel")}
+              className="relative flex h-9 w-9 items-center justify-center rounded-full text-icon hover:bg-background-neutral"
+            >
+              <RiFileTextLine size={18} />
+              {session?.authorNote?.text && (
+                <span
+                  aria-label={t("companions.authorNote.activeIndicator")}
+                  className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-background-brand-bold"
+                />
+              )}
+            </button>
+          </Tooltip>
           <Tooltip title={t("companions.chatWindow.editCompanion")}>
             <button
               onClick={onEditCharacter}
@@ -89,15 +125,26 @@ export const ChatWindow = ({
         <ScrollArea>
           <div className="flex flex-col gap-4 py-6">
             {messages.map((message) => (
-              <MessageBubble
-                key={message.id}
-                text={message.text}
-                createdAt={message.createdAt}
-                isUser={message.sender === "user"}
-                character={character}
-                userDisplayName={settings.userDisplayName}
-                locale={locale}
-              />
+              <div key={message.id} className="flex flex-col gap-1">
+                {message.sender === "user" &&
+                  message.loreInjections &&
+                  message.loreInjections.length > 0 && (
+                    <div className="flex justify-end">
+                      <LoreInjectionNotice
+                        injections={message.loreInjections}
+                      />
+                    </div>
+                  )}
+                <MessageBubble
+                  text={message.text}
+                  createdAt={message.createdAt}
+                  isUser={message.sender === "user"}
+                  character={character}
+                  userDisplayName={settings.userDisplayName}
+                  locale={locale}
+                  injections={message.loreInjections}
+                />
+              </div>
             ))}
             {isTyping && <TypingIndicator character={character} />}
             <div ref={bottomRef} />
@@ -132,6 +179,17 @@ export const ChatWindow = ({
           </button>
         </div>
       </div>
+
+      {session && (
+        <AuthorNotePanel
+          key={session.id}
+          isOpen={isAuthorNoteOpen}
+          authorNote={session.authorNote}
+          onClose={() => setIsAuthorNoteOpen(false)}
+          onSave={(note) => setAuthorNote(session.id, note)}
+          onClear={() => setAuthorNote(session.id, undefined)}
+        />
+      )}
     </div>
   );
 };
@@ -182,6 +240,7 @@ const MessageBubble = ({
   character,
   userDisplayName,
   locale,
+  injections,
 }: {
   text: string;
   createdAt: number;
@@ -189,6 +248,7 @@ const MessageBubble = ({
   character: Character;
   userDisplayName: string;
   locale: Locale;
+  injections?: LoreInjectionSnapshot[];
 }): JSX.Element => (
   <div className={cx("flex items-end gap-2.5", isUser && "flex-row-reverse")}>
     {isUser ? (
@@ -204,7 +264,13 @@ const MessageBubble = ({
           : "rounded-2xl rounded-bl-md border border-border bg-elevation-surface-raised text-font"
       )}
     >
-      <p className="whitespace-pre-wrap font-primary leading-6">{text}</p>
+      <p className="whitespace-pre-wrap font-primary leading-6">
+        <HighlightedMessageText
+          text={text}
+          injections={injections}
+          isUser={isUser}
+        />
+      </p>
       <p
         className={cx(
           "mt-1 text-2xs",
@@ -243,4 +309,9 @@ interface ChatWindowProps {
   session: ChatSession | undefined;
   onOpenHistory: () => void;
   onEditCharacter: () => void;
+  onOpenPreview: () => void;
+  // When set, overrides the default companions-store sendMessage flow —
+  // used by scene dialogue so a sent message advances quest/progress state
+  // instead of the free-standing companion chat's scripted-reply flow.
+  onSendOverride?: (text: string) => void;
 }

@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import cx from "classix";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
-import { RiChatSmile2Line } from "react-icons/ri";
+import { RiChatSmile2Line, RiSailboatLine } from "react-icons/ri";
 import { Tooltip } from "@app/components/tooltip";
 import { useTranslation } from "@app/store/locale.store";
 import { SelctTheme } from "./select-theme";
@@ -33,6 +33,15 @@ export const Header = (): JSX.Element => {
             className={iconBaseClass}
           >
             <RiChatSmile2Line size={22} />
+          </Link>
+        </Tooltip>
+        <Tooltip title={t("header.stories")}>
+          <Link
+            to="/stories"
+            aria-label={t("header.goToStories")}
+            className={iconBaseClass}
+          >
+            <RiSailboatLine size={22} />
           </Link>
         </Tooltip>
         <Tooltip title={t("header.about")}>
