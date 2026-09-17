@@ -8,6 +8,7 @@ import {
 import { Character, CharacterId } from "@domain/character";
 import { ChatRoom } from "@domain/chat-room";
 import { ChatMessage, LoreInjectionSnapshot } from "@domain/chat-message";
+import { QuickAction } from "@domain/quick-action";
 import { ScrollArea } from "@app/components/scroll-area";
 import { Tooltip } from "@app/components/tooltip";
 import { formatDateTime } from "@utils/formatDateTime";
@@ -17,6 +18,7 @@ import { LoreInjectionNotice } from "../lore-injection-notice";
 import { HighlightedMessageText } from "../highlighted-message-text";
 import { useCompanionsStore } from "../companions.store";
 import { useChatRoomStore } from "../chat-room.store";
+import { QuickActionBar } from "../quick-action-bar";
 import { GroupMemberBar } from "./group-member-bar";
 import {
   useMentionAutocomplete,
@@ -27,10 +29,15 @@ export const GroupChatWindow = ({
   room,
   onDeleteRoom,
   onViewCharacter,
+  quickActions,
 }: {
   room: ChatRoom;
   onDeleteRoom: () => void;
   onViewCharacter: (characterId: CharacterId) => void;
+  // Contextual "say this" chips shown above the input. Omitted for
+  // free-standing group chat rooms (/companions) — only scene group chat
+  // passes these.
+  quickActions?: QuickAction[];
 }): JSX.Element => {
   const { characters, settings } = useCompanionsStore();
   const {
@@ -74,6 +81,43 @@ export const GroupChatWindow = ({
     setDraft("");
     setCursor(0);
   };
+
+  // Quick-action chips send through the exact same path as typing + hitting
+  // send, so quest progress / lore injection / highlighting stay intact.
+  const handleQuickSend = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    sendRoomMessage(room.id, trimmed);
+  };
+
+  // Inserts text at the current cursor position (not the end of the
+  // draft) — important for "@member" chips so mentioning someone mid-
+  // sentence doesn't relocate the caret and confuse the mention
+  // autocomplete that's watching `cursor`.
+  const handleQuickFill = (text: string) => {
+    const before = draft.slice(0, cursor);
+    const after = draft.slice(cursor);
+    const nextValue = `${before}${text}${after}`;
+    setDraft(nextValue);
+    setCursor(before.length + text.length);
+  };
+
+  // "@member" chips, one per room member, placed BEFORE any caller-supplied
+  // quickActions so they aren't pushed into the overflow menu by
+  // QuickActionBar's VISIBLE_COUNT cap — mentioning someone is the most
+  // group-chat-specific action and shouldn't require an extra click to
+  // reach. `alwaysFill` makes clicking ALWAYS insert at the cursor rather
+  // than send, both as a visible chip and from the overflow menu.
+  const mentionChipActions: QuickAction[] = memberCharacters.map((c) => ({
+    id: `mention:${c.id}`,
+    label: `@${c.name}`,
+    text: `@${c.name} `,
+    source: "generic" as const,
+    alwaysFill: true,
+  }));
+  const allQuickActions = quickActions
+    ? [...mentionChipActions, ...quickActions]
+    : undefined;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.nativeEvent.isComposing) return;
@@ -202,6 +246,13 @@ export const GroupChatWindow = ({
           <p className="mb-2 text-xs text-font-subtlest">
             {t("companions.group.mentionHint")}
           </p>
+        )}
+        {allQuickActions && (
+          <QuickActionBar
+            actions={allQuickActions}
+            onSend={handleQuickSend}
+            onFill={handleQuickFill}
+          />
         )}
         <div className="relative flex items-end gap-3">
           {mention.isOpen && (

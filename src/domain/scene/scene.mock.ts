@@ -42,7 +42,19 @@ export const scenesMock: Scene[] = [
     description:
       "A low-ceilinged room thick with pipe smoke. Sable holds court at the end of the bar, nursing something dark.",
     ambience: "Creaking floorboards, a card game gone quiet in the corner.",
-    npcs: [{ characterId: sable.id, roleInScene: "Ledger of Secrets" }],
+    npcs: [
+      {
+        characterId: sable.id,
+        roleInScene: "Ledger of Secrets",
+        quickPhrases: [
+          {
+            id: "qp-sable-brass-key",
+            label: "Who has the brass key?",
+            text: "Who has the brass key?",
+          },
+        ],
+      },
+    ],
     exits: [
       { toSceneId: SCENE_DOCKS_ID, label: "Back out to the docks" },
       {
@@ -63,6 +75,18 @@ export const scenesMock: Scene[] = [
     coverEmoji: "🍺",
     coverColor: "#4a3728",
     order: 1,
+    quickPhrases: [
+      {
+        id: "qp-tavern-buy-drink",
+        label: "Buy you a drink?",
+        text: "Can I buy you a drink?",
+      },
+      {
+        id: "qp-tavern-ship-out",
+        label: "Looking for a way out",
+        text: "I'm looking for a ship out of the harbor.",
+      },
+    ],
   },
   {
     id: SCENE_WAREHOUSE_ID,

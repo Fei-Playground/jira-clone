@@ -328,6 +328,13 @@ export const en = {
       title: "Stories",
       subtitle: "Pick a story to step into as a scene-by-scene adventure.",
     },
+    quickAction: {
+      more: "More",
+      advancesQuest: "Advances a quest",
+      shiftToFill: "Click to send, Shift+click to fill the input instead",
+      sendAriaLabel: "Send: {{text}}",
+      mentionMember: "Mention {{name}}",
+    },
     scene: {
       backToLibrary: "Back to stories",
       progressNote: "Progress autosaves to this browser — export a save file to keep it elsewhere.",

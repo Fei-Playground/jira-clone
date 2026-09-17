@@ -8,6 +8,7 @@ import {
 } from "react-icons/ri";
 import { Character } from "@domain/character";
 import { ChatSession, LoreInjectionSnapshot } from "@domain/chat-message";
+import { QuickAction } from "@domain/quick-action";
 import { ScrollArea } from "@app/components/scroll-area";
 import { Tooltip } from "@app/components/tooltip";
 import { formatDateTime } from "@utils/formatDateTime";
@@ -17,6 +18,7 @@ import { useCompanionsStore } from "../companions.store";
 import { AuthorNotePanel } from "../author-note-panel";
 import { LoreInjectionNotice } from "../lore-injection-notice";
 import { HighlightedMessageText } from "../highlighted-message-text";
+import { QuickActionBar } from "../quick-action-bar";
 
 export const ChatWindow = ({
   character,
@@ -25,6 +27,7 @@ export const ChatWindow = ({
   onEditCharacter,
   onOpenPreview,
   onSendOverride,
+  quickActions,
 }: ChatWindowProps): JSX.Element => {
   const { sendMessage, settings, setAuthorNote } = useCompanionsStore();
   const { t, locale } = useTranslation();
@@ -57,6 +60,25 @@ export const ChatWindow = ({
     }
     setDraft("");
     setIsTyping(true);
+  };
+
+  // A quick-action chip's "send" click must walk the EXACT same path as
+  // typing + hitting send — otherwise quest progress / lore injection /
+  // keyword highlighting silently stop working for anything sent via a
+  // chip. It intentionally does not go through `draft` state at all.
+  const handleQuickSend = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || !session) return;
+    if (onSendOverride) {
+      onSendOverride(trimmed);
+    } else {
+      sendMessage(trimmed);
+    }
+    setIsTyping(true);
+  };
+
+  const handleQuickFill = (text: string) => {
+    setDraft((prev) => (prev ? `${prev} ${text}` : text));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -153,6 +175,13 @@ export const ChatWindow = ({
       </div>
 
       <div className="border-t border-border p-4">
+        {quickActions && (
+          <QuickActionBar
+            actions={quickActions}
+            onSend={handleQuickSend}
+            onFill={handleQuickFill}
+          />
+        )}
         <div className="flex items-end gap-3">
           <textarea
             value={draft}
@@ -314,4 +343,8 @@ interface ChatWindowProps {
   // used by scene dialogue so a sent message advances quest/progress state
   // instead of the free-standing companion chat's scripted-reply flow.
   onSendOverride?: (text: string) => void;
+  // Contextual "say this" chips shown above the input. Omitted entirely by
+  // the free-standing companion chat (/companions) — only scene dialogue
+  // passes these, so nothing changes for existing free-chat behaviour.
+  quickActions?: QuickAction[];
 }

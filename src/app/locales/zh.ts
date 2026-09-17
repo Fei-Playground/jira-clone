@@ -325,6 +325,13 @@ export const zh = {
       title: "故事",
       subtitle: "选一个故事，一个场景一个场景地走进去。",
     },
+    quickAction: {
+      more: "更多",
+      advancesQuest: "推进一个任务",
+      shiftToFill: "点击发送，按住 Shift 点击则填入输入框",
+      sendAriaLabel: "发送：{{text}}",
+      mentionMember: "@ {{name}}",
+    },
     scene: {
       backToLibrary: "返回故事列表",
       progressNote: "进度会自动保存在此浏览器中——如需在其他地方保留，请导出存档文件。",

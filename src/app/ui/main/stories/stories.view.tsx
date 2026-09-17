@@ -21,6 +21,7 @@ import {
 } from "@domain/environment";
 import { checkStoryReachability, deriveSceneBackground } from "@domain/scene";
 import { deriveSceneMood } from "@domain/music";
+import { buildQuickActions } from "@domain/quick-action";
 import { useTranslation } from "@app/store/locale.store";
 import * as Dialog from "@app/components/dialog";
 import { Tooltip } from "@app/components/tooltip";
@@ -28,7 +29,10 @@ import {
   CompanionsContextProvider,
   useCompanionsStore,
 } from "../companions/companions.store";
-import { LorebookContextProvider } from "../companions/lorebook.store";
+import {
+  LorebookContextProvider,
+  useLorebookStore,
+} from "../companions/lorebook.store";
 import { ChatWindow } from "../companions/chat-window";
 import {
   ChatRoomContextProvider,
@@ -792,10 +796,13 @@ const SceneDialogue = ({
   characterId: CharacterId;
   onBack: () => void;
 }): JSX.Element => {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const { characters } = useCompanionsStore();
+  const { lorebooks } = useLorebookStore();
   const {
     currentScene,
+    quests,
+    progress,
     getOrCreateSceneSession,
     appendSceneSessionMessage,
     recordNpcTalk,
@@ -803,9 +810,26 @@ const SceneDialogue = ({
   } = useStoryStore();
 
   const character = characters.find((c) => c.id === characterId);
-  if (!character || !currentScene) return <></>;
+  if (!character || !currentScene || !progress) return <></>;
 
   const session = getOrCreateSceneSession(currentScene.id, characterId);
+
+  const npc = currentScene.npcs.find((n) => n.characterId === characterId);
+  const sceneLorebooks = lorebooks.filter((lb) =>
+    currentScene.lorebookIds.includes(lb.id)
+  );
+  const quickActions = buildQuickActions({
+    npcCharacterId: characterId,
+    npcName: character.name,
+    scenePhrases: currentScene.quickPhrases,
+    npcPhrases: npc?.quickPhrases,
+    evaluatePhraseCondition: (phrase) =>
+      phrase.condition ? evaluateCondition(phrase.condition, progress) : true,
+    quests,
+    progress,
+    lorebooks: sceneLorebooks,
+    locale,
+  });
 
   const handleSend = (text: string) => {
     appendSceneSessionMessage(session.id, text, "user");
@@ -838,6 +862,7 @@ const SceneDialogue = ({
         onEditCharacter={() => {}}
         onOpenPreview={() => {}}
         onSendOverride={handleSend}
+        quickActions={quickActions}
       />
     </div>
   );
@@ -851,8 +876,10 @@ const SceneDialogue = ({
 // is mid-render triggers React's "update a component while rendering a
 // different component" warning.
 const SceneGroupChat = ({ onBack }: { onBack: () => void }): JSX.Element => {
-  const { t } = useTranslation();
-  const { currentScene, roomIdBySceneId, registerSceneRoom } = useStoryStore();
+  const { t, locale } = useTranslation();
+  const { lorebooks } = useLorebookStore();
+  const { currentScene, quests, progress, roomIdBySceneId, registerSceneRoom } =
+    useStoryStore();
   const { rooms, createRoom, deleteRoom } = useChatRoomStore();
 
   const existingRoomId = currentScene
@@ -875,6 +902,25 @@ const SceneGroupChat = ({ onBack }: { onBack: () => void }): JSX.Element => {
 
   if (!currentScene) return <></>;
 
+  const sceneLorebooks = lorebooks.filter((lb) =>
+    currentScene.lorebookIds.includes(lb.id)
+  );
+  const quickActions =
+    progress &&
+    buildQuickActions({
+      // No single conversation partner in a group room — questKeyword chips
+      // scoped to a specific NPC won't appear here; scene-wide ones
+      // (no characterId) and lore/generic chips still do.
+      npcCharacterId: undefined,
+      scenePhrases: currentScene.quickPhrases,
+      evaluatePhraseCondition: (phrase) =>
+        phrase.condition ? evaluateCondition(phrase.condition, progress) : true,
+      quests,
+      progress,
+      lorebooks: sceneLorebooks,
+      locale,
+    });
+
   return (
     <div className="flex h-full flex-1 flex-col">
       <div className="border-b border-border px-6 py-3">
@@ -891,6 +937,7 @@ const SceneGroupChat = ({ onBack }: { onBack: () => void }): JSX.Element => {
           room={room}
           onDeleteRoom={() => deleteRoom(room.id)}
           onViewCharacter={() => {}}
+          quickActions={quickActions || undefined}
         />
       ) : (
         <div className="flex flex-1 items-center justify-center text-font-subtlest">
