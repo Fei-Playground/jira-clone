@@ -8,6 +8,7 @@ import {
 } from "react";
 import { v4 as uuid } from "uuid";
 import { Story, StoryId, storiesMock, getStoryText } from "@domain/story";
+import { World, worldsMock, getWorldText } from "@domain/world";
 import {
   Scene,
   SceneId,
@@ -99,6 +100,8 @@ interface StoryStore {
   scenes: Scene[];
   quests: Quest[];
   items: Item[];
+  worlds: World[];
+  activeWorld: World | undefined;
   activeStoryId: StoryId | null;
   activeStory: Story | undefined;
   progress: PlayerProgress | undefined;
@@ -324,6 +327,22 @@ export const StoryContextProvider = ({
     return [...mockLocalized, ...patchedCustom];
   }, [locale, questPatches, customQuests]);
 
+  const localizedWorlds = useMemo(
+    () =>
+      worldsMock.map((world) => {
+        const text = getWorldText(world.id, locale);
+        if (!text) return world;
+        return {
+          ...world,
+          name: text.name,
+          description: text.description,
+          tier: text.tier,
+          toneTags: text.toneTags,
+        };
+      }),
+    [locale]
+  );
+
   const localizedItems = useMemo(
     () =>
       itemsMock.map((item) => {
@@ -356,6 +375,9 @@ export const StoryContextProvider = ({
   }, [locale, storyEventPatches, customStoryEvents]);
 
   const activeStory = localizedStories.find((s) => s.id === activeStoryId);
+  const activeWorld = activeStory
+    ? localizedWorlds.find((w) => w.id === activeStory.worldId)
+    : undefined;
   const progress = activeStoryId ? progressByStoryId[activeStoryId] : undefined;
 
   // Autosave: any time progress or the active story changes, persist the
@@ -807,6 +829,8 @@ export const StoryContextProvider = ({
     scenes: localizedScenes,
     quests: localizedQuests,
     items: localizedItems,
+    worlds: localizedWorlds,
+    activeWorld,
     activeStoryId,
     activeStory,
     progress,

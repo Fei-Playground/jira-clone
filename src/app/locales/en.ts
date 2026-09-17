@@ -340,6 +340,18 @@ export const en = {
       itemTaken: "Taken",
       unreachableTooltip: "No path currently leads here — this scene may be stuck.",
     },
+    music: {
+      play: "Play ambient soundtrack",
+      pause: "Pause ambient soundtrack",
+      volume: "Volume",
+      unsupported: "Ambient soundtrack isn't supported in this browser.",
+      disclosure: "Generated ambient soundscape, not licensed music.",
+      moodCalm: "Calm",
+      moodTense: "Tense",
+      moodMelancholy: "Melancholy",
+      moodMysterious: "Mysterious",
+      moodTriumphant: "Triumphant",
+    },
     inventory: {
       open: "Open inventory",
       title: "Inventory",

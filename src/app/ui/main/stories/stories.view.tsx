@@ -14,8 +14,13 @@ import {
 import { toast } from "react-toastify";
 import { CharacterId } from "@domain/character";
 import { evaluateCondition, explainCondition } from "@domain/condition";
-import { TIME_OF_DAY_EMOJI, WEATHER_EMOJI } from "@domain/environment";
-import { checkStoryReachability } from "@domain/scene";
+import {
+  TIME_OF_DAY_EMOJI,
+  WEATHER_EMOJI,
+  DEFAULT_ENVIRONMENT,
+} from "@domain/environment";
+import { checkStoryReachability, deriveSceneBackground } from "@domain/scene";
+import { deriveSceneMood } from "@domain/music";
 import { useTranslation } from "@app/store/locale.store";
 import * as Dialog from "@app/components/dialog";
 import { Tooltip } from "@app/components/tooltip";
@@ -32,6 +37,8 @@ import {
 import { GroupChatWindow } from "../companions/group-chat";
 import { StoryContextProvider, useStoryStore } from "./story.store";
 import { StoryEditor } from "./story-editor";
+import { useAmbientSoundtrack } from "./use-ambient-soundtrack";
+import { SoundtrackBar } from "./soundtrack-bar";
 
 export const StoriesView = (): JSX.Element => {
   return (
@@ -128,6 +135,7 @@ const SceneShell = (): JSX.Element => {
   const { t } = useTranslation();
   const {
     activeStory,
+    activeWorld,
     exitStory,
     currentScene,
     exportSave,
@@ -142,6 +150,15 @@ const SceneShell = (): JSX.Element => {
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isQuestPanelOpen, setIsQuestPanelOpen] = useState(false);
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false);
+
+  // The scene's ambient soundtrack mood is a real function of the story's
+  // world (tone tags) and the CURRENT environment — a storm event firing
+  // really shifts what's playing, same as it shifts the scene background.
+  const sceneMood = deriveSceneMood(
+    environment ?? DEFAULT_ENVIRONMENT,
+    activeWorld
+  );
+  const soundtrack = useAmbientSoundtrack(sceneMood);
 
   // Story events fire silently in the data layer — this is where they
   // surface to the player as a toast whenever a batch of effects includes
@@ -250,6 +267,7 @@ const SceneShell = (): JSX.Element => {
             </Tooltip>
           </div>
         )}
+        <SoundtrackBar mood={sceneMood} controls={soundtrack} />
         {lastSavedAt && (
           <p className="mt-2 text-2xs text-font-subtlest">
             {t("stories.save.autosaveNote")}
@@ -562,170 +580,205 @@ const SceneView = ({
     return { sceneItem, item, alreadyTaken, takeable };
   });
 
+  // Real, state-driven background: the scene's own base color blended with
+  // the CURRENT environment (time of day / weather / ambience). Story
+  // events that shift the environment (a storm breaking, ambience rising)
+  // change this banner the moment they fire — it's a function of live
+  // state, not a fixed picture per scene.
+  const background = deriveSceneBackground(currentScene, progress.environment);
+
   return (
-    <div className="flex-1 overflow-y-auto p-6">
-      <h2 className="font-primary-black text-2xl text-font">
-        {currentScene.name}
-      </h2>
-      <p className="mt-1 text-sm italic text-font-subtlest">
-        {currentScene.ambience}
-      </p>
-      <p className="mt-3 max-w-2xl text-sm text-font">
-        {currentScene.description}
-      </p>
+    <div className="flex-1 overflow-y-auto">
+      <div
+        className="flex flex-col justify-end px-6 py-8 transition-[background] duration-700 ease-in-out"
+        style={{ background: background.gradient }}
+      >
+        <span
+          className={
+            background.darkness > 0.45
+              ? "mb-1 text-4xl"
+              : "mb-1 text-4xl drop-shadow"
+          }
+        >
+          {currentScene.coverEmoji}
+        </span>
+        <h2
+          className={
+            background.darkness > 0.45
+              ? "font-primary-black text-2xl text-white"
+              : "font-primary-black text-2xl text-font"
+          }
+        >
+          {currentScene.name}
+        </h2>
+        <p
+          className={
+            background.darkness > 0.45
+              ? "mt-1 text-sm italic text-white/80"
+              : "mt-1 text-sm italic text-font-subtlest"
+          }
+        >
+          {currentScene.ambience}
+        </p>
+      </div>
+      <div className="p-6">
+        <p className="max-w-2xl text-sm text-font">
+          {currentScene.description}
+        </p>
 
-      {sceneQuests.length > 0 && (
-        <div className="mt-4 flex flex-col gap-2">
-          {sceneQuests.map((quest) => {
-            const state = progress.questStates[quest.id];
-            if (!state) return null;
-            return (
-              <div
-                key={quest.id}
-                className="rounded-md border border-border bg-elevation-surface-raised p-3"
-              >
-                <p className="font-primary-bold text-sm text-font">
-                  {quest.title}
-                </p>
-                <p className="text-xs text-font-subtlest">
-                  {quest.description}
-                </p>
-                <p className="mt-1 text-2xs text-font-subtlest">
-                  {t("stories.quest.status")}:{" "}
-                  {t(`stories.quest.${state.status}` as never)}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {sceneItems.length > 0 && (
-        <div className="mt-6">
-          <p className="mb-2 text-xs font-bold text-font-subtlest">
-            {t("stories.scene.items")}
-          </p>
-          <div className="flex flex-col gap-2">
-            {sceneItems.map(({ sceneItem, item, alreadyTaken, takeable }) => (
-              <div
-                key={sceneItem.itemId}
-                className="flex items-center justify-between gap-3 rounded-md border border-border bg-elevation-surface-raised px-3 py-2"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{item?.emoji ?? "🎁"}</span>
-                  <span className="text-sm text-font">{sceneItem.label}</span>
+        {sceneQuests.length > 0 && (
+          <div className="mt-4 flex flex-col gap-2">
+            {sceneQuests.map((quest) => {
+              const state = progress.questStates[quest.id];
+              if (!state) return null;
+              return (
+                <div
+                  key={quest.id}
+                  className="rounded-md border border-border bg-elevation-surface-raised p-3"
+                >
+                  <p className="font-primary-bold text-sm text-font">
+                    {quest.title}
+                  </p>
+                  <p className="text-xs text-font-subtlest">
+                    {quest.description}
+                  </p>
+                  <p className="mt-1 text-2xs text-font-subtlest">
+                    {t("stories.quest.status")}:{" "}
+                    {t(`stories.quest.${state.status}` as never)}
+                  </p>
                 </div>
-                {alreadyTaken ? (
-                  <span className="flex items-center gap-1 text-2xs text-font-subtlest">
-                    <RiCheckLine size={12} className="text-icon-success" />
-                    {t("stories.scene.itemTaken")}
-                  </span>
-                ) : (
-                  <button
-                    disabled={!takeable}
-                    onClick={() =>
-                      takeSceneItem(
-                        currentScene.id,
-                        sceneItem.itemId,
-                        sceneItem.oneTime
-                      )
-                    }
-                    className={
-                      takeable
-                        ? "flex items-center gap-1 rounded-md bg-background-brand-subtlest px-2 py-1 text-xs text-font-brand hover:bg-background-brand-subtlest-hovered"
-                        : "flex cursor-not-allowed items-center gap-1 rounded-md bg-background-neutral px-2 py-1 text-xs text-font-subtlest opacity-70"
-                    }
+              );
+            })}
+          </div>
+        )}
+
+        {sceneItems.length > 0 && (
+          <div className="mt-6">
+            <p className="mb-2 text-xs font-bold text-font-subtlest">
+              {t("stories.scene.items")}
+            </p>
+            <div className="flex flex-col gap-2">
+              {sceneItems.map(({ sceneItem, item, alreadyTaken, takeable }) => (
+                <div
+                  key={sceneItem.itemId}
+                  className="flex items-center justify-between gap-3 rounded-md border border-border bg-elevation-surface-raised px-3 py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{item?.emoji ?? "🎁"}</span>
+                    <span className="text-sm text-font">{sceneItem.label}</span>
+                  </div>
+                  {alreadyTaken ? (
+                    <span className="flex items-center gap-1 text-2xs text-font-subtlest">
+                      <RiCheckLine size={12} className="text-icon-success" />
+                      {t("stories.scene.itemTaken")}
+                    </span>
+                  ) : (
+                    <button
+                      disabled={!takeable}
+                      onClick={() =>
+                        takeSceneItem(
+                          currentScene.id,
+                          sceneItem.itemId,
+                          sceneItem.oneTime
+                        )
+                      }
+                      className={
+                        takeable
+                          ? "flex items-center gap-1 rounded-md bg-background-brand-subtlest px-2 py-1 text-xs text-font-brand hover:bg-background-brand-subtlest-hovered"
+                          : "flex cursor-not-allowed items-center gap-1 rounded-md bg-background-neutral px-2 py-1 text-xs text-font-subtlest opacity-70"
+                      }
+                    >
+                      {t("stories.scene.takeItem")}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-6">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-xs font-bold text-font-subtlest">
+              {t("stories.scene.npcsHere")}
+            </p>
+            {npcCharacters.length > 1 && (
+              <button
+                onClick={onOpenGroupChat}
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-font-brand hover:bg-background-brand-subtlest"
+              >
+                <RiGroupLine size={14} />
+                {t("stories.scene.talkToEveryone")}
+              </button>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {npcCharacters.map(({ npc, character }) =>
+              character ? (
+                <button
+                  key={npc.characterId}
+                  onClick={() => onOpenDialogue(npc.characterId)}
+                  className="flex items-center gap-2 rounded-md border border-border bg-elevation-surface-raised px-3 py-2 hover:bg-background-neutral"
+                >
+                  <span
+                    className="flex h-9 w-9 items-center justify-center rounded-full text-lg"
+                    style={{ background: character.avatarColor }}
                   >
-                    {t("stories.scene.takeItem")}
-                  </button>
-                )}
-              </div>
-            ))}
+                    {character.avatarEmoji}
+                  </span>
+                  <span className="text-left">
+                    <span className="block font-primary-bold text-sm text-font">
+                      {character.name}
+                    </span>
+                    <span className="block text-2xs text-font-subtlest">
+                      {npc.roleInScene}
+                    </span>
+                  </span>
+                </button>
+              ) : null
+            )}
           </div>
         </div>
-      )}
 
-      <div className="mt-6">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="text-xs font-bold text-font-subtlest">
-            {t("stories.scene.npcsHere")}
+        <div className="mt-6">
+          <p className="mb-2 text-xs font-bold text-font-subtlest">
+            {t("stories.scene.exits")}
           </p>
-          {npcCharacters.length > 1 && (
-            <button
-              onClick={onOpenGroupChat}
-              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-font-brand hover:bg-background-brand-subtlest"
-            >
-              <RiGroupLine size={14} />
-              {t("stories.scene.talkToEveryone")}
-            </button>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-3">
-          {npcCharacters.map(({ npc, character }) =>
-            character ? (
-              <button
-                key={npc.characterId}
-                onClick={() => onOpenDialogue(npc.characterId)}
-                className="flex items-center gap-2 rounded-md border border-border bg-elevation-surface-raised px-3 py-2 hover:bg-background-neutral"
-              >
-                <span
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-lg"
-                  style={{ background: character.avatarColor }}
+          <div className="flex flex-col gap-2">
+            {currentScene.exits.map((exit, exitIndex) => {
+              const unlocked = exit.condition
+                ? evaluateCondition(exit.condition, progress)
+                : true;
+              const explanation = exit.condition
+                ? explainCondition(exit.condition, progress, {
+                    characterNames: {},
+                    sceneNames: {},
+                    questTitles: {},
+                    itemNames: {},
+                  })
+                : null;
+              return (
+                <button
+                  key={`${exit.toSceneId}-${exitIndex}`}
+                  disabled={!unlocked}
+                  onClick={() => goToScene(exit.toSceneId)}
+                  className={
+                    unlocked
+                      ? "flex items-center justify-between rounded-md border border-border bg-elevation-surface-raised px-3 py-2 text-left text-sm text-font hover:bg-background-neutral"
+                      : "flex cursor-not-allowed items-center justify-between rounded-md border border-border bg-elevation-surface-sunken px-3 py-2 text-left text-sm text-font-subtlest opacity-70"
+                  }
                 >
-                  {character.avatarEmoji}
-                </span>
-                <span className="text-left">
-                  <span className="block font-primary-bold text-sm text-font">
-                    {character.name}
-                  </span>
-                  <span className="block text-2xs text-font-subtlest">
-                    {npc.roleInScene}
-                  </span>
-                </span>
-              </button>
-            ) : null
-          )}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <p className="mb-2 text-xs font-bold text-font-subtlest">
-          {t("stories.scene.exits")}
-        </p>
-        <div className="flex flex-col gap-2">
-          {currentScene.exits.map((exit, exitIndex) => {
-            const unlocked = exit.condition
-              ? evaluateCondition(exit.condition, progress)
-              : true;
-            const explanation = exit.condition
-              ? explainCondition(exit.condition, progress, {
-                  characterNames: {},
-                  sceneNames: {},
-                  questTitles: {},
-                  itemNames: {},
-                })
-              : null;
-            return (
-              <button
-                key={`${exit.toSceneId}-${exitIndex}`}
-                disabled={!unlocked}
-                onClick={() => goToScene(exit.toSceneId)}
-                className={
-                  unlocked
-                    ? "flex items-center justify-between rounded-md border border-border bg-elevation-surface-raised px-3 py-2 text-left text-sm text-font hover:bg-background-neutral"
-                    : "flex cursor-not-allowed items-center justify-between rounded-md border border-border bg-elevation-surface-sunken px-3 py-2 text-left text-sm text-font-subtlest opacity-70"
-                }
-              >
-                <span>{exit.label}</span>
-                {!unlocked && explanation && (
-                  <span className="flex items-center gap-1 text-2xs">
-                    <RiLockLine size={12} />
-                    {t("stories.scene.locked")}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+                  <span>{exit.label}</span>
+                  {!unlocked && explanation && (
+                    <span className="flex items-center gap-1 text-2xs">
+                      <RiLockLine size={12} />
+                      {t("stories.scene.locked")}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

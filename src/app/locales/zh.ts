@@ -337,6 +337,18 @@ export const zh = {
       itemTaken: "已拾取",
       unreachableTooltip: "目前没有任何路径能到达这里——这个场景可能卡住了。",
     },
+    music: {
+      play: "播放环境音",
+      pause: "暂停环境音",
+      volume: "音量",
+      unsupported: "此浏览器不支持环境音播放。",
+      disclosure: "生成式环境音效，非授权音乐。",
+      moodCalm: "宁静",
+      moodTense: "紧张",
+      moodMelancholy: "忧伤",
+      moodMysterious: "神秘",
+      moodTriumphant: "昂扬",
+    },
     inventory: {
       open: "打开背包",
       title: "背包",
