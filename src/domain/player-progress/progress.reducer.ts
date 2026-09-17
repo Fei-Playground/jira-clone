@@ -384,9 +384,7 @@ export const applyProgressEvent = ({
   // (e.g. a quest completing while still in the scene) fires immediately
   // rather than only on the next scene change.
   (storyEvents ?? [])
-    .filter(
-      (e) => e.sceneId === next.currentSceneId && !next.firedEventIds.includes(e.id)
-    )
+    .filter((e) => e.sceneId === next.currentSceneId && !next.firedEventIds.includes(e.id))
     .forEach((storyEvent) => {
       if (!evaluateCondition(storyEvent.trigger, next)) return;
 
@@ -407,10 +405,7 @@ export const applyProgressEvent = ({
           weather: effect.setWeather ?? next.environment.weather,
           ambienceIntensity: Math.max(
             0,
-            Math.min(
-              100,
-              next.environment.ambienceIntensity + (effect.ambienceDelta ?? 0)
-            )
+            Math.min(100, next.environment.ambienceIntensity + (effect.ambienceDelta ?? 0))
           ),
         },
       };
