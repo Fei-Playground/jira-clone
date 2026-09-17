@@ -11,6 +11,15 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "a1b2c3d4-0000-4000-8000-reply0000001",
+      user: usersMock[5], // Mr. Potato
+      message: "Good to know, @Jessie — so the reporter always keeps full control of their issue.",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
