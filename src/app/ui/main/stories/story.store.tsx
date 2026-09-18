@@ -600,10 +600,45 @@ export const StoryContextProvider = ({
           storyEvents: localizedStoryEvents,
           event: { type: "enterScene", sceneId: story.startSceneId },
         });
-        return { ...prev, [storyId]: result.progress };
+        // Chapter 1: the manuscript starts the moment the player steps into
+        // the start scene, not only on a LATER scene change — this is the
+        // same composer runEvent uses, so the opening chapter is written by
+        // exactly the same rule as every chapter after it.
+        const openingBlocks = composeBlocksForEvent({
+          event: { type: "enterScene", sceneId: story.startSceneId },
+          effects: result.effects,
+          progressBefore: initial,
+          progressAfter: result.progress,
+          scenes: localizedScenes,
+          quests: localizedQuests,
+          items: localizedItems,
+          characters: localizedCharacters,
+          activeMember: undefined,
+          locale,
+        });
+        const nextProgress =
+          openingBlocks.length > 0
+            ? {
+                ...result.progress,
+                manuscript: appendToManuscript(
+                  result.progress.manuscript,
+                  openingBlocks,
+                  locale
+                ),
+              }
+            : result.progress;
+        return { ...prev, [storyId]: nextProgress };
       });
     },
-    [localizedStories, localizedScenes, localizedQuests, localizedStoryEvents]
+    [
+      localizedStories,
+      localizedScenes,
+      localizedQuests,
+      localizedStoryEvents,
+      localizedItems,
+      localizedCharacters,
+      locale,
+    ]
   );
 
   const exitStory = useCallback(() => setActiveStoryId(null), []);

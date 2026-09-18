@@ -99,7 +99,16 @@ const renderBlockNovel = (
       return [{ blockId: block.id, type: "prose", text: payload.text }];
     case "dialogue": {
       const verb = SPEECH_VERB[locale][payload.toneHint ?? "neutral"];
-      const speaker = block.speakerName ?? "";
+      // A player line carries no speakerName (it's the protagonist) — fall
+      // back to the protagonist subject so the transcription never reads as
+      // a verb with nobody attached to it.
+      const speaker =
+        block.speakerName ??
+        (locale === Locale.ZH
+          ? options.pov === "first"
+            ? "我"
+            : options.protagonistName || "主角"
+          : protagonistSubject(options));
       const text =
         locale === Locale.ZH
           ? `「${payload.line}」${speaker}${verb}。`
@@ -177,11 +186,14 @@ const renderBlockScreenplay = (block: NarrativeBlock, locale: Locale): RenderedL
         { blockId: block.id, type: "action", text: payload.text },
       ];
     case "dialogue": {
+      // Same rule as novel mode: a player line has no speakerName, and a
+      // screenplay character block with a blank name is a broken block.
+      const speaker = block.speakerName ?? (locale === Locale.ZH ? "主角" : "PROTAGONIST");
       const lines: RenderedLine[] = [
         {
           blockId: block.id,
           type: "dialogueSpeaker",
-          text: (block.speakerName ?? "").toUpperCase(),
+          text: speaker.toUpperCase(),
         },
       ];
       if (payload.toneHint && payload.toneHint !== "neutral") {

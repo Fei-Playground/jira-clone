@@ -208,6 +208,22 @@ module.exports = {
       "dialog-overlay": "rgba(0,0,0,0.45)",
     },
     extend: {
+      // theme.fontFamily above fully overrides Tailwind's defaults, which
+      // removes `font-serif` / `font-mono`. The manuscript view relies on
+      // both (serif prose for novel mode, monospace for screenplay format),
+      // so restore them additively with CJK-capable stacks.
+      fontFamily: {
+        serif: ["Georgia", "Songti SC", "SimSun", "Noto Serif CJK SC", "Noto Serif SC", "serif"],
+        mono: [
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Consolas",
+          "Liberation Mono",
+          "Courier New",
+          "monospace",
+        ],
+      },
       fontSize: {
         "2xs": ["0.75rem", "1rem"],
         xs: ["0.8125rem", "1rem"],

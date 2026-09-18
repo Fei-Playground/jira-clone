@@ -139,6 +139,10 @@ export const ManuscriptView = ({
         </div>
       </div>
 
+      <p className="border-border-default border-b bg-elevation-surface-sunken px-4 py-1.5 text-2xs leading-snug text-font-subtlest">
+        {t("stories.manuscript.provenanceNote")}
+      </p>
+
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4">
         {rendered.lines.length === 0 ? (
           <p className="text-center text-sm text-font-subtlest">
