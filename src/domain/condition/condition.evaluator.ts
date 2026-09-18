@@ -34,6 +34,8 @@ const evaluateLeaf = (
       return progress.environment.weather === condition.weather;
     case "ambienceAtLeast":
       return progress.environment.ambienceIntensity >= condition.value;
+    case "npcAffinityAtLeast":
+      return (progress.npcRelationships?.[condition.characterId]?.affinity ?? 0) >= condition.value;
     default:
       return false;
   }
@@ -159,6 +161,17 @@ const leafRequirement = (
         labelParams: {
           value: condition.value,
           current: progress.environment.ambienceIntensity,
+        },
+      };
+    case "npcAffinityAtLeast":
+      return {
+        satisfied,
+        kind: condition.type,
+        labelKey: "condition.npcAffinityAtLeast",
+        labelParams: {
+          name: labels.characterNames[condition.characterId] ?? condition.characterId,
+          value: condition.value,
+          current: progress.npcRelationships?.[condition.characterId]?.affinity ?? 0,
         },
       };
     default:

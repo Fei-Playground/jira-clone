@@ -6,7 +6,34 @@ import { CharacterId } from "@domain/character";
 import { evaluateCondition } from "@domain/condition";
 import { StoryEvent, StoryEventId } from "@domain/story-event";
 import { TimeOfDay, Weather } from "@domain/environment";
-import { PlayerProgress } from "./player-progress";
+import { PlayerProgress, NpcRelationship } from "./player-progress";
+
+export const DEFAULT_RELATIONSHIP: NpcRelationship = {
+  affinity: 0,
+  mood: 50,
+  lastInteractionAt: 0,
+};
+
+// Real, deterministic relationship movement — not decoration. Affinity only
+// ever rises (it represents accumulated trust); mood rises and falls and is
+// clamped to [0,100] on every touch so it can't drift out of range.
+const bumpRelationship = (
+  progress: PlayerProgress,
+  characterId: CharacterId,
+  affinityDelta: number,
+  moodDelta: number
+): PlayerProgress => {
+  const current = progress.npcRelationships?.[characterId] ?? DEFAULT_RELATIONSHIP;
+  const next: NpcRelationship = {
+    affinity: Math.max(0, Math.min(100, current.affinity + Math.max(0, affinityDelta))),
+    mood: Math.max(0, Math.min(100, current.mood + moodDelta)),
+    lastInteractionAt: Date.now(),
+  };
+  return {
+    ...progress,
+    npcRelationships: { ...progress.npcRelationships, [characterId]: next },
+  };
+};
 
 export type ProgressEvent =
   | { type: "enterScene"; sceneId: SceneId }
@@ -228,6 +255,9 @@ export const applyProgressEvent = ({
           [event.characterId]: (next.npcTalkCounts[event.characterId] ?? 0) + 1,
         },
       };
+      // Real relationship movement: opening a new conversation is a small,
+      // genuine step toward the NPC trusting the player more.
+      next = bumpRelationship(next, event.characterId, 2, 3);
 
       quests
         .filter((q) => next.questStates[q.id]?.status === "active")
@@ -242,6 +272,7 @@ export const applyProgressEvent = ({
     }
 
     case "sendMessage": {
+      let advancedAQuestObjective = false;
       quests
         .filter((q) => next.questStates[q.id]?.status === "active")
         .forEach((quest) => {
@@ -252,9 +283,18 @@ export const applyProgressEvent = ({
               containsKeyword(event.text, obj.keywords)
             ) {
               next = advanceObjective(next, quest, obj.id, 1, objectiveTarget(obj), effects);
+              advancedAQuestObjective = true;
             }
           });
         });
+      // Real relationship movement: saying the right thing to advance a
+      // quest genuinely builds trust; any message at all is at least a
+      // small, real mood bump (the NPC is being talked to, not ignored).
+      if (event.characterId) {
+        next = advancedAQuestObjective
+          ? bumpRelationship(next, event.characterId, 4, 6)
+          : bumpRelationship(next, event.characterId, 0, 1);
+      }
       break;
     }
 
@@ -350,6 +390,12 @@ export const applyProgressEvent = ({
         },
       };
       effects.push({ type: "questCompleted", questId: event.questId });
+      // Real relationship movement: turning in a quest is the single
+      // strongest trust-building act in the game — give it the largest bump.
+      const relationshipTarget = quest.turnInCharacterId ?? quest.giverCharacterId;
+      if (relationshipTarget) {
+        next = bumpRelationship(next, relationshipTarget, 10, 15);
+      }
       break;
     }
 

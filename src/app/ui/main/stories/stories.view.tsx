@@ -22,6 +22,9 @@ import {
 import { checkStoryReachability, deriveSceneBackground } from "@domain/scene";
 import { deriveSceneMood } from "@domain/music";
 import { buildQuickActions } from "@domain/quick-action";
+import { RelationshipIndicator } from "./relationship-indicator";
+import { PartyBar } from "./party-bar";
+import { PartyChannel } from "./party-channel";
 import { useTranslation } from "@app/store/locale.store";
 import * as Dialog from "@app/components/dialog";
 import { Tooltip } from "@app/components/tooltip";
@@ -154,6 +157,7 @@ const SceneShell = (): JSX.Element => {
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [isQuestPanelOpen, setIsQuestPanelOpen] = useState(false);
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false);
+  const [isPartyChannelOpen, setIsPartyChannelOpen] = useState(false);
 
   // The scene's ambient soundtrack mood is a real function of the story's
   // world (tone tags) and the CURRENT environment — a storm event firing
@@ -192,6 +196,10 @@ const SceneShell = (): JSX.Element => {
 
   if (isGroupChatOpen) {
     return <SceneGroupChat onBack={() => setIsGroupChatOpen(false)} />;
+  }
+
+  if (isPartyChannelOpen) {
+    return <PartyChannel onBack={() => setIsPartyChannelOpen(false)} />;
   }
 
   return (
@@ -242,6 +250,7 @@ const SceneShell = (): JSX.Element => {
             </button>
           </Tooltip>
         </div>
+        <PartyBar onOpenChannel={() => setIsPartyChannelOpen(true)} />
         <SceneMap />
         {environment && (
           <div className="mt-3 flex items-center gap-3 rounded-md border border-border bg-elevation-surface-raised px-2 py-1.5 text-xs text-font-subtlest">
@@ -566,10 +575,22 @@ const SceneView = ({
     useStoryStore();
   if (!currentScene || !progress) return <></>;
 
-  const npcCharacters = currentScene.npcs.map((npc) => ({
-    npc,
-    character: characters.find((c) => c.id === npc.characterId),
-  }));
+  // A hidden NPC's `presenceCondition` is evaluated against real progress —
+  // when it's not met, the NPC is filtered out entirely rather than shown
+  // with a lock icon. There's nothing on the scene hinting they exist;
+  // the player only discovers them by meeting the condition and coming
+  // back, which is what makes them a genuine discovery instead of a
+  // telegraphed "there's a secret here" marker.
+  const npcCharacters = currentScene.npcs
+    .filter(
+      (npc) =>
+        !npc.presenceCondition ||
+        evaluateCondition(npc.presenceCondition, progress)
+    )
+    .map((npc) => ({
+      npc,
+      character: characters.find((c) => c.id === npc.characterId),
+    }));
 
   const sceneQuests = quests.filter((q) => q.giverSceneId === currentScene.id);
 
@@ -731,8 +752,15 @@ const SceneView = ({
                     {character.avatarEmoji}
                   </span>
                   <span className="text-left">
-                    <span className="block font-primary-bold text-sm text-font">
-                      {character.name}
+                    <span className="flex items-center gap-1">
+                      <span className="font-primary-bold text-sm text-font">
+                        {character.name}
+                      </span>
+                      <RelationshipIndicator
+                        relationship={
+                          progress.npcRelationships?.[npc.characterId]
+                        }
+                      />
                     </span>
                     <span className="block text-2xs text-font-subtlest">
                       {npc.roleInScene}
@@ -888,10 +916,19 @@ const SceneGroupChat = ({ onBack }: { onBack: () => void }): JSX.Element => {
   const room = rooms.find((r) => r.id === existingRoomId);
 
   useEffect(() => {
-    if (!currentScene || room) return;
+    if (!currentScene || room || !progress) return;
+    // Same presenceCondition filtering as SceneView's NPC list — a hidden
+    // NPC must not leak into the group room before they're discoverable.
+    const presentNpcIds = currentScene.npcs
+      .filter(
+        (npc) =>
+          !npc.presenceCondition ||
+          evaluateCondition(npc.presenceCondition, progress)
+      )
+      .map((npc) => npc.characterId);
     const newRoom = createRoom({
       name: currentScene.name,
-      characterIds: currentScene.npcs.map((npc) => npc.characterId),
+      characterIds: presentNpcIds,
       turnMode: "natural",
       lorebookIds: currentScene.lorebookIds,
       sceneId: currentScene.id,

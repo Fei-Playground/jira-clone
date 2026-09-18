@@ -19,6 +19,10 @@ export type Condition =
   // lets a scene/exit/item gate on "how tense does the world currently
   // feel", shifted by story events rather than by a single flag/weather.
   | { type: "ambienceAtLeast"; value: number }
+  // The player's long-run affinity (0-100) with this NPC has reached at
+  // least this value — lets a quest/scene/dialogue gate on "has this NPC
+  // grown to trust you", driven by real interaction history.
+  | { type: "npcAffinityAtLeast"; characterId: CharacterId; value: number }
   | { type: "allOf"; conditions: Condition[] }
   | { type: "anyOf"; conditions: Condition[] }
   | { type: "not"; condition: Condition };

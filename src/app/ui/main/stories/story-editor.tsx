@@ -52,6 +52,7 @@ const LEAF_KINDS: LeafKind[] = [
   "timeOfDayIs",
   "weatherIs",
   "ambienceAtLeast",
+  "npcAffinityAtLeast",
 ];
 
 const emptyLeafForKind = (kind: LeafKind): Condition => {
@@ -76,6 +77,8 @@ const emptyLeafForKind = (kind: LeafKind): Condition => {
       return { type: "weatherIs", weather: WEATHER_VALUES[0] };
     case "ambienceAtLeast":
       return { type: "ambienceAtLeast", value: 50 };
+    case "npcAffinityAtLeast":
+      return { type: "npcAffinityAtLeast", characterId: "", value: 50 };
   }
 };
 
@@ -314,6 +317,44 @@ export const ConditionEditor = ({
               />
               <span className="text-2xs text-font-subtlest">
                 {t("stories.editor.condition.ambienceAtLeastSuffix")}
+              </span>
+            </div>
+          ) : leaf.type === "npcAffinityAtLeast" ? (
+            <div className="flex flex-1 items-center gap-2">
+              <select
+                value={leaf.characterId}
+                onChange={(e) =>
+                  updateLeaf(i, { ...leaf, characterId: e.target.value })
+                }
+                className="flex-1 rounded border border-border bg-background-input px-1 py-1 text-xs"
+              >
+                <option value="">
+                  {t("stories.editor.condition.selectCharacter")}
+                </option>
+                {characters.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <span className="text-2xs text-font-subtlest">
+                {t("stories.editor.condition.npcAffinityAtLeastPrefix")}
+              </span>
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={leaf.value}
+                onChange={(e) =>
+                  updateLeaf(i, {
+                    ...leaf,
+                    value: Math.max(0, Math.min(100, Number(e.target.value))),
+                  })
+                }
+                className="w-16 rounded border border-border bg-background-input px-1 py-1 text-xs"
+              />
+              <span className="text-2xs text-font-subtlest">
+                {t("stories.editor.condition.npcAffinityAtLeastSuffix")}
               </span>
             </div>
           ) : null}

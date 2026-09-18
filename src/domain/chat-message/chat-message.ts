@@ -30,6 +30,10 @@ export interface ChatMessage {
   // one-on-one session, where `sender: "character"` already identifies the
   // single companion).
   senderCharacterId?: CharacterId;
+  // Party-channel only: which PlayerProfile sent this `sender: "user"`
+  // message — lets a shared human-to-human channel attribute a message to
+  // the right party member instead of the generic "you".
+  senderProfileId?: string;
   loreInjections?: LoreInjectionSnapshot[];
   generatedImages?: GeneratedImageRecord[];
 }

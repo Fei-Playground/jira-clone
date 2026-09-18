@@ -24,7 +24,7 @@ import {
   getStoryEventText,
 } from "@domain/story-event";
 import { EnvironmentState, TimeOfDay, Weather } from "@domain/environment";
-import { Condition } from "@domain/condition";
+import { Condition, evaluateCondition } from "@domain/condition";
 import { CharacterId, charactersMock } from "@domain/character";
 import {
   ChatSession,
@@ -34,6 +34,16 @@ import {
 import { ChatRoomId } from "@domain/chat-room";
 import { PlayerProgress } from "@domain/player-progress";
 import {
+  Party,
+  PlayerProfile,
+  PlayerProfileId,
+  MIN_PARTY_MEMBERS,
+  MAX_PARTY_MEMBERS,
+  buildPartyActivityEntries,
+  nextPartyEmoji,
+  nextPartyColor,
+} from "@domain/party";
+import {
   applyProgressEvent,
   ProgressEvent,
   ProgressEffect,
@@ -42,7 +52,11 @@ import { DEFAULT_ENVIRONMENT } from "@domain/environment";
 import { useTranslation } from "@app/store/locale.store";
 
 const AUTOSAVE_STORAGE_KEY = "jira-clone.stories.autosave.v1";
-const AUTOSAVE_VERSION = 1;
+// v2 adds partiesByStoryId (multiplayer). v1 saves are read as single-player
+// (partiesByStoryId defaults to {}) — NOT rejected, so upgrading never
+// silently discards a player's existing progress.
+const AUTOSAVE_VERSION = 2;
+const MIN_READABLE_VERSION = 1;
 
 const createInitialProgress = (story: Story): PlayerProgress => ({
   storyId: story.id,
@@ -71,6 +85,9 @@ interface StorySaveFile {
   savedAt: number;
   progressByStoryId: Record<StoryId, PlayerProgress>;
   activeStoryId: StoryId | null;
+  // Added in v2 — absent on a v1 save, which reads as {} (no parties, pure
+  // single-player behavior, exactly as before v2 existed).
+  partiesByStoryId?: Record<StoryId, Party>;
 }
 
 const readAutosave = (): StorySaveFile | null => {
@@ -79,7 +96,15 @@ const readAutosave = (): StorySaveFile | null => {
     const raw = window.localStorage.getItem(AUTOSAVE_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as StorySaveFile;
-    if (parsed.version !== AUTOSAVE_VERSION) return null;
+    // Any version from MIN_READABLE_VERSION up to the current one is
+    // readable — a v1 save simply has no partiesByStoryId, which every
+    // reader below already treats as "no party" via `?? {}`.
+    if (
+      parsed.version < MIN_READABLE_VERSION ||
+      parsed.version > AUTOSAVE_VERSION
+    ) {
+      return null;
+    }
     return parsed;
   } catch {
     return null;
@@ -188,6 +213,18 @@ interface StoryStore {
     timeOfDay?: TimeOfDay;
     weather?: Weather;
   }) => void;
+
+  // Multiplayer party: hot-seat, same-device sharing of one story's
+  // progress across several PlayerProfiles. undefined when the active
+  // story has no party — every consumer must treat that as "single
+  // player, behave exactly as before".
+  party: Party | undefined;
+  createParty: (name: string, memberNames: string[]) => Party | undefined;
+  addPartyMember: (memberName: string) => void;
+  removePartyMember: (memberId: PlayerProfileId) => void;
+  disbandParty: () => void;
+  switchActiveMember: (memberId: PlayerProfileId) => void;
+  registerPartyChannel: (roomId: ChatRoomId) => void;
 }
 
 const StoryContext = createContext<StoryStore | undefined>(undefined);
@@ -204,6 +241,9 @@ export const StoryContextProvider = ({
   const [progressByStoryId, setProgressByStoryId] = useState<
     Record<StoryId, PlayerProgress>
   >(() => readAutosave()?.progressByStoryId ?? {});
+  const [partiesByStoryId, setPartiesByStoryId] = useState<
+    Record<StoryId, Party>
+  >(() => readAutosave()?.partiesByStoryId ?? {});
   const [lastEffects, setLastEffects] = useState<ProgressEffect[]>([]);
   const [sessionsBySceneNpc, setSessionsBySceneNpc] = useState<
     Record<string, ChatSession>
@@ -390,8 +430,9 @@ export const StoryContextProvider = ({
       savedAt: Date.now(),
       progressByStoryId,
       activeStoryId,
+      partiesByStoryId,
     });
-  }, [progressByStoryId, activeStoryId]);
+  }, [progressByStoryId, activeStoryId, partiesByStoryId]);
   // Displayed "autosaves to this browser" note only needs to know whether
   // there IS progress to save — not the exact timestamp — so it's derived
   // instead of tracked as separate state that would need syncing.
@@ -408,9 +449,36 @@ export const StoryContextProvider = ({
         storyEvents: localizedStoryEvents,
         event,
       });
+      // When this story has a party, attribute the effects to whoever is
+      // currently at the controls and append them to the shared activity
+      // log — attribution happens here at the store layer, so
+      // applyProgressEvent stays a pure progress calculator with no notion
+      // of parties at all.
+      const party = partiesByStoryId[activeStory.id];
+      let nextProgress = result.progress;
+      if (party) {
+        const activeMember = party.members.find(
+          (m) => m.id === party.activeMemberId
+        );
+        if (activeMember) {
+          const newEntries = buildPartyActivityEntries({
+            effects: result.effects,
+            activeMember,
+            quests: localizedQuests,
+            scenes: localizedScenes,
+            items: localizedItems,
+          });
+          if (newEntries.length > 0) {
+            nextProgress = {
+              ...nextProgress,
+              activityLog: [...(nextProgress.activityLog ?? []), ...newEntries],
+            };
+          }
+        }
+      }
       setProgressByStoryId((prev) => ({
         ...prev,
-        [activeStory.id]: result.progress,
+        [activeStory.id]: nextProgress,
       }));
       setLastEffects(result.effects);
     },
@@ -420,6 +488,8 @@ export const StoryContextProvider = ({
       localizedScenes,
       localizedQuests,
       localizedStoryEvents,
+      localizedItems,
+      partiesByStoryId,
     ]
   );
 
@@ -451,6 +521,171 @@ export const StoryContextProvider = ({
   );
 
   const exitStory = useCallback(() => setActiveStoryId(null), []);
+
+  const party = activeStoryId ? partiesByStoryId[activeStoryId] : undefined;
+
+  const createParty = useCallback(
+    (name: string, memberNames: string[]): Party | undefined => {
+      if (!activeStory || !progress) return undefined;
+      if (
+        memberNames.length < MIN_PARTY_MEMBERS ||
+        memberNames.length > MAX_PARTY_MEMBERS
+      ) {
+        return undefined;
+      }
+      const members: PlayerProfile[] = memberNames.map((memberName, i) => ({
+        id: uuid(),
+        name: memberName,
+        emoji: nextPartyEmoji(i),
+        color: nextPartyColor(i),
+        // Every member starts where the current single-player run already
+        // stands — forming a party mid-playthrough doesn't relocate anyone.
+        currentSceneId: progress.currentSceneId,
+        joinedAt: Date.now(),
+      }));
+      const newParty: Party = {
+        id: uuid(),
+        storyId: activeStory.id,
+        name,
+        members,
+        activeMemberId: members[0].id,
+        createdAt: Date.now(),
+      };
+      setPartiesByStoryId((prev) => ({ ...prev, [activeStory.id]: newParty }));
+      setProgressByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: { ...prev[activeStory.id], partyId: newParty.id },
+      }));
+      return newParty;
+    },
+    [activeStory, progress]
+  );
+
+  const addPartyMember = useCallback(
+    (memberName: string) => {
+      if (!activeStory || !party || !progress) return;
+      if (party.members.length >= MAX_PARTY_MEMBERS) return;
+      const newMember: PlayerProfile = {
+        id: uuid(),
+        name: memberName,
+        emoji: nextPartyEmoji(party.members.length),
+        color: nextPartyColor(party.members.length),
+        currentSceneId: progress.currentSceneId,
+        joinedAt: Date.now(),
+      };
+      setPartiesByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: { ...party, members: [...party.members, newMember] },
+      }));
+    },
+    [activeStory, party, progress]
+  );
+
+  const removePartyMember = useCallback(
+    (memberId: PlayerProfileId) => {
+      if (!activeStory || !party) return;
+      const remaining = party.members.filter((m) => m.id !== memberId);
+      // Historical activityLog entries keep their memberName snapshot, so
+      // removing a member never blanks out what they already did.
+      const nextActiveMemberId =
+        party.activeMemberId === memberId
+          ? (remaining[0]?.id ?? party.activeMemberId)
+          : party.activeMemberId;
+      setPartiesByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: {
+          ...party,
+          members: remaining,
+          activeMemberId: nextActiveMemberId,
+        },
+      }));
+    },
+    [activeStory, party]
+  );
+
+  const disbandParty = useCallback(() => {
+    if (!activeStory) return;
+    setPartiesByStoryId((prev) => {
+      const next = { ...prev };
+      delete next[activeStory.id];
+      return next;
+    });
+    setProgressByStoryId((prev) => ({
+      ...prev,
+      [activeStory.id]: { ...prev[activeStory.id], partyId: undefined },
+    }));
+  }, [activeStory]);
+
+  // The single most important piece of the multiplayer design: switching
+  // whose turn it is. Step 1 writes the OLD active member's position back
+  // from the shared progress.currentSceneId (that's where they really are
+  // right now); step 2 flips whose turn it is; step 3 overwrites
+  // progress.currentSceneId with the NEW member's saved position —
+  // deliberately NOT via an enterScene event, since this is a perspective
+  // switch, not a move, and must not re-trigger visitScene objectives or
+  // scene-entry story events. Step 4 guards against a scene that became
+  // locked since that member was last there (story progressed under them).
+  const switchActiveMember = useCallback(
+    (memberId: PlayerProfileId) => {
+      if (!activeStory || !party || !progress) return;
+      const oldMember = party.members.find(
+        (m) => m.id === party.activeMemberId
+      );
+      const newMember = party.members.find((m) => m.id === memberId);
+      if (!newMember || newMember.id === party.activeMemberId) return;
+
+      const updatedMembers = party.members.map((m) => {
+        if (oldMember && m.id === oldMember.id) {
+          return { ...m, currentSceneId: progress.currentSceneId };
+        }
+        return m;
+      });
+
+      let targetSceneId = newMember.currentSceneId;
+      const targetScene = localizedScenes.find((s) => s.id === targetSceneId);
+      const stillUnlocked =
+        targetScene && evaluateCondition(targetScene.unlock, progress);
+      if (!targetScene || !stillUnlocked) {
+        // The story progressed and this member's last scene is no longer
+        // reachable — fall back to the story's start scene rather than
+        // stranding the player on a scene evaluateCondition now rejects.
+        targetSceneId = activeStory.startSceneId;
+      }
+
+      setPartiesByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: {
+          ...party,
+          members: updatedMembers.map((m) =>
+            m.id === newMember.id ? { ...m, currentSceneId: targetSceneId } : m
+          ),
+          activeMemberId: newMember.id,
+        },
+      }));
+      setProgressByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: {
+          ...prev[activeStory.id],
+          currentSceneId: targetSceneId,
+        },
+      }));
+    },
+    [activeStory, party, progress, localizedScenes]
+  );
+
+  // Called once, lazily, the first time the party channel is opened —
+  // records which ChatRoom (created via the companions module's own
+  // chat-room store, zero NPC members) belongs to this party.
+  const registerPartyChannel = useCallback(
+    (roomId: ChatRoomId) => {
+      if (!activeStory || !party) return;
+      setPartiesByStoryId((prev) => ({
+        ...prev,
+        [activeStory.id]: { ...party, channelRoomId: roomId },
+      }));
+    },
+    [activeStory, party]
+  );
 
   const currentScene = localizedScenes.find(
     (s) => s.id === progress?.currentSceneId
@@ -871,6 +1106,13 @@ export const StoryContextProvider = ({
     environment: progress?.environment,
     setEnvironment,
     updateStoryInitialEnvironment,
+    party,
+    createParty,
+    addPartyMember,
+    removePartyMember,
+    disbandParty,
+    switchActiveMember,
+    registerPartyChannel,
   };
 
   return (

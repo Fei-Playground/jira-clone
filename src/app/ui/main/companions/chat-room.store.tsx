@@ -51,7 +51,11 @@ interface ChatRoomStore {
     patch: Partial<Pick<ChatRoom, "name" | "turnMode" | "lorebookIds">>
   ) => void;
   toggleMemberMute: (roomId: ChatRoomId, characterId: CharacterId) => void;
-  sendRoomMessage: (roomId: ChatRoomId, text: string) => void;
+  sendRoomMessage: (
+    roomId: ChatRoomId,
+    text: string,
+    senderProfileId?: string
+  ) => void;
   callOnMember: (roomId: ChatRoomId, characterId: CharacterId) => void;
   setRoomAuthorNote: (
     roomId: ChatRoomId,
@@ -285,7 +289,7 @@ export const ChatRoomContextProvider = ({
   );
 
   const sendRoomMessage = useCallback(
-    (roomId: ChatRoomId, text: string) => {
+    (roomId: ChatRoomId, text: string, senderProfileId?: string) => {
       const room = localizedRooms.find((r) => r.id === roomId);
       if (!room) return;
 
@@ -308,6 +312,7 @@ export const ChatRoomContextProvider = ({
       const userMessage: ChatMessage = {
         ...createUserMessage(text),
         loreInjections: loreInjections.length > 0 ? loreInjections : undefined,
+        senderProfileId,
       };
 
       setRooms((prev) =>

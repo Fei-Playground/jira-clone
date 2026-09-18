@@ -30,6 +30,8 @@ export const GroupChatWindow = ({
   onDeleteRoom,
   onViewCharacter,
   quickActions,
+  partyMembersById,
+  activeSenderProfileId,
 }: {
   room: ChatRoom;
   onDeleteRoom: () => void;
@@ -38,6 +40,18 @@ export const GroupChatWindow = ({
   // free-standing group chat rooms (/companions) — only scene group chat
   // passes these.
   quickActions?: QuickAction[];
+  // Party channel only: maps a PlayerProfile id to its display info, so
+  // GroupMessage can attribute a `sender: "user"` message to the party
+  // member who actually sent it rather than the generic "you". Omitted for
+  // every other kind of room — NPC group chats included — so nothing else
+  // changes.
+  partyMembersById?: Record<
+    string,
+    { name: string; emoji: string; color: string }
+  >;
+  // Party channel only: whichever member is currently at the controls —
+  // sending attributes the message to this profile.
+  activeSenderProfileId?: string;
 }): JSX.Element => {
   const { characters, settings } = useCompanionsStore();
   const {
@@ -77,7 +91,7 @@ export const GroupChatWindow = ({
   const handleSend = () => {
     const trimmed = draft.trim();
     if (!trimmed) return;
-    sendRoomMessage(room.id, trimmed);
+    sendRoomMessage(room.id, trimmed, activeSenderProfileId);
     setDraft("");
     setCursor(0);
   };
@@ -87,7 +101,7 @@ export const GroupChatWindow = ({
   const handleQuickSend = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    sendRoomMessage(room.id, trimmed);
+    sendRoomMessage(room.id, trimmed, activeSenderProfileId);
   };
 
   // Inserts text at the current cursor position (not the end of the
@@ -226,6 +240,11 @@ export const GroupChatWindow = ({
                 }
                 userDisplayName={settings.userDisplayName}
                 locale={locale}
+                partyMember={
+                  message.senderProfileId
+                    ? partyMembersById?.[message.senderProfileId]
+                    : undefined
+                }
               />
             ))}
             {isTyping && typingCharacter && (
@@ -322,11 +341,15 @@ const GroupMessage = ({
   character,
   userDisplayName,
   locale,
+  partyMember,
 }: {
   message: ChatMessage;
   character: Character | undefined;
   userDisplayName: string;
   locale: string;
+  // When set, this message was sent by a party member in a party channel —
+  // their name/emoji/color take over the generic "you" avatar and label.
+  partyMember?: { name: string; emoji: string; color: string };
 }): JSX.Element => {
   const isUser = message.sender === "user";
 
@@ -355,13 +378,16 @@ const GroupMessage = ({
         <span
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base shadow-sm"
           style={{
-            background: isUser
-              ? "linear-gradient(145deg, var(--color-background-brand-bold), var(--color-background-brand-boldest))"
-              : `linear-gradient(145deg, ${character?.avatarColor ?? "#666"}, ${character?.avatarColor ?? "#666"}cc)`,
+            background:
+              isUser && partyMember
+                ? `linear-gradient(145deg, ${partyMember.color}, ${partyMember.color}cc)`
+                : isUser
+                  ? "linear-gradient(145deg, var(--color-background-brand-bold), var(--color-background-brand-boldest))"
+                  : `linear-gradient(145deg, ${character?.avatarColor ?? "#666"}, ${character?.avatarColor ?? "#666"}cc)`,
           }}
         >
           {isUser
-            ? userDisplayName.slice(0, 1).toUpperCase()
+            ? (partyMember?.emoji ?? userDisplayName.slice(0, 1).toUpperCase())
             : (character?.avatarEmoji ?? "?")}
         </span>
         <div
@@ -381,6 +407,11 @@ const GroupMessage = ({
               style={{ color: character.avatarColor }}
             >
               {character.name}
+            </p>
+          )}
+          {isUser && partyMember && (
+            <p className="mb-0.5 text-2xs font-bold text-font-inverse opacity-90">
+              {partyMember.name}
             </p>
           )}
           <p className="whitespace-pre-wrap font-primary leading-6">
