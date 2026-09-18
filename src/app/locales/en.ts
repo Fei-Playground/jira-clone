@@ -361,6 +361,7 @@ export const en = {
       povPicker: "Viewpoint",
       povOf: "Viewpoint: {{name}}",
       povNarrator: "Narrator (default)",
+      creatorMode: "Creator controls (edit / hide / sources)",
     },
     quickAction: {
       more: "More",

@@ -29,9 +29,9 @@ const rawBlockText = (block: NarrativeBlock): string => {
 };
 
 const ORIGIN_BADGE_STYLE: Record<NarrativeOrigin, string> = {
-  authored: "bg-background-success-subtlest text-font-success",
-  dialogue: "bg-background-info-subtlest text-font-information",
-  composed: "bg-background-warning-subtlest text-font-warning",
+  authored: "bg-background-success text-font-success",
+  dialogue: "bg-background-info text-font-info",
+  composed: "bg-background-warning text-font-warning",
 };
 
 // A creator-mode audit view: every block in the manuscript, in order, with

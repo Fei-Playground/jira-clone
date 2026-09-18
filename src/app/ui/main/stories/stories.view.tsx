@@ -11,6 +11,7 @@ import {
   RiListCheck3,
   RiErrorWarningLine,
   RiBook2Line,
+  RiQuillPenLine,
 } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { CharacterId } from "@domain/character";
@@ -167,6 +168,12 @@ const SceneShell = (): JSX.Element => {
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false);
   const [isPartyChannelOpen, setIsPartyChannelOpen] = useState(false);
   const [isManuscriptOpen, setIsManuscriptOpen] = useState(true);
+  // Independent of isEditingStory: the full-screen StoryEditor replaces
+  // this whole view, so the manuscript rail (and its creator affordances)
+  // would never be on screen at the same time as "edit this story" mode.
+  // This toggle lets a creator turn on block-level edit/hide/provenance
+  // controls without leaving the manuscript rail.
+  const [isManuscriptCreatorMode, setIsManuscriptCreatorMode] = useState(false);
   const {
     manuscript,
     manuscriptOptions,
@@ -280,6 +287,22 @@ const SceneShell = (): JSX.Element => {
               <RiBook2Line size={18} />
             </button>
           </Tooltip>
+          {isManuscriptOpen && (
+            <Tooltip title={t("stories.manuscript.creatorMode")}>
+              <button
+                onClick={() => setIsManuscriptCreatorMode((v) => !v)}
+                aria-label={t("stories.manuscript.creatorMode")}
+                aria-pressed={isManuscriptCreatorMode}
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-icon hover:bg-background-neutral ${
+                  isManuscriptCreatorMode
+                    ? "bg-background-brand-subtlest text-icon-brand"
+                    : ""
+                }`}
+              >
+                <RiQuillPenLine size={18} />
+              </button>
+            </Tooltip>
+          )}
         </div>
         <PartyBar onOpenChannel={() => setIsPartyChannelOpen(true)} />
         <SceneMap />
@@ -329,7 +352,7 @@ const SceneShell = (): JSX.Element => {
             blocks={manuscript}
             options={manuscriptOptions}
             onOptionsChange={setManuscriptOptions}
-            creatorMode={isEditingStory}
+            creatorMode={isManuscriptCreatorMode}
             onEditBlock={editManuscriptBlock}
             onToggleHidden={toggleManuscriptBlockHidden}
             partyMembers={party?.members}

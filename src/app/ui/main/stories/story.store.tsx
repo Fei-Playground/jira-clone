@@ -1198,6 +1198,14 @@ export const StoryContextProvider = ({
             ? undefined
             : (localizedCharacters.find((c) => c.id === character?.id)?.name ??
               character?.name);
+        // Attribute a PLAYER line to whoever's currently at the controls
+        // (party mode) so the multi-POV picker has real per-member
+        // attribution to switch on — an NPC line carries no member (NPCs
+        // aren't party members).
+        const activeMember =
+          sender === "user"
+            ? party?.members.find((m) => m.id === party.activeMemberId)
+            : undefined;
         const dialogueBlock = composeDialogueBlock({
           text,
           speakerId: sender === "character" ? character?.id : undefined,
@@ -1211,6 +1219,8 @@ export const StoryContextProvider = ({
                   progress?.npcRelationships?.[character?.id ?? ""]
                 )
               : undefined,
+          memberId: activeMember?.id,
+          memberName: activeMember?.name,
         });
         setProgressByStoryId((prev) => {
           const current = prev[activeStory.id];
@@ -1229,7 +1239,7 @@ export const StoryContextProvider = ({
         });
       }
     },
-    [activeStory, currentScene, progress, localizedCharacters, locale]
+    [activeStory, currentScene, progress, localizedCharacters, locale, party]
   );
 
   const registerSceneRoom = useCallback(

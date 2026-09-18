@@ -358,6 +358,7 @@ export const zh = {
       povPicker: "视角",
       povOf: "视角：{{name}}",
       povNarrator: "旁观叙事（默认）",
+      creatorMode: "创作者控制（改写 / 隐藏 / 查看来源）",
     },
     quickAction: {
       more: "更多",
