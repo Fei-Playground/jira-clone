@@ -13,6 +13,10 @@ export interface Issue {
   asignee: User;
   comments: Comment[];
   priority: Priority;
+  // Used by the board's Gantt mode to position and size each issue's bar.
+  // Optional because issues loaded from the database don't have them yet.
+  startDate?: number;
+  dueDate?: number;
   createdAt: number;
   updatedAt: number;
 }

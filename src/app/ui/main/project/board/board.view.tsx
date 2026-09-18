@@ -3,6 +3,9 @@ import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { BsKanban } from "react-icons/bs";
+import { LuChartGantt } from "react-icons/lu";
+import cx from "classix";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
@@ -11,10 +14,15 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
+import { GanttView } from "./gantt-view";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
+type ViewMode = "kanban" | "gantt";
+
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [viewMode, setViewMode] = useState<ViewMode>("kanban");
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,10 +34,19 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-auto inline">
+            <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
         </section>
-        <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
-        </DndProvider>
+        {viewMode === "kanban" ? (
+          <DndProvider backend={HTML5Backend}>
+            <Categories categories={project.categories} />
+          </DndProvider>
+        ) : (
+          <div className="mt-6 min-h-0 flex-grow">
+            <GanttView categories={project.categories} />
+          </div>
+        )}
         <Outlet />
       </div>
     </ProjectContextProvider>
@@ -38,6 +55,65 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+}
+
+const ViewModeToggle = ({
+  viewMode,
+  setViewMode,
+}: ViewModeToggleProps): JSX.Element => (
+  <div
+    role="group"
+    aria-label="Board view mode"
+    className="flex rounded border-none bg-background-neutral p-0.5"
+  >
+    <ViewModeButton
+      label="Kanban"
+      icon={<BsKanban size={14} />}
+      isActive={viewMode === "kanban"}
+      onClick={() => setViewMode("kanban")}
+    />
+    <ViewModeButton
+      label="Gantt"
+      icon={<LuChartGantt size={14} />}
+      isActive={viewMode === "gantt"}
+      onClick={() => setViewMode("gantt")}
+    />
+  </div>
+);
+
+interface ViewModeToggleProps {
+  viewMode: ViewMode;
+  setViewMode: (viewMode: ViewMode) => void;
+}
+
+const ViewModeButton = ({
+  label,
+  icon,
+  isActive,
+  onClick,
+}: ViewModeButtonProps): JSX.Element => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-pressed={isActive}
+    aria-label={`Switch to ${label} view`}
+    className={cx(
+      "flex cursor-pointer items-center gap-1.5 rounded border-none px-3 py-1.5 text-xs",
+      isActive
+        ? "bg-background-brand-subtlest text-font-brand"
+        : "text-font-subtlest hover:bg-background-neutral-hovered"
+    )}
+  >
+    {icon}
+    {label}
+  </button>
+);
+
+interface ViewModeButtonProps {
+  label: string;
+  icon: JSX.Element;
+  isActive: boolean;
+  onClick: () => void;
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {
