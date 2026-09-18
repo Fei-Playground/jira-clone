@@ -26,6 +26,7 @@ import {
 import { EnvironmentState, TimeOfDay, Weather } from "@domain/environment";
 import { Condition, evaluateCondition } from "@domain/condition";
 import {
+  Character,
   CharacterId,
   charactersMock,
   getCharacterText,
@@ -53,6 +54,17 @@ import {
   ProgressEffect,
 } from "@domain/player-progress";
 import { DEFAULT_ENVIRONMENT } from "@domain/environment";
+import {
+  NarrativeBlock,
+  composeBlocksForEvent,
+  composeDialogueBlock,
+  appendToManuscript,
+  deriveToneHint,
+} from "@domain/narrative";
+import {
+  ManuscriptOptions,
+  DEFAULT_MANUSCRIPT_OPTIONS,
+} from "@app/ui/main/stories/manuscript";
 import { useTranslation } from "@app/store/locale.store";
 
 const AUTOSAVE_STORAGE_KEY = "jira-clone.stories.autosave.v1";
@@ -171,6 +183,14 @@ interface StoryStore {
     text: string
   ) => void;
   makeDialogueChoice: (setFlags: string[]) => void;
+  // The live manuscript for the active story — real narrative source
+  // material, rendered by the manuscript view. Empty array when there's no
+  // active story/progress yet.
+  manuscript: NarrativeBlock[];
+  manuscriptOptions: ManuscriptOptions;
+  setManuscriptOptions: (options: ManuscriptOptions) => void;
+  editManuscriptBlock: (blockId: string, text: string) => void;
+  toggleManuscriptBlockHidden: (blockId: string) => void;
   // Manual save export/import — same shape autosave uses.
   exportSave: () => void;
   importSave: (file: File) => Promise<{ success: boolean; error?: string }>;
@@ -257,6 +277,9 @@ export const StoryContextProvider = ({
     Record<SceneId, ChatRoomId>
   >({});
   const [isEditingStory, setIsEditingStory] = useState(false);
+  const [manuscriptOptions, setManuscriptOptions] = useState<ManuscriptOptions>(
+    DEFAULT_MANUSCRIPT_OPTIONS
+  );
   // Creator-mode content: brand-new scenes/quests the author added, plus
   // patches (edits, exit changes) applied on top of any scene/quest —
   // mock-seeded or custom. Kept as separate overlays rather than mutating
@@ -398,6 +421,23 @@ export const StoryContextProvider = ({
     [locale]
   );
 
+  // Localized character list for the manuscript composer (quest-giver /
+  // relationship-shift beat text needs a real display name) — mirrors the
+  // exact localization rule getOrCreateSceneSession already applies
+  // per-character: custom (creator-authored) characters have no i18n entry
+  // and keep whatever the creator typed.
+  const localizedCharacters: Character[] = useMemo(
+    () =>
+      charactersMock.map((character) => {
+        if (character.isCustom) return character;
+        const text = getCharacterText(character.id, locale);
+        return text
+          ? { ...character, name: text.name, greeting: text.greeting }
+          : character;
+      }),
+    [locale]
+  );
+
   const localizedStoryEvents = useMemo(() => {
     const mockLocalized = storyEventsMock.map((event) => {
       const text = getStoryEventText(event.id, locale);
@@ -470,8 +510,9 @@ export const StoryContextProvider = ({
         // of parties at all.
         const party = partiesByStoryId[activeStory.id];
         let nextProgress = result.progress;
+        let activeMember: PlayerProfile | undefined;
         if (party) {
-          const activeMember = party.members.find(
+          activeMember = party.members.find(
             (m) => m.id === party.activeMemberId
           );
           if (activeMember) {
@@ -493,6 +534,34 @@ export const StoryContextProvider = ({
             }
           }
         }
+
+        // The manuscript: every real thing this event just caused becomes
+        // narrative source material in the SAME pass, from the exact same
+        // `result` the reducer already computed — no replay, no separate
+        // pass, nothing invented.
+        const newManuscriptBlocks = composeBlocksForEvent({
+          event,
+          effects: result.effects,
+          progressBefore: current,
+          progressAfter: nextProgress,
+          scenes: localizedScenes,
+          quests: localizedQuests,
+          items: localizedItems,
+          characters: localizedCharacters,
+          activeMember,
+          locale,
+        });
+        if (newManuscriptBlocks.length > 0) {
+          nextProgress = {
+            ...nextProgress,
+            manuscript: appendToManuscript(
+              nextProgress.manuscript,
+              newManuscriptBlocks,
+              locale
+            ),
+          };
+        }
+
         return { ...prev, [activeStory.id]: nextProgress };
       });
       setLastEffects(() => latestEffects);
@@ -504,7 +573,9 @@ export const StoryContextProvider = ({
       localizedQuests,
       localizedStoryEvents,
       localizedItems,
+      localizedCharacters,
       partiesByStoryId,
+      locale,
     ]
   );
 
@@ -978,6 +1049,50 @@ export const StoryContextProvider = ({
     [runEvent]
   );
 
+  // Creator control over the manuscript: a rewritten line overrides the
+  // rendered text (the source block is kept, never lost); hiding removes a
+  // block from the rendered/exported manuscript while keeping it in the
+  // record so un-hiding restores it exactly.
+  const editManuscriptBlock = useCallback(
+    (blockId: string, text: string) => {
+      if (!activeStory) return;
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id];
+        if (!current?.manuscript) return prev;
+        return {
+          ...prev,
+          [activeStory.id]: {
+            ...current,
+            manuscript: current.manuscript.map((b) =>
+              b.id === blockId ? { ...b, editedText: text } : b
+            ),
+          },
+        };
+      });
+    },
+    [activeStory]
+  );
+
+  const toggleManuscriptBlockHidden = useCallback(
+    (blockId: string) => {
+      if (!activeStory) return;
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id];
+        if (!current?.manuscript) return prev;
+        return {
+          ...prev,
+          [activeStory.id]: {
+            ...current,
+            manuscript: current.manuscript.map((b) =>
+              b.id === blockId ? { ...b, hidden: !b.hidden } : b
+            ),
+          },
+        };
+      });
+    },
+    [activeStory]
+  );
+
   const getOrCreateSceneSession = useCallback(
     (sceneId: SceneId, characterId: CharacterId): ChatSession => {
       const key = `${sceneId}:${characterId}`;
@@ -1011,10 +1126,11 @@ export const StoryContextProvider = ({
 
   const appendSceneSessionMessage = useCallback(
     (sessionId: ChatSessionId, text: string, sender: "user" | "character") => {
+      let session: ChatSession | undefined;
       setSessionsBySceneNpc((prev) => {
         const key = Object.keys(prev).find((k) => prev[k].id === sessionId);
         if (!key) return prev;
-        const session = prev[key];
+        session = prev[key];
         const message =
           sender === "user"
             ? {
@@ -1033,8 +1149,52 @@ export const StoryContextProvider = ({
           },
         };
       });
+
+      // Every real line said in a scene conversation — player or NPC — is
+      // manuscript source material, appended here in the same call rather
+      // than replayed later. The NPC's tone is read from its REAL current
+      // relationship values, never invented.
+      if (activeStory) {
+        const character = charactersMock.find(
+          (c) => c.id === session?.characterId
+        );
+        const speakerName =
+          sender === "user"
+            ? undefined
+            : (localizedCharacters.find((c) => c.id === character?.id)?.name ??
+              character?.name);
+        const dialogueBlock = composeDialogueBlock({
+          text,
+          speakerId: sender === "character" ? character?.id : undefined,
+          speakerName,
+          sceneId: session?.sceneId,
+          sceneName: currentScene?.name,
+          environment: progress?.environment,
+          toneHint:
+            sender === "character"
+              ? deriveToneHint(
+                  progress?.npcRelationships?.[character?.id ?? ""]
+                )
+              : undefined,
+        });
+        setProgressByStoryId((prev) => {
+          const current = prev[activeStory.id];
+          if (!current) return prev;
+          return {
+            ...prev,
+            [activeStory.id]: {
+              ...current,
+              manuscript: appendToManuscript(
+                current.manuscript,
+                [dialogueBlock],
+                locale
+              ),
+            },
+          };
+        });
+      }
     },
-    []
+    [activeStory, currentScene, progress, localizedCharacters, locale]
   );
 
   const registerSceneRoom = useCallback(
@@ -1119,6 +1279,11 @@ export const StoryContextProvider = ({
     recordNpcTalk,
     recordSentMessage,
     makeDialogueChoice,
+    manuscript: progress?.manuscript ?? [],
+    manuscriptOptions,
+    setManuscriptOptions,
+    editManuscriptBlock,
+    toggleManuscriptBlockHidden,
     exportSave,
     importSave,
     lastSavedAt,

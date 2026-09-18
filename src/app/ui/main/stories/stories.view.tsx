@@ -10,6 +10,7 @@ import {
   RiEdit2Line,
   RiListCheck3,
   RiErrorWarningLine,
+  RiBook2Line,
 } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { CharacterId } from "@domain/character";
@@ -29,6 +30,7 @@ import {
 import { deriveSceneMood } from "@domain/music";
 import { buildQuickActions } from "@domain/quick-action";
 import { RelationshipIndicator } from "./relationship-indicator";
+import { ManuscriptView } from "./manuscript";
 import { PartyBar } from "./party-bar";
 import { PartyChannel } from "./party-channel";
 import { useTranslation } from "@app/store/locale.store";
@@ -164,6 +166,14 @@ const SceneShell = (): JSX.Element => {
   const [isQuestPanelOpen, setIsQuestPanelOpen] = useState(false);
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false);
   const [isPartyChannelOpen, setIsPartyChannelOpen] = useState(false);
+  const [isManuscriptOpen, setIsManuscriptOpen] = useState(true);
+  const {
+    manuscript,
+    manuscriptOptions,
+    setManuscriptOptions,
+    editManuscriptBlock,
+    toggleManuscriptBlockHidden,
+  } = useStoryStore();
 
   // The scene's ambient soundtrack mood is a real function of the story's
   // world (tone tags) and the CURRENT environment — a storm event firing
@@ -255,6 +265,20 @@ const SceneShell = (): JSX.Element => {
               <RiEdit2Line size={18} />
             </button>
           </Tooltip>
+          <Tooltip title={t("stories.manuscript.title")}>
+            <button
+              onClick={() => setIsManuscriptOpen((v) => !v)}
+              aria-label={t("stories.manuscript.title")}
+              aria-pressed={isManuscriptOpen}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-icon hover:bg-background-neutral ${
+                isManuscriptOpen
+                  ? "bg-background-brand-subtlest text-icon-brand"
+                  : ""
+              }`}
+            >
+              <RiBook2Line size={18} />
+            </button>
+          </Tooltip>
         </div>
         <PartyBar onOpenChannel={() => setIsPartyChannelOpen(true)} />
         <SceneMap />
@@ -297,6 +321,19 @@ const SceneShell = (): JSX.Element => {
         onOpenDialogue={setOpenDialogueNpcId}
         onOpenGroupChat={() => setIsGroupChatOpen(true)}
       />
+
+      {isManuscriptOpen && (
+        <div className="w-[420px] min-w-[380px] border-l border-border">
+          <ManuscriptView
+            blocks={manuscript}
+            options={manuscriptOptions}
+            onOptionsChange={setManuscriptOptions}
+            creatorMode={isEditingStory}
+            onEditBlock={editManuscriptBlock}
+            onToggleHidden={toggleManuscriptBlockHidden}
+          />
+        </div>
+      )}
 
       <InventoryDialog
         isOpen={isInventoryOpen}
@@ -429,7 +466,8 @@ const QuestPanelDialog = ({
   onClose: () => void;
 }): JSX.Element => {
   const { t } = useTranslation();
-  const { quests, progress, activeStory, acceptQuest, turnInQuest } = useStoryStore();
+  const { quests, progress, activeStory, acceptQuest, turnInQuest } =
+    useStoryStore();
 
   // `quests` is the full global list across every story — scope to the
   // active story so a Blacktide offer never leaks into a Wayfinder run's

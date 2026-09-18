@@ -8,6 +8,7 @@ import { ChatRoomId } from "@domain/chat-room";
 import { EnvironmentState } from "@domain/environment";
 import { StoryEventId } from "@domain/story-event";
 import { PartyId, PartyActivityEntry } from "@domain/party";
+import type { NarrativeBlock } from "@domain/narrative";
 
 // A relationship dimension between the player and one NPC. Both values are
 // real, computed state (not decoration) — the condition system can gate on
@@ -61,5 +62,10 @@ export interface PlayerProgress {
   // single-player behavior is exactly as before.
   partyId?: PartyId;
   activityLog?: PartyActivityEntry[];
+  // The live manuscript: every real thing that happened, in the order it
+  // happened, as narrative source material (not finished prose — see
+  // @domain/narrative). Optional so v1/v2 saves read in with an empty
+  // manuscript rather than being rejected.
+  manuscript?: NarrativeBlock[];
   updatedAt: number;
 }
