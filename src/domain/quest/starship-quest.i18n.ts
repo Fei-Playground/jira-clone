@@ -5,6 +5,8 @@ import {
   QUEST_SENSOR_GHOST_ID,
   QUEST_COOLANT_LEAK_ID,
   QUEST_THE_SIGNAL_ID,
+  QUEST_REPORT_GALLEY_TRADE_ID,
+  QUEST_JOIN_GALLEY_TRADE_ID,
 } from "../story/starship-story.ids";
 
 export const starshipQuestTextByLocale: Record<Locale, Record<QuestId, QuestText>> = {
@@ -27,6 +29,18 @@ export const starshipQuestTextByLocale: Record<Locale, Record<QuestId, QuestText
         'Unit 7 has been quietly logging an anomalous signal for days. Bring the log to Nova and mention it directly — she\'ll want to hear the word "signal."',
       objectiveLabels: ["Tell Nova about the signal", "Reach the observation deck"],
     },
+    [QUEST_REPORT_GALLEY_TRADE_ID]: {
+      title: "Report the Galley Trade",
+      description:
+        "Someone's running an off-the-books trade out of the galley. Marlow would want to know about it.",
+      objectiveLabels: ["Tell Captain Marlow about the galley trade"],
+    },
+    [QUEST_JOIN_GALLEY_TRADE_ID]: {
+      title: "Join the Galley Trade",
+      description:
+        "Chef Basil could use a reliable second pair of hands for his little side business. It pays, if you don't ask too many questions.",
+      objectiveLabels: ["Tell Chef Basil you're in"],
+    },
   },
   [Locale.ZH]: {
     [QUEST_SENSOR_GHOST_ID]: {
@@ -46,6 +60,16 @@ export const starshipQuestTextByLocale: Record<Locale, Record<QuestId, QuestText
       description:
         "7号单元已经悄悄记录了好几天一个异常信号。把日志带给星芒，并直接跟她提一句——她想听到「信号」这两个字。",
       objectiveLabels: ["告诉星芒关于信号的事", "抵达观景台"],
+    },
+    [QUEST_REPORT_GALLEY_TRADE_ID]: {
+      title: "举报厨房交易",
+      description: "有人在厨房里搭了个台面下的交易。马洛应该会想知道。",
+      objectiveLabels: ["把厨房交易的事告诉马洛船长"],
+    },
+    [QUEST_JOIN_GALLEY_TRADE_ID]: {
+      title: "加入厨房交易",
+      description: "罗勒主厨需要一个可靠的帮手来帮他拓展那个小买卖。只要你不问太多，就能拿到钱。",
+      objectiveLabels: ["告诉罗勒主厨你愿意接这个活"],
     },
   },
 };

@@ -36,7 +36,7 @@ export const starshipSceneTextByLocale: Record<Locale, Record<SceneId, SceneText
       description:
         "Unit 7 stands vigil beside a diagnostic bed nobody's using, quietly cataloguing dust motes in the recycled air.",
       ambience: "The faint beep of an idle monitor, sterile and still.",
-      npcRoles: ["Medical Assistant Unit"],
+      npcRoles: ["Medical Assistant Unit", "Galley Trader"],
       exitLabels: [
         "Back to the engine room",
         "Up to the observation deck",
@@ -76,7 +76,7 @@ export const starshipSceneTextByLocale: Record<Locale, Record<SceneId, SceneText
       name: "医疗舱",
       description: "7号单元静静守在一张没人用的诊断床边，安静地记录着回收空气中的尘埃。",
       ambience: "闲置监视器的微弱哔哔声，无菌而静止。",
-      npcRoles: ["医疗辅助单元"],
+      npcRoles: ["医疗辅助单元", "厨房交易商"],
       exitLabels: [
         "回到引擎室",
         "上到观景台",

@@ -1,5 +1,10 @@
 import { charactersMock } from "@domain/character";
-import { COOLANT_CANISTER_ITEM_ID, SIGNAL_LOG_ITEM_ID } from "@domain/item";
+import {
+  COOLANT_CANISTER_ITEM_ID,
+  SIGNAL_LOG_ITEM_ID,
+  CAPTAINS_COMMENDATION_ITEM_ID,
+  GALLEY_FAVOR_TOKEN_ITEM_ID,
+} from "@domain/item";
 import {
   STARSHIP_STORY_ID,
   SCENE_ENGINE_ROOM_ID,
@@ -7,12 +12,16 @@ import {
   QUEST_SENSOR_GHOST_ID,
   QUEST_COOLANT_LEAK_ID,
   QUEST_THE_SIGNAL_ID,
+  QUEST_REPORT_GALLEY_TRADE_ID,
+  QUEST_JOIN_GALLEY_TRADE_ID,
   FLAG_ENGINE_STABILIZED,
   FLAG_NOVA_TRUSTS_YOU,
+  FLAG_REPORTED_GALLEY_TRADE,
+  FLAG_JOINED_GALLEY_TRADE,
 } from "../story/starship-story.ids";
 import { Quest } from "./quest";
 
-const [nova, , , , , captainMarlow, unit7] = charactersMock;
+const [nova, , , , chefBasil, captainMarlow, unit7] = charactersMock;
 
 export const starshipQuestsMock: Quest[] = [
   {
@@ -101,5 +110,62 @@ export const starshipQuestsMock: Quest[] = [
     reward: { setFlags: [FLAG_NOVA_TRUSTS_YOU] },
     isMainline: true,
     order: 2,
+  },
+  // A REAL mutually-exclusive pair, same mechanism as Blacktide's
+  // smuggling/fencing pair: both become available the instant the engine is
+  // stabilized, and completing EITHER one retracts the other via excludedBy.
+  {
+    id: QUEST_REPORT_GALLEY_TRADE_ID,
+    storyId: STARSHIP_STORY_ID,
+    title: "Report the Galley Trade",
+    description:
+      "Someone's running an off-the-books trade out of the galley. Marlow would want to know about it.",
+    giverCharacterId: captainMarlow.id,
+    giverSceneId: SCENE_ENGINE_ROOM_ID,
+    available: { type: "flagSet", flag: FLAG_ENGINE_STABILIZED },
+    excludedBy: { type: "flagSet", flag: FLAG_JOINED_GALLEY_TRADE },
+    objectives: [
+      {
+        id: "obj-report-galley-trade-talk",
+        kind: "talkToNpc",
+        characterId: captainMarlow.id,
+        times: 1,
+        label: "Tell Captain Marlow about the galley trade",
+      },
+    ],
+    turnInCharacterId: captainMarlow.id,
+    reward: {
+      items: [{ itemId: CAPTAINS_COMMENDATION_ITEM_ID, count: 1 }],
+      setFlags: [FLAG_REPORTED_GALLEY_TRADE],
+    },
+    isMainline: false,
+    order: 3,
+  },
+  {
+    id: QUEST_JOIN_GALLEY_TRADE_ID,
+    storyId: STARSHIP_STORY_ID,
+    title: "Join the Galley Trade",
+    description:
+      "Chef Basil could use a reliable second pair of hands for his little side business. It pays, if you don't ask too many questions.",
+    giverCharacterId: chefBasil.id,
+    giverSceneId: SCENE_ENGINE_ROOM_ID,
+    available: { type: "flagSet", flag: FLAG_ENGINE_STABILIZED },
+    excludedBy: { type: "flagSet", flag: FLAG_REPORTED_GALLEY_TRADE },
+    objectives: [
+      {
+        id: "obj-join-galley-trade-talk",
+        kind: "talkToNpc",
+        characterId: chefBasil.id,
+        times: 1,
+        label: "Tell Chef Basil you're in",
+      },
+    ],
+    turnInCharacterId: chefBasil.id,
+    reward: {
+      items: [{ itemId: GALLEY_FAVOR_TOKEN_ITEM_ID, count: 1 }],
+      setFlags: [FLAG_JOINED_GALLEY_TRADE],
+    },
+    isMainline: false,
+    order: 3,
   },
 ];

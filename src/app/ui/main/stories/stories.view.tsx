@@ -429,9 +429,16 @@ const QuestPanelDialog = ({
   onClose: () => void;
 }): JSX.Element => {
   const { t } = useTranslation();
-  const { quests, progress, acceptQuest, turnInQuest } = useStoryStore();
+  const { quests, progress, activeStory, acceptQuest, turnInQuest } = useStoryStore();
 
-  const withState = quests
+  // `quests` is the full global list across every story — scope to the
+  // active story so a Blacktide offer never leaks into a Wayfinder run's
+  // quest panel (and vice versa).
+  const storyQuests = activeStory
+    ? quests.filter((q) => q.storyId === activeStory.id)
+    : quests;
+
+  const withState = storyQuests
     .map((quest) => ({ quest, state: progress?.questStates[quest.id] }))
     .filter(
       (

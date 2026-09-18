@@ -8,7 +8,12 @@ import {
   HARBOR_GUARD_BADGE_ITEM_ID,
   SMUGGLERS_CUT_ITEM_ID,
 } from "./item.mock";
-import { COOLANT_CANISTER_ITEM_ID, SIGNAL_LOG_ITEM_ID } from "./starship-item.mock";
+import {
+  COOLANT_CANISTER_ITEM_ID,
+  SIGNAL_LOG_ITEM_ID,
+  CAPTAINS_COMMENDATION_ITEM_ID,
+  GALLEY_FAVOR_TOKEN_ITEM_ID,
+} from "./starship-item.mock";
 
 export interface ItemText {
   name: string;
@@ -50,6 +55,15 @@ export const itemTextByLocale: Record<Locale, Record<ItemId, ItemText>> = {
       name: "Signal Log",
       description: "A patient log of an anomalous signal, timestamped over several days.",
     },
+    [CAPTAINS_COMMENDATION_ITEM_ID]: {
+      name: "Captain's Commendation",
+      description: "A small printed slip, signed by Marlow, for reporting the galley trade.",
+    },
+    [GALLEY_FAVOR_TOKEN_ITEM_ID]: {
+      name: "Galley Favor Token",
+      description:
+        "A chipped ceramic token — redeemable for one off-the-books favor from the galley.",
+    },
   },
   [Locale.ZH]: {
     [BRASS_KEY_ITEM_ID]: {
@@ -84,6 +98,14 @@ export const itemTextByLocale: Record<Locale, Record<ItemId, ItemText>> = {
     [SIGNAL_LOG_ITEM_ID]: {
       name: "信号日志",
       description: "一份记录了好几天的异常信号日志，带有详细的时间戳。",
+    },
+    [CAPTAINS_COMMENDATION_ITEM_ID]: {
+      name: "马洛的表扬令",
+      description: "一张马洛签名的小卡片，表彰你举报了厨房交易的行为。",
+    },
+    [GALLEY_FAVOR_TOKEN_ITEM_ID]: {
+      name: "厨房人情券",
+      description: "一枚缺角的陶瓷令牌——可兑换厨房的一项台面下人情。",
     },
   },
 };

@@ -11,10 +11,12 @@ import {
   QUEST_COOLANT_LEAK_ID,
   QUEST_THE_SIGNAL_ID,
   FLAG_ENGINE_STABILIZED,
+  FLAG_TOLD_BASIL_ABOUT_NOVA,
+  FLAG_WARNED_NOVA_ABOUT_BASIL,
 } from "../story/starship-story.ids";
 import { Scene } from "./scene";
 
-const [nova, , , , , captainMarlow, unit7] = charactersMock;
+const [nova, , , , chefBasil, captainMarlow, unit7] = charactersMock;
 
 export const starshipScenesMock: Scene[] = [
   {
@@ -76,7 +78,42 @@ export const starshipScenesMock: Scene[] = [
     description:
       "Unit 7 stands vigil beside a diagnostic bed nobody's using, quietly cataloguing dust motes in the recycled air.",
     ambience: "The faint beep of an idle monitor, sterile and still.",
-    npcs: [{ characterId: unit7.id, roleInScene: "Medical Assistant Unit" }],
+    npcs: [
+      { characterId: unit7.id, roleInScene: "Medical Assistant Unit" },
+      {
+        characterId: chefBasil.id,
+        roleInScene: "Galley Trader",
+        presenceCondition: { type: "npcAffinityAtLeast", characterId: unit7.id, value: 20 },
+        dialogueChoices: [
+          {
+            id: "choice-tell-basil-about-nova",
+            label: "Trade him Nova's private logs for galley favors",
+            line: "Nova's been logging things she probably shouldn't. What would that be worth to you?",
+            setFlags: [FLAG_TOLD_BASIL_ABOUT_NOVA],
+            visibleWhen: {
+              type: "allOf",
+              conditions: [
+                { type: "not", condition: { type: "flagSet", flag: FLAG_TOLD_BASIL_ABOUT_NOVA } },
+                { type: "not", condition: { type: "flagSet", flag: FLAG_WARNED_NOVA_ABOUT_BASIL } },
+              ],
+            },
+          },
+          {
+            id: "choice-warn-nova-about-basil",
+            label: "Refuse, and warn Nova about him",
+            line: "Whatever you're trading in, it's not going to be Nova's logs. And I'd watch what you say around her from now on.",
+            setFlags: [FLAG_WARNED_NOVA_ABOUT_BASIL],
+            visibleWhen: {
+              type: "allOf",
+              conditions: [
+                { type: "not", condition: { type: "flagSet", flag: FLAG_TOLD_BASIL_ABOUT_NOVA } },
+                { type: "not", condition: { type: "flagSet", flag: FLAG_WARNED_NOVA_ABOUT_BASIL } },
+              ],
+            },
+          },
+        ],
+      },
+    ],
     exits: [
       { toSceneId: SCENE_ENGINE_ROOM_ID, label: "Back to the engine room" },
       {

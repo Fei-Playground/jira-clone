@@ -9,7 +9,12 @@
 import { Locale } from "@app/locales";
 import { CharacterId } from "@domain/character";
 import { PlayerProgress } from "@domain/player-progress";
-import { FLAG_SOLD_OUT_WISP, FLAG_PROTECTED_WISP } from "@domain/story";
+import {
+  FLAG_SOLD_OUT_WISP,
+  FLAG_PROTECTED_WISP,
+  FLAG_TOLD_BASIL_ABOUT_NOVA,
+  FLAG_WARNED_NOVA_ABOUT_BASIL,
+} from "@domain/story";
 
 // DialogueChoice label/line, localized by choice id — same shape as the
 // other keyed i18n lookups in this domain (getSceneText, getQuestText).
@@ -34,6 +39,26 @@ const DIALOGUE_CHOICE_TEXT: Record<string, Record<Locale, { label: string; line:
       line: "你花多少钱买人名都与我无关，我不会卖任何人。换作我，我会离这些箱子远一点。",
     },
   },
+  "choice-tell-basil-about-nova": {
+    [Locale.EN]: {
+      label: "Trade him Nova's private logs for galley favors",
+      line: "Nova's been logging things she probably shouldn't. What would that be worth to you?",
+    },
+    [Locale.ZH]: {
+      label: "把星芒的私人日志拿来换厨房好处",
+      line: "星芒一直在记录一些她不应该记的东西。这个消息对你来说值几个钱？",
+    },
+  },
+  "choice-warn-nova-about-basil": {
+    [Locale.EN]: {
+      label: "Refuse, and warn Nova about him",
+      line: "Whatever you're trading in, it's not going to be Nova's logs. And I'd watch what you say around her from now on.",
+    },
+    [Locale.ZH]: {
+      label: "拒绝，并去警告星芒",
+      line: "你想交易什么都行，但星芒的日志不行。以后在她面前说话我会小心一些。",
+    },
+  },
 };
 
 export const getDialogueChoiceText = (
@@ -49,7 +74,9 @@ export const getBranchedGreeting = (
 ): string | undefined => {
   const soldOut = progress.flags.includes(FLAG_SOLD_OUT_WISP);
   const protected_ = progress.flags.includes(FLAG_PROTECTED_WISP);
-  if (!soldOut && !protected_) return undefined;
+  const toldBasil = progress.flags.includes(FLAG_TOLD_BASIL_ABOUT_NOVA);
+  const warnedNova = progress.flags.includes(FLAG_WARNED_NOVA_ABOUT_BASIL);
+  if (!soldOut && !protected_ && !toldBasil && !warnedNova) return undefined;
 
   // Corvin, the informant \u2014 grateful if paid for the information, cold and
   // wary once he realizes the tip never paid off (the player warned Wisp
@@ -76,6 +103,37 @@ export const getBranchedGreeting = (
     return locale === Locale.ZH
       ? "\u4f60\u672c\u53ef\u4ee5\u5356\u4e86\u6211\u2014\u2014\u4f46\u4f60\u6ca1\u3002\u8fd9\u6bd4\u4efb\u4f55\u62a5\u916c\u90fd\u91cd\u3002\u4ee5\u540e\u6211\u77e5\u9053\u7684\u4e8b\uff0c\u4f60\u4f1a\u6bd4\u5176\u4ed6\u4eba\u65e9\u4e00\u6b65\u542c\u5230\u3002"
       : "You could have sold me out — and didn't. That's worth more than any payment. Whatever I learn from here, you'll hear it before anyone else does.";
+  }
+
+  // Chef Basil, the galley trader — same shape as Corvin: pleased if he got
+  // what he was after, wary and cut off once the tip cost him Nova's trust
+  // instead.
+  if (characterName === "Chef Basil" || characterName === "罗勒主厨") {
+    if (toldBasil) {
+      return locale === Locale.ZH
+        ? "那批日志已经到手了，交易完成。以后还有什么星芒的东西想卖，欢迎再来。"
+        : "Got the logs, deal's done. Come back anytime you've got more of Nova's business to trade.";
+    }
+    if (warnedNova) {
+      return locale === Locale.ZH
+        ? "……星芒现在盯着我这儿了。你本可以换点好处，却选了当告状的。行，以后买卖先避开你。"
+        : "...Nova's watching me now. You could've had something out of this, and you chose to be a snitch instead. Fine — no more business while you're around.";
+    }
+  }
+
+  // Nova — hurt and more guarded if betrayed, warmer and more forthcoming
+  // if the player chose to protect her instead.
+  if (characterName === "Nova" || characterName === "星芒") {
+    if (toldBasil) {
+      return locale === Locale.ZH
+        ? "……我知道你把我的日志拿去换东西了。我以后会小心得很——包括对你。"
+        : "...I know you traded my logs away. I'll be a lot more careful from now on — with you included.";
+    }
+    if (warnedNova) {
+      return locale === Locale.ZH
+        ? "你本可以拿我的日志换些东西，却没有。谢谢你。我会把这记下来。"
+        : "You could have traded my logs and didn't. Thank you for that. I'm making a note of it.";
+    }
   }
 
   return undefined;

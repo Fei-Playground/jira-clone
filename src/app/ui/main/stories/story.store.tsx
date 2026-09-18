@@ -25,7 +25,11 @@ import {
 } from "@domain/story-event";
 import { EnvironmentState, TimeOfDay, Weather } from "@domain/environment";
 import { Condition, evaluateCondition } from "@domain/condition";
-import { CharacterId, charactersMock } from "@domain/character";
+import {
+  CharacterId,
+  charactersMock,
+  getCharacterText,
+} from "@domain/character";
 import {
   ChatSession,
   ChatSessionId,
@@ -981,19 +985,28 @@ export const StoryContextProvider = ({
       if (existing) return existing;
 
       const character = charactersMock.find((c) => c.id === characterId);
+      // Custom (creator-authored) characters have no i18n entry and keep
+      // whatever the creator typed, same rule used everywhere else in this
+      // domain (character personas, scene text, quest text).
+      const localizedText =
+        character && !character.isCustom
+          ? getCharacterText(character.id, locale)
+          : undefined;
+      const name = localizedText?.name ?? character?.name;
+      const greeting = localizedText?.greeting ?? character?.greeting;
       const newSession: ChatSession = {
         id: uuid(),
         characterId,
-        title: character?.name ?? "Scene conversation",
+        title: name ?? "Scene conversation",
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        messages: character ? [createCharacterMessage(character.greeting)] : [],
+        messages: greeting ? [createCharacterMessage(greeting)] : [],
         sceneId,
       };
       setSessionsBySceneNpc((prev) => ({ ...prev, [key]: newSession }));
       return newSession;
     },
-    [sessionsBySceneNpc]
+    [sessionsBySceneNpc, locale]
   );
 
   const appendSceneSessionMessage = useCallback(
