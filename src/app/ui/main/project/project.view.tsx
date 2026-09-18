@@ -1,11 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
+import { useTranslation } from "@app/store/locale.store";
 
-const sectionTitles: Record<string, string> = {
-  board: "Board",
-  analytics: "Analytics",
-  backlog: "Backlog",
-};
 const defaultSection = "board";
 
 export const ProjectView = ({
@@ -15,20 +11,26 @@ export const ProjectView = ({
 }: Props): JSX.Element => {
   const location = useLocation();
   const section = location.pathname.split("/").slice(-1)[0];
+  const { t } = useTranslation();
 
+  const sectionTitles: Record<string, string> = {
+    board: t("sidebar.board"),
+    analytics: t("sidebar.analytics"),
+    backlog: t("sidebar.backlog"),
+  };
   const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
 
   return (
     <div className="relative flex h-full flex-grow">
       <Sidebar
         projectName={name}
-        projectDescription={description || "Description undefined"}
+        projectDescription={description || t("sidebar.descriptionUndefined")}
         projectImage={image || "/images/default-project.png"}
       />
       <div className="z-10 flex h-full w-full flex-grow flex-col px-5 py-6">
         <section>
           <Link to="/projects" className="underline underline-offset-[3px]">
-            Projects
+            {t("projects.breadcrumb")}
           </Link>
           <span className="mx-2">/</span>
           <span>{name}</span>

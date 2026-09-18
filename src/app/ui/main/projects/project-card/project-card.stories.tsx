@@ -5,6 +5,8 @@ import {
   projectMock1,
 } from "@domain/project";
 import { withRemixStub } from "@app/stories/utils";
+import { LocaleProvider } from "@app/store/locale.store";
+import { DEFAULT_LOCALE } from "@app/locales";
 import { ProjectCard } from "./project-card";
 
 const meta: Meta<typeof ProjectCard> = {
@@ -20,7 +22,14 @@ const meta: Meta<typeof ProjectCard> = {
       },
     },
   },
-  decorators: [(Story) => withRemixStub(Story())],
+  decorators: [
+    (Story) =>
+      withRemixStub(
+        <LocaleProvider specifiedLocale={DEFAULT_LOCALE}>
+          <Story />
+        </LocaleProvider>
+      ),
+  ],
 };
 
 export default meta;

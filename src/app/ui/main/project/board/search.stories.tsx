@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { withRemixStub } from "@app/stories/utils";
 import { projectMock1 } from "@domain/project";
 import { ProjectContextProvider } from "@app/ui/main/project";
+import { LocaleProvider } from "@app/store/locale.store";
+import { DEFAULT_LOCALE } from "@app/locales";
 import { Search } from "./search";
 
 const meta: Meta<typeof Search> = {
@@ -10,13 +13,16 @@ const meta: Meta<typeof Search> = {
     layout: "centered",
   },
   decorators: [
-    (Story) => (
-      <ProjectContextProvider project={projectMock1}>
-        <div className="p-4">
-          <Story />
-        </div>
-      </ProjectContextProvider>
-    ),
+    (Story) =>
+      withRemixStub(
+        <LocaleProvider specifiedLocale={DEFAULT_LOCALE}>
+          <ProjectContextProvider project={projectMock1}>
+            <div className="p-4">
+              <Story />
+            </div>
+          </ProjectContextProvider>
+        </LocaleProvider>
+      ),
   ],
 };
 

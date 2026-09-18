@@ -2,21 +2,24 @@ import { Link, Outlet } from "react-router";
 import { AiOutlinePlus } from "react-icons/ai";
 import { ProjectSummary } from "@domain/project";
 import { Button } from "@app/components/button";
+import { useTranslation } from "@app/store/locale.store";
 import { ProjectCard } from "./project-card";
 
 export const ProjectsView = ({
   projectsSummary,
 }: ProjectsViewProps): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <div className="p-6">
-      <h1 className="font-primary-black text-2xl">PROJECTS</h1>
+      <h1 className="font-primary-black text-2xl">{t("projects.title")}</h1>
       <div className="mt-8">
         <Link to="new" className="flex w-fit">
           <Button color="neutral" variant="subtlest" className="py-3 pl-3 pr-4">
             <span>
               <AiOutlinePlus size={22} />
             </span>
-            <span className="leading-4">Add Project</span>
+            <span className="leading-4">{t("projects.addProject")}</span>
           </Button>
         </Link>
       </div>

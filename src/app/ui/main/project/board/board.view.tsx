@@ -8,6 +8,7 @@ import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { useTranslation } from "@app/store/locale.store";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [submittingIssues, setSubmittingIssues] = useState<IssueId[]>([]);
   const [prevCategories, setPrevCategories] = useState(categories);
@@ -86,7 +88,8 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   return (
     <section className="mt-12 flex h-full flex-col">
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
-        Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
+        {t("common.pressPrefix")} <Kbd>Shift</Kbd> + <Kbd>N</Kbd>{" "}
+        {t("common.toCreateIssue")}
       </span>
       <div className="flex h-full gap-3">
         {categories.map((category) => (

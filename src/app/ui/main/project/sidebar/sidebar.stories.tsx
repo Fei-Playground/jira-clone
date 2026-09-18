@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { projectMock1 } from "@domain/project";
 import { withRemixStub } from "@app/stories/utils";
+import { LocaleProvider } from "@app/store/locale.store";
+import { DEFAULT_LOCALE } from "@app/locales";
 import { Sidebar } from "./sidebar";
 
 const meta: Meta<typeof Sidebar> = {
@@ -28,7 +30,14 @@ const meta: Meta<typeof Sidebar> = {
       },
     },
   },
-  decorators: [(Story) => withRemixStub(<Story />)],
+  decorators: [
+    (Story) =>
+      withRemixStub(
+        <LocaleProvider specifiedLocale={DEFAULT_LOCALE}>
+          <Story />
+        </LocaleProvider>
+      ),
+  ],
 };
 
 export default meta;

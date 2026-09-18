@@ -3,16 +3,18 @@ import cx from "classix";
 import { BiSearch } from "react-icons/bi";
 import { IoCloseOutline } from "react-icons/io5";
 import { useProjectStore } from "@app/ui/main/project";
+import { useTranslation } from "@app/store/locale.store";
 
 export const Search = (): JSX.Element => {
   const { search, setSearch } = useProjectStore();
+  const { t } = useTranslation();
 
   const clearSearch = () => setSearch("");
   const renderIcon = (): JSX.Element => {
     return search.length === 0 ? (
       <SearchIcon />
     ) : (
-      <ClearIcon onClick={clearSearch} />
+      <ClearIcon onClick={clearSearch} label={t("board.clearSearch")} />
     );
   };
 
@@ -26,7 +28,7 @@ export const Search = (): JSX.Element => {
         type="text"
         name="search"
         value={search}
-        placeholder="Filter issues"
+        placeholder={t("board.filterIssuesPlaceholder")}
         onChange={handleChange}
         className={cx(
           "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
@@ -53,7 +55,7 @@ const SearchIcon = (): JSX.Element => (
   </span>
 );
 
-const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => (
+const ClearIcon = ({ onClick, label }: ClearIconProps): JSX.Element => (
   // onMouseDown is needed because blur (unfocus) happens
   // before 'click' event, but not before 'onMouseDown'
   <button
@@ -62,7 +64,7 @@ const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => (
       iconBaseClass,
       "cursor-pointer rounded hover:bg-background-neutral"
     )}
-    aria-label="Clear search"
+    aria-label={label}
   >
     <IoCloseOutline size={16} />
   </button>
@@ -70,4 +72,5 @@ const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => (
 
 interface ClearIconProps {
   onClick: () => void;
+  label: string;
 }

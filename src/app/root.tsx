@@ -19,8 +19,11 @@ import {
   ThemeProvider,
   useTheme,
 } from "@app/store/theme.store";
+import { LocaleProvider, useTranslation } from "@app/store/locale.store";
+import { Locale } from "@app/locales";
 import { formatTags, formatProperties } from "@utils/meta";
 import { getThemeSession } from "./session-storage/theme-storage.server";
+import { getLocaleSession } from "./session-storage/locale-storage.server";
 import { Toast } from "./components/toast";
 import { Error404 } from "./components/error-404";
 import { Error500 } from "./components/error-500";
@@ -78,19 +81,24 @@ export const meta: MetaFunction = () => {
 type LoaderData = {
   theme?: Theme;
   preference?: Preference;
+  locale: Locale;
 };
 export const loader: LoaderFunction = async ({ request }) => {
   const themeSession = await getThemeSession(request);
   const { theme, preference } = themeSession.getTheme();
-  return json<LoaderData>({ theme, preference });
+  const localeSession = await getLocaleSession(request);
+  const locale = localeSession.getLocaleOrDetect();
+  return json<LoaderData>({ theme, preference, locale });
 };
 
 export default function AppWithProviders() {
-  const { theme, preference } = useLoaderData<LoaderData>();
+  const { theme, preference, locale } = useLoaderData<LoaderData>();
   return (
-    <ThemeProvider specifiedTheme={theme} specifiedPreference={preference}>
-      <App />
-    </ThemeProvider>
+    <LocaleProvider specifiedLocale={locale}>
+      <ThemeProvider specifiedTheme={theme} specifiedPreference={preference}>
+        <App />
+      </ThemeProvider>
+    </LocaleProvider>
   );
 }
 
@@ -98,6 +106,7 @@ const App = (): JSX.Element => {
   const loaderData = useLoaderData<LoaderData>();
   const { theme: sessionTheme, preference: sessionPreference } = loaderData;
   const { theme } = useTheme();
+  const { locale } = useTranslation();
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -120,7 +129,7 @@ const App = (): JSX.Element => {
   }, []);
 
   return (
-    <html lang="en" className={cx("h-full", theme)}>
+    <html lang={locale} className={cx("h-full", theme)}>
       <head>
         <Meta />
         <Links />

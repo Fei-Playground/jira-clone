@@ -6,10 +6,13 @@ import { RiArrowDropLeftLine } from "react-icons/ri";
 import { ImStatsDots } from "react-icons/im";
 import { BsListNested, BsCloudSlash } from "react-icons/bs";
 import { TbError404 } from "react-icons/tb";
+import { useTranslation } from "@app/store/locale.store";
+import { TranslationKey } from "@app/locales";
 
 export const Sidebar = (props: Props): JSX.Element => {
   const { projectName, projectDescription, projectImage } = props;
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const { t } = useTranslation();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -40,13 +43,14 @@ export const Sidebar = (props: Props): JSX.Element => {
         </section>
         <section className="flex-grow p-3">
           <nav className="flex-grow">
-            {navItems.map(({ href, name, icon, disabled }) => (
+            {navItems(t).map(({ href, name, icon, disabled }) => (
               <NavItem
                 key={href}
                 href={href}
                 icon={icon}
                 name={name}
                 disabled={disabled}
+                notImplementedLabel={t("sidebar.notImplemented")}
               />
             ))}
           </nav>
@@ -62,7 +66,7 @@ export const Sidebar = (props: Props): JSX.Element => {
             "absolute -left-[12px] mt-6 flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full border-none bg-elevation-surface-raised text-icon shadow-[0_1px_5px_-1px_rgba(0,0,0,0.3)] transition-transform delay-150 duration-200 ease-in hover:bg-icon-brand hover:text-font-inverse",
             !isOpen && "rotate-180"
           )}
-          aria-label="Toggle sidebar"
+          aria-label={t("sidebar.toggleSidebar")}
         >
           <RiArrowDropLeftLine size={24} />
         </button>
@@ -77,36 +81,42 @@ interface Props {
   projectImage: string;
 }
 
-const navItems: NavItemProps[] = [
+const navItems = (t: (key: TranslationKey) => string): NavItemProps[] => [
   {
     href: "board",
     icon: <HiOutlineViewBoards size={24} />,
-    name: "Board",
+    name: t("sidebar.board"),
   },
   {
     href: "analytics",
     icon: <ImStatsDots size={20} />,
-    name: "Analytics",
+    name: t("sidebar.analytics"),
   },
   {
     href: "backlog",
     icon: <BsListNested size={24} />,
-    name: "Backlog",
+    name: t("sidebar.backlog"),
     disabled: true,
   },
   {
     href: "server-error",
     icon: <BsCloudSlash size={24} />,
-    name: "Server error",
+    name: t("sidebar.serverError"),
   },
   {
     href: "not-found",
     icon: <TbError404 size={24} />,
-    name: "Not found",
+    name: t("sidebar.notFound"),
   },
 ];
 
-const NavItem = ({ href, icon, name, disabled }: NavItemProps): JSX.Element => {
+const NavItem = ({
+  href,
+  icon,
+  name,
+  disabled,
+  notImplementedLabel,
+}: NavItemProps): JSX.Element => {
   return (
     <NavLink
       to={disabled ? "#" : href}
@@ -130,7 +140,7 @@ const NavItem = ({ href, icon, name, disabled }: NavItemProps): JSX.Element => {
           disabled && "group-hover:block"
         )}
       >
-        Not implemented
+        {notImplementedLabel}
       </span>
     </NavLink>
   );
@@ -141,4 +151,5 @@ export interface NavItemProps {
   icon: JSX.Element;
   name: string;
   disabled?: boolean;
+  notImplementedLabel?: string;
 }
