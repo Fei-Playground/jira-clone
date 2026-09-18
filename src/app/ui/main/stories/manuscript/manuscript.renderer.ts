@@ -7,7 +7,15 @@
 
 import { Locale } from "@app/locales";
 import { NarrativeBlock, NarrativeBlockId } from "@domain/narrative";
-import { SPEECH_VERB, BEAT_TEMPLATE, CLOSING_TEMPLATE, CHAPTER_LABEL } from "@domain/narrative";
+import {
+  SPEECH_VERB,
+  BEAT_TEMPLATE,
+  CLOSING_TEMPLATE,
+  CHAPTER_LABEL,
+  SCREENPLAY_SCENE_HEADING,
+  SCREENPLAY_TRANSITION,
+  SCREENPLAY_CLOSING,
+} from "@domain/narrative";
 
 export type ManuscriptMode = "novel" | "screenplay";
 export type NarrativePov = "first" | "third";
@@ -139,27 +147,35 @@ const renderBlockNovel = (
   }
 };
 
-// Screenplay mode is a documented partial implementation this batch — a
-// faithful but simplified action/dialogue mapping. Full standard-format
-// polish (scene headings, parentheticals from toneHint) is planned for the
-// next batch; this already gives a real, distinct rendering, not a
-// placeholder string.
+// Screenplay mode: real standard-format screenplay elements — a scene
+// heading with time-of-day (slugline convention), action lines, and
+// character-name/dialogue/parenthetical blocks. Author-written scene
+// description and dialogue lines are still quoted verbatim; only the
+// slugline and parentheticals are composed from real state.
 const renderBlockScreenplay = (block: NarrativeBlock, locale: Locale): RenderedLine[] => {
   if (block.editedText !== undefined) {
     return [{ blockId: block.id, type: "action", text: block.editedText }];
   }
   const payload = block.payload;
   switch (payload.kind) {
-    case "chapterBreak":
-      return [
-        {
-          blockId: block.id,
-          type: "sceneHeading",
-          text: (block.sceneName ?? "").toUpperCase(),
-        },
-      ];
+    case "chapterBreak": {
+      const timeOfDay = block.environment?.timeOfDay;
+      const heading = timeOfDay
+        ? SCREENPLAY_SCENE_HEADING[locale](block.sceneName ?? "", timeOfDay)
+        : (block.sceneName ?? "").toUpperCase();
+      return [{ blockId: block.id, type: "sceneHeading", text: heading }];
+    }
     case "sceneSetting":
       return [{ blockId: block.id, type: "action", text: payload.description }];
+    case "narration":
+      // A narration block fired by enterScene-on-revisit is a scene
+      // transition in prose terms — render it as the standard screenplay
+      // transition slugline followed by the connective action line, so a
+      // scene change reads as a real script transition, not a stray line.
+      return [
+        { blockId: block.id, type: "separator", text: SCREENPLAY_TRANSITION[locale] },
+        { blockId: block.id, type: "action", text: payload.text },
+      ];
     case "dialogue": {
       const lines: RenderedLine[] = [
         {
@@ -185,11 +201,39 @@ const renderBlockScreenplay = (block: NarrativeBlock, locale: Locale): RenderedL
       lines.push({ blockId: block.id, type: "dialogueLine", text: payload.line });
       return lines;
     }
-    default:
-      return renderBlockNovel(block, DEFAULT_MANUSCRIPT_OPTIONS, locale).map((l) => ({
-        ...l,
-        type: l.type === "chapterHeading" ? "sceneHeading" : "action",
-      }));
+    case "innerVoice":
+      // Screenplay convention has no interiority — a choice becomes what
+      // the protagonist visibly DOES, an action line.
+      return [{ blockId: block.id, type: "action", text: payload.choiceLabel }];
+    case "beat": {
+      const t = BEAT_TEMPLATE[locale];
+      let text = "";
+      switch (payload.beatKind) {
+        case "threadOpened":
+          text = t.threadOpened(
+            String(payload.params.giver ?? ""),
+            String(payload.params.thread ?? "")
+          );
+          break;
+        case "threadAdvanced":
+          text = t.threadAdvanced(String(payload.params.thread ?? ""));
+          break;
+        case "threadClosed":
+          text = t.threadClosed(String(payload.params.thread ?? ""));
+          break;
+        case "propObtained":
+          text = t.propObtained(String(payload.params.prop ?? ""));
+          break;
+        case "relationshipShift":
+          text = t.relationshipShift(String(payload.params.name ?? ""));
+          break;
+      }
+      return [{ blockId: block.id, type: "action", text }];
+    }
+    case "turningPoint":
+      return [{ blockId: block.id, type: "action", text: payload.text }];
+    case "closing":
+      return [{ blockId: block.id, type: "separator", text: SCREENPLAY_CLOSING[locale] }];
   }
 };
 

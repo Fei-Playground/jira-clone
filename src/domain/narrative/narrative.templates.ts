@@ -130,6 +130,38 @@ export const CHAPTER_LABEL: Record<Locale, (index: number) => string> = {
   [Locale.ZH]: (index) => `第${index}章`,
 };
 
+// Standard screenplay scene-heading time-of-day suffix (INT./EXT. is not
+// derivable from our data — we don't know if a scene is indoors or
+// outdoors — so the heading uses the neutral form without INT./EXT.,
+// which is still a real, recognizable slugline in screenplay convention).
+const SCREENPLAY_TIME_SUFFIX: Record<Locale, Record<TimeOfDay, string>> = {
+  [Locale.EN]: { dawn: "DAWN", day: "DAY", dusk: "DUSK", night: "NIGHT" },
+  [Locale.ZH]: { dawn: "黎明", day: "日", dusk: "黄昏", night: "夜" },
+};
+
+// e.g. "雨夜酒馆 · 夜" / "RAINY NIGHT TAVERN - NIGHT"
+export const SCREENPLAY_SCENE_HEADING: Record<
+  Locale,
+  (sceneName: string, timeOfDay: TimeOfDay) => string
+> = {
+  [Locale.EN]: (sceneName, timeOfDay) =>
+    `${sceneName.toUpperCase()} - ${SCREENPLAY_TIME_SUFFIX[Locale.EN][timeOfDay]}`,
+  [Locale.ZH]: (sceneName, timeOfDay) =>
+    `${sceneName} · ${SCREENPLAY_TIME_SUFFIX[Locale.ZH][timeOfDay]}`,
+};
+
+// Screenplay-format transition slugline between scenes (distinct from the
+// novel-mode TRANSITION_TEMPLATE's prose sentence).
+export const SCREENPLAY_TRANSITION: Record<Locale, string> = {
+  [Locale.EN]: "CUT TO:",
+  [Locale.ZH]: "转场：",
+};
+
+export const SCREENPLAY_CLOSING: Record<Locale, string> = {
+  [Locale.EN]: "FADE OUT.",
+  [Locale.ZH]: "淡出。",
+};
+
 // Manuscript-level disclosure line, shown pinned at the top of the view.
 export const PROVENANCE_NOTE: Record<Locale, string> = {
   [Locale.EN]:

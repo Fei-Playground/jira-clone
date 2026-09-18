@@ -18,7 +18,7 @@ export const ManuscriptLine = ({
       );
     case "sceneHeading":
       return (
-        <p className="font-mono mb-2 mt-6 text-xs font-bold uppercase text-font">
+        <p className="font-mono mb-2 mt-8 border-b border-border pb-1 text-xs font-bold uppercase tracking-wide text-font">
           {line.text}
         </p>
       );
@@ -36,24 +36,33 @@ export const ManuscriptLine = ({
       );
     case "dialogueSpeaker":
       return (
-        <p className="font-mono mt-3 text-center text-xs font-bold text-font">
+        <p className="font-mono ml-[30%] mt-3 max-w-[45%] text-xs font-bold uppercase text-font">
           {line.text}
         </p>
       );
     case "parenthetical":
       return (
-        <p className="font-mono text-center text-2xs italic text-font-subtlest">
+        <p className="font-mono ml-[25%] max-w-[50%] text-2xs italic text-font-subtlest">
           {line.text}
         </p>
       );
     case "dialogueLine":
       return (
-        <p className="font-mono mx-auto mb-2 max-w-[70%] text-center text-xs leading-relaxed text-font">
+        <p className="font-mono mb-2 ml-[15%] max-w-[60%] text-xs leading-relaxed text-font">
           {line.text}
         </p>
       );
     case "separator":
-      return <hr className="my-4 border-border" />;
+      // In screenplay mode this carries real text (a transition slugline
+      // like "CUT TO:" or the closing "FADE OUT.") — render it as a
+      // centered, uppercase-styled slug rather than a blank rule.
+      return line.text ? (
+        <p className="font-mono my-4 text-center text-xs font-bold uppercase tracking-wide text-font-subtlest">
+          {line.text}
+        </p>
+      ) : (
+        <hr className="my-4 border-border" />
+      );
     case "ghost":
       return (
         <p className="font-serif text-font-subtlest/60 mb-2 text-[13px] italic">
