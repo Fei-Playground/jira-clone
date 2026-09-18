@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Dialog from "@app/components/dialog";
 import {
   RiInformationLine,
   RiEyeOffLine,
   RiEyeLine,
   RiPencilLine,
+  RiListCheck2,
 } from "react-icons/ri";
 import { Tooltip } from "@app/components/tooltip";
 import { useTranslation } from "@app/store/locale.store";
 import { NarrativeBlock } from "@domain/narrative";
+import { PlayerProfile } from "@domain/party";
 import {
   ManuscriptOptions,
   ManuscriptMode,
@@ -17,6 +20,7 @@ import {
   renderManuscript,
 } from "./manuscript.renderer";
 import { ManuscriptLine } from "./manuscript-block";
+import { ProvenanceView } from "./provenance-view";
 
 export interface ManuscriptViewProps {
   blocks: NarrativeBlock[];
@@ -25,6 +29,9 @@ export interface ManuscriptViewProps {
   creatorMode: boolean;
   onEditBlock?: (blockId: string, text: string) => void;
   onToggleHidden?: (blockId: string) => void;
+  // Present only when the active story has a party — lets the toolbar
+  // offer a POV picker. Absent = single-protagonist mode, no picker shown.
+  partyMembers?: PlayerProfile[];
 }
 
 export const ManuscriptView = ({
@@ -34,11 +41,13 @@ export const ManuscriptView = ({
   creatorMode,
   onEditBlock,
   onToggleHidden,
+  partyMembers,
 }: ManuscriptViewProps): JSX.Element => {
   const { t, locale } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [isProvenanceViewOpen, setIsProvenanceViewOpen] = useState(false);
   const prevBlockCount = useRef(0);
 
   const rendered = useMemo(
@@ -120,6 +129,58 @@ export const ManuscriptView = ({
               { value: "present", label: t("stories.manuscript.tensePresent") },
             ]}
           />
+          {partyMembers && partyMembers.length >= 2 && (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger
+                aria-label={t("stories.manuscript.povPicker")}
+                className="rounded-md bg-background-neutral px-2 py-0.5 text-2xs font-medium text-font hover:bg-background-neutral-hovered"
+              >
+                {t("stories.manuscript.povOf", {
+                  name:
+                    partyMembers.find((m) => m.id === options.povMemberId)
+                      ?.name ?? t("stories.manuscript.povNarrator"),
+                })}
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  sideOffset={4}
+                  className="z-50 flex flex-col gap-0.5 rounded-md bg-elevation-surface-overlay p-1 text-xs shadow-md"
+                >
+                  <DropdownMenu.Item
+                    onClick={() =>
+                      onOptionsChange({ ...options, povMemberId: undefined })
+                    }
+                    className="cursor-pointer rounded px-2 py-1 text-font outline-none hover:bg-background-neutral"
+                  >
+                    {t("stories.manuscript.povNarrator")}
+                  </DropdownMenu.Item>
+                  {partyMembers.map((member) => (
+                    <DropdownMenu.Item
+                      key={member.id}
+                      onClick={() =>
+                        onOptionsChange({ ...options, povMemberId: member.id })
+                      }
+                      className="cursor-pointer rounded px-2 py-1 text-font outline-none hover:bg-background-neutral"
+                    >
+                      {member.emoji} {member.name}
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          )}
+          {creatorMode && (
+            <Tooltip title={t("stories.manuscript.viewAllSources")}>
+              <button
+                type="button"
+                onClick={() => setIsProvenanceViewOpen(true)}
+                aria-label={t("stories.manuscript.viewAllSources")}
+                className="flex h-6 w-6 items-center justify-center rounded-full text-icon hover:bg-background-brand-subtlest hover:text-icon-brand"
+              >
+                <RiListCheck2 size={16} />
+              </button>
+            </Tooltip>
+          )}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
               aria-label={t("stories.manuscript.whereFrom")}
@@ -264,6 +325,22 @@ export const ManuscriptView = ({
           {t("stories.manuscript.wordCount", { count: rendered.wordCount })}
         </span>
       </div>
+
+      <Dialog.Root
+        open={isProvenanceViewOpen}
+        onOpenChange={setIsProvenanceViewOpen}
+      >
+        <Dialog.Portal>
+          <Dialog.Overlay>
+            <Dialog.Content className="max-w-[720px]">
+              <Dialog.Title>
+                {t("stories.manuscript.viewAllSources")}
+              </Dialog.Title>
+              <ProvenanceView blocks={blocks} />
+            </Dialog.Content>
+          </Dialog.Overlay>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 };

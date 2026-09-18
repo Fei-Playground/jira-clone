@@ -27,6 +27,16 @@ export interface ManuscriptOptions {
   tense: NarrativeTense;
   includeMinorBeats: boolean;
   protagonistName: string;
+  // Multi-POV (party mode only): whose viewpoint the manuscript is written
+  // from. When set, blocks the SELECTED member acted in render as "I"/我
+  // regardless of `pov` — this is what "regenerate from a different
+  // member's viewpoint" means: re-running the SAME renderer with a
+  // different povMemberId, never replaying the story. Blocks another
+  // member acted in keep rendering with that member's own name, so the
+  // selected viewpoint reads like a real first-person account of events
+  // some of which someone else did. undefined = single-protagonist mode
+  // (existing `pov`/`protagonistName` behaviour, unchanged).
+  povMemberId?: string;
 }
 
 export const DEFAULT_MANUSCRIPT_OPTIONS: ManuscriptOptions = {
@@ -67,8 +77,38 @@ const protagonistSubject = (options: ManuscriptOptions): string => {
   return options.protagonistName || "They";
 };
 
-const decidedVerb = (options: ManuscriptOptions): string => {
-  if (options.pov === "first") {
+// Per-block subject resolution for multi-POV: whoever acted in THIS block
+// (`block.memberId`) is either the selected viewpoint (renders as "I") or
+// someone else (renders with their own real name) — this is what makes
+// switching `povMemberId` a real re-telling rather than a global find/
+// replace of one name for another.
+const resolveSubject = (
+  block: NarrativeBlock,
+  options: ManuscriptOptions,
+  locale: Locale
+): string => {
+  if (options.povMemberId && block.memberId) {
+    if (block.memberId === options.povMemberId) {
+      return locale === Locale.ZH ? "我" : "I";
+    }
+    return block.memberName || protagonistSubject(options);
+  }
+  if (locale === Locale.ZH) {
+    return options.pov === "first" ? "我" : options.protagonistName || "主角";
+  }
+  return protagonistSubject(options);
+};
+
+const isFirstPersonSubject = (block: NarrativeBlock, options: ManuscriptOptions): boolean => {
+  if (options.povMemberId && block.memberId) {
+    return block.memberId === options.povMemberId;
+  }
+  return options.pov === "first";
+};
+
+const decidedVerb = (block: NarrativeBlock, options: ManuscriptOptions): string => {
+  const firstPerson = isFirstPersonSubject(block, options);
+  if (firstPerson) {
     return options.tense === "present" ? "decide" : "decided";
   }
   return options.tense === "present" ? "decides" : "decided";
@@ -99,16 +139,12 @@ const renderBlockNovel = (
       return [{ blockId: block.id, type: "prose", text: payload.text }];
     case "dialogue": {
       const verb = SPEECH_VERB[locale][payload.toneHint ?? "neutral"];
-      // A player line carries no speakerName (it's the protagonist) — fall
-      // back to the protagonist subject so the transcription never reads as
-      // a verb with nobody attached to it.
-      const speaker =
-        block.speakerName ??
-        (locale === Locale.ZH
-          ? options.pov === "first"
-            ? "我"
-            : options.protagonistName || "主角"
-          : protagonistSubject(options));
+      // A player/party-member line carries no speakerName (it's whoever is
+      // acting, not an NPC) — resolveSubject picks "I"/我 when this block's
+      // actor IS the selected viewpoint, or their real name otherwise, so
+      // regenerating from a different member's viewpoint changes who's "I"
+      // without touching a single line of stored text.
+      const speaker = block.speakerName ?? resolveSubject(block, options, locale);
       const text =
         locale === Locale.ZH
           ? `「${payload.line}」${speaker}${verb}。`
@@ -116,11 +152,11 @@ const renderBlockNovel = (
       return [{ blockId: block.id, type: "prose", text }];
     }
     case "innerVoice": {
-      const subject = protagonistSubject(options);
-      const verb = decidedVerb(options);
+      const subject = resolveSubject(block, options, locale);
+      const verb = decidedVerb(block, options);
       const text =
         locale === Locale.ZH
-          ? `${subject === "I" ? "我" : subject}${payload.choiceLabel}`
+          ? `${subject}${payload.choiceLabel}`
           : `${subject} ${verb}: ${payload.choiceLabel}.`;
       return [{ blockId: block.id, type: "prose", text }];
     }

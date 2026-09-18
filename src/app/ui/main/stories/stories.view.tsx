@@ -173,6 +173,7 @@ const SceneShell = (): JSX.Element => {
     setManuscriptOptions,
     editManuscriptBlock,
     toggleManuscriptBlockHidden,
+    party,
   } = useStoryStore();
 
   // The scene's ambient soundtrack mood is a real function of the story's
@@ -331,6 +332,7 @@ const SceneShell = (): JSX.Element => {
             creatorMode={isEditingStory}
             onEditBlock={editManuscriptBlock}
             onToggleHidden={toggleManuscriptBlockHidden}
+            partyMembers={party?.members}
           />
         </div>
       )}
