@@ -12,11 +12,13 @@ import {
   QUEST_BRASS_KEY_ID,
   QUEST_DELIVER_LETTER_ID,
   FLAG_HARBOR_MASTER_TRUSTS_YOU,
+  FLAG_SOLD_OUT_WISP,
+  FLAG_PROTECTED_WISP,
 } from "./../story/blacktide-story.ids";
 import { Scene } from "./scene";
 import { starshipScenesMock } from "./starship-scene.mock";
 
-const [, sable, wisp, , , captainMarlow, unit7] = charactersMock;
+const [, sable, wisp, , , captainMarlow, unit7, corvin] = charactersMock;
 
 export const scenesMock: Scene[] = [
   {
@@ -95,7 +97,52 @@ export const scenesMock: Scene[] = [
     description:
       "Crates stacked higher than a person, most gone soft with damp. Something — someone — shifts behind the nearest stack.",
     ambience: "Rats in the rafters, the tang of tar and old rope.",
-    npcs: [{ characterId: wisp.id, roleInScene: "Stowaway" }],
+    npcs: [
+      { characterId: wisp.id, roleInScene: "Stowaway" },
+      {
+        characterId: corvin.id,
+        roleInScene: "Harbor Informant",
+        // Hidden: Corvin is filtered out of this scene (and its group chat)
+        // entirely until Sable has grown to trust the player. No lock icon,
+        // no map hint — he simply isn't part of the scene's NPC list until
+        // the condition is met, so discovering him is a genuine surprise
+        // tied to a real relationship value, not a scripted reveal.
+        presenceCondition: { type: "npcAffinityAtLeast", characterId: sable.id, value: 20 },
+        // The branching-consequence dialogue: two mutually-exclusive choices
+        // (visible only while NEITHER flag is set yet), each of which sets a
+        // flag directly — no quest involved. Whichever one the player picks
+        // changes what both Corvin AND Wisp say afterward (see
+        // dialogue-branch.ts), for the rest of the run.
+        dialogueChoices: [
+          {
+            id: "choice-sell-out-wisp",
+            label: "Sell him Wisp's location",
+            line: "There's a stowaway hiding in the crates behind the tavern. What's that worth to you?",
+            setFlags: [FLAG_SOLD_OUT_WISP],
+            visibleWhen: {
+              type: "allOf",
+              conditions: [
+                { type: "not", condition: { type: "flagSet", flag: FLAG_SOLD_OUT_WISP } },
+                { type: "not", condition: { type: "flagSet", flag: FLAG_PROTECTED_WISP } },
+              ],
+            },
+          },
+          {
+            id: "choice-protect-wisp",
+            label: "Refuse, and warn Wisp about him",
+            line: "Whatever you're paying for names, I'm not selling anyone out. And I'd steer clear of these crates if I were you.",
+            setFlags: [FLAG_PROTECTED_WISP],
+            visibleWhen: {
+              type: "allOf",
+              conditions: [
+                { type: "not", condition: { type: "flagSet", flag: FLAG_SOLD_OUT_WISP } },
+                { type: "not", condition: { type: "flagSet", flag: FLAG_PROTECTED_WISP } },
+              ],
+            },
+          },
+        ],
+      },
+    ],
     exits: [
       { toSceneId: SCENE_TAVERN_ID, label: "Back through the tavern's rear door" },
       {

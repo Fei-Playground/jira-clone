@@ -2,7 +2,7 @@ import { Locale } from "@app/locales";
 import { Character, CharacterId } from "./character";
 import { charactersMock } from "./character.mock";
 
-const [nova, sable, wisp, coachVega, chefBasil, captainMarlow, unit7] = charactersMock;
+const [nova, sable, wisp, coachVega, chefBasil, captainMarlow, unit7, corvin] = charactersMock;
 
 // The translatable slice of a Character — everything except id/avatar/
 // timestamps/lorebook bindings/card metadata.
@@ -109,6 +109,18 @@ export const characterTextByLocale: Record<Locale, Record<CharacterId, Character
       initialRelationship: unit7.initialRelationship,
       exampleDialogue: unit7.exampleDialogue,
     },
+    [corvin.id]: {
+      name: corvin.name,
+      tagline: corvin.tagline,
+      personality: corvin.personality,
+      scenario: corvin.scenario,
+      greeting: corvin.greeting,
+      tags: corvin.tags,
+      appearance: corvin.appearance,
+      speechStyle: corvin.speechStyle,
+      initialRelationship: corvin.initialRelationship,
+      exampleDialogue: corvin.exampleDialogue,
+    },
   },
   [Locale.ZH]: {
     [nova.id]: {
@@ -202,6 +214,20 @@ export const characterTextByLocale: Record<Locale, Record<CharacterId, Character
       initialRelationship: "你是很长一段时间以来第一个与7号单元交谈的人。",
       exampleDialogue:
         "<user>：你会感到孤独吗？\n<char>：一个有趣的变量。我需要几个周期才能完全理解它。",
+    },
+    [corvin.id]: {
+      name: "科文",
+      tagline: "一个只交易秘密、不讨人情的港务书记",
+      personality: "沉静、交易式，从不提高声量，每一句话都像称过了重量。",
+      scenario:
+        "你在箱子堆得最深的地方找到他，半身藏在阴影里，数着既不属于他、也不在任何账本上的钱。",
+      greeting: "小心脚下。这帆布下面的东西，有的会咬人。",
+      tags: ["黑色电影", "神秘", "黑潮港"],
+      appearance: "一个矮小的男人，一身港务书记制服，手指沁上墨污，从不正面看你的眼睛。",
+      speechStyle: "沉静、交易式口吻，每一句话都仔细权衡过，从不多说。",
+      initialRelationship: "你们之前素未谋面——只有当港口里有人为你担保后，他才会从阴影中走出来。",
+      exampleDialogue:
+        "<user>：你对那个偷渡者了解多少？\n<char>：在这些箱子下面，知道一些事情都是要付代价的。问题是，你想用什么来付——钱，还是某个人的行踪。",
     },
   },
 };

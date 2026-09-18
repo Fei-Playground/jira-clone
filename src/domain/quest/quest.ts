@@ -53,4 +53,11 @@ export interface Quest {
   isMainline: boolean;
   order: number;
   isCustom?: boolean;
+  // Evaluated every time progress changes, but ONLY while this quest is
+  // still "available" (offered, not yet accepted). When it becomes true,
+  // the quest is recalled to "locked" — real retraction, not decoration:
+  // an offer the player hasn't taken yet can genuinely be withdrawn because
+  // they chose the opposing branch. Once a quest is "active" or beyond,
+  // this is never checked again — accepting it commits the player.
+  excludedBy?: Condition;
 }

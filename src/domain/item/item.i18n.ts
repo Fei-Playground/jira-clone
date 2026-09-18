@@ -5,6 +5,8 @@ import {
   SEALED_LETTER_ITEM_ID,
   BOAT_TICKET_ITEM_ID,
   STORM_TALISMAN_ITEM_ID,
+  HARBOR_GUARD_BADGE_ITEM_ID,
+  SMUGGLERS_CUT_ITEM_ID,
 } from "./item.mock";
 import { COOLANT_CANISTER_ITEM_ID, SIGNAL_LOG_ITEM_ID } from "./starship-item.mock";
 
@@ -32,6 +34,14 @@ export const itemTextByLocale: Record<Locale, Record<ItemId, ItemText>> = {
       description:
         "A small carved talisman, its edges smoothed by years of being clutched through worse storms than this one.",
     },
+    [HARBOR_GUARD_BADGE_ITEM_ID]: {
+      name: "Harbor Guard Badge",
+      description: "A tin badge the harbor guard presses on anyone who reports smuggling to them.",
+    },
+    [SMUGGLERS_CUT_ITEM_ID]: {
+      name: "Smuggler's Cut",
+      description: "A fold of bills, still smelling faintly of the crate it was hidden in.",
+    },
     [COOLANT_CANISTER_ITEM_ID]: {
       name: "Coolant Canister",
       description: "A spare canister of ion-drive coolant, still cold to the touch.",
@@ -58,6 +68,14 @@ export const itemTextByLocale: Record<Locale, Record<ItemId, ItemText>> = {
       name: "风暴护身符",
       description:
         "一枚雕工粗糙的小护身符，边缘早已被年复一年地摩挲得光滑——比这场风暴更凶险的日子，它都挺过来了。",
+    },
+    [HARBOR_GUARD_BADGE_ITEM_ID]: {
+      name: "港务卫队徽章",
+      description: "一枚锡制徽章，港务卫队会发给任何向他们举报走私的人。",
+    },
+    [SMUGGLERS_CUT_ITEM_ID]: {
+      name: "走私分成",
+      description: "一叠钞票，还残留着藏它的箱子的气味。",
     },
     [COOLANT_CANISTER_ITEM_ID]: {
       name: "冷却剂罐",

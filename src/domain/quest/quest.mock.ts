@@ -1,5 +1,11 @@
 import { charactersMock } from "@domain/character";
-import { BRASS_KEY_ITEM_ID, SEALED_LETTER_ITEM_ID, BOAT_TICKET_ITEM_ID } from "@domain/item";
+import {
+  BRASS_KEY_ITEM_ID,
+  SEALED_LETTER_ITEM_ID,
+  BOAT_TICKET_ITEM_ID,
+  HARBOR_GUARD_BADGE_ITEM_ID,
+  SMUGGLERS_CUT_ITEM_ID,
+} from "@domain/item";
 import {
   BLACKTIDE_STORY_ID,
   SCENE_DOCKS_ID,
@@ -9,7 +15,11 @@ import {
   QUEST_ASK_AROUND_ID,
   QUEST_BRASS_KEY_ID,
   QUEST_DELIVER_LETTER_ID,
+  QUEST_REPORT_SMUGGLING_ID,
+  QUEST_FENCE_THE_GOODS_ID,
   FLAG_HARBOR_MASTER_TRUSTS_YOU,
+  FLAG_REPORTED_SMUGGLING,
+  FLAG_FENCED_THE_GOODS,
 } from "./../story/blacktide-story.ids";
 import { Quest } from "./quest";
 import { starshipQuestsMock } from "./starship-quest.mock";
@@ -94,6 +104,66 @@ export const questsMock: Quest[] = [
     },
     isMainline: true,
     order: 2,
+  },
+  // A REAL mutually-exclusive pair: both become available the instant the
+  // brass key is in hand (same `available` condition on both), so a player
+  // genuinely sees BOTH offers on the table at once. Accepting/completing
+  // EITHER one sets a flag the OTHER's `excludedBy` reads, which retracts
+  // it from "available" back to "locked" — a real withdrawal, not just two
+  // quests that happen to never both get finished.
+  {
+    id: QUEST_REPORT_SMUGGLING_ID,
+    storyId: BLACKTIDE_STORY_ID,
+    title: "Report the Smuggling Ring",
+    description:
+      "That brass key opens a door that shouldn't exist. The harbor guard at the docks would pay well to know about it.",
+    giverCharacterId: captainMarlow.id,
+    giverSceneId: SCENE_DOCKS_ID,
+    available: { type: "questCompleted", questId: QUEST_BRASS_KEY_ID },
+    excludedBy: { type: "flagSet", flag: FLAG_FENCED_THE_GOODS },
+    objectives: [
+      {
+        id: "obj-report-smuggling-talk",
+        kind: "talkToNpc",
+        characterId: captainMarlow.id,
+        times: 1,
+        label: "Tell Captain Marlow about the warehouse door",
+      },
+    ],
+    turnInCharacterId: captainMarlow.id,
+    reward: {
+      items: [{ itemId: HARBOR_GUARD_BADGE_ITEM_ID, count: 1 }],
+      setFlags: [FLAG_REPORTED_SMUGGLING],
+    },
+    isMainline: false,
+    order: 3,
+  },
+  {
+    id: QUEST_FENCE_THE_GOODS_ID,
+    storyId: BLACKTIDE_STORY_ID,
+    title: "Help Fence the Goods",
+    description:
+      "Sable knows exactly what's behind that door, and exactly who'd pay to make it disappear quietly. Help her move it.",
+    giverCharacterId: sable.id,
+    giverSceneId: SCENE_TAVERN_ID,
+    available: { type: "questCompleted", questId: QUEST_BRASS_KEY_ID },
+    excludedBy: { type: "flagSet", flag: FLAG_REPORTED_SMUGGLING },
+    objectives: [
+      {
+        id: "obj-fence-goods-talk",
+        kind: "talkToNpc",
+        characterId: sable.id,
+        times: 1,
+        label: "Tell Sable you're in",
+      },
+    ],
+    turnInCharacterId: sable.id,
+    reward: {
+      items: [{ itemId: SMUGGLERS_CUT_ITEM_ID, count: 1 }],
+      setFlags: [FLAG_FENCED_THE_GOODS],
+    },
+    isMainline: false,
+    order: 3,
   },
   ...starshipQuestsMock,
 ];

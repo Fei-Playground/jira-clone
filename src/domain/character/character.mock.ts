@@ -168,6 +168,29 @@ export const charactersMock: Character[] = [
     defaultAuthorNote: "",
     cardVersion: 1,
   },
+  {
+    id: "0d1f2a3b-0008-4a00-8000-000000000008",
+    name: "Corvin",
+    tagline: "A harbor clerk who trades in secrets, not favors",
+    personality:
+      "Quiet, transactional, never raises his voice, weighs every word like it costs him something.",
+    scenario:
+      "You find him where the crates run deepest, half in shadow, counting coin that isn't his by any honest ledger.",
+    greeting: "Careful where you step. Some of what's under these tarps bites.",
+    avatarColor: "#2f2a1f",
+    avatarEmoji: "🤵",
+    tags: ["noir", "secretive", "blacktide"],
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1,
+    appearance:
+      "A slight man in a harbor clerk's coat, ink-stained fingers, never quite meets your eyes.",
+    speechStyle: "Quiet, transactional, weighs every word, never wastes one.",
+    initialRelationship:
+      "You've never met before — he only steps out of the shadows once someone in the harbor has vouched for you.",
+    exampleDialogue:
+      "<user>: What do you know about the stowaway?\n<char>: Knowledge has a price here, same as everything else under these crates. Question is what you're willing to pay — in coin, or in someone's whereabouts.",
+    defaultAuthorNote: "",
+    cardVersion: 1,
+  },
 ];
 
 export const characterMock1 = charactersMock[0];

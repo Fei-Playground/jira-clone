@@ -800,6 +800,30 @@ export const StoryEditor = ({
                           }
                         />
                       </div>
+                      <div>
+                        <label className="mb-1 flex items-center gap-2 text-xs font-bold text-font-subtlest">
+                          <input
+                            type="checkbox"
+                            checked={!!quest.excludedBy}
+                            onChange={(e) =>
+                              updateQuest(quest.id, {
+                                excludedBy: e.target.checked
+                                  ? { type: "flagSet", flag: "" }
+                                  : undefined,
+                              })
+                            }
+                          />
+                          {t("stories.editor.quest.excludedByCondition")}
+                        </label>
+                        {quest.excludedBy && (
+                          <ConditionEditor
+                            condition={quest.excludedBy}
+                            onChange={(excludedBy) =>
+                              updateQuest(quest.id, { excludedBy })
+                            }
+                          />
+                        )}
+                      </div>
                       <div className="flex justify-end">
                         <Button
                           color="neutral"

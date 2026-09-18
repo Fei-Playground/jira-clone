@@ -46,7 +46,7 @@ export const sceneTextByLocale: Record<Locale, Record<SceneId, SceneText>> = {
       description:
         "Crates stacked higher than a person, most gone soft with damp. Something — someone — shifts behind the nearest stack.",
       ambience: "Rats in the rafters, the tang of tar and old rope.",
-      npcRoles: ["Stowaway"],
+      npcRoles: ["Stowaway", "Harbor Informant"],
       exitLabels: [
         "Back through the tavern's rear door",
         "Climb the service ladder toward the lighthouse",
@@ -99,7 +99,7 @@ export const sceneTextByLocale: Record<Locale, Record<SceneId, SceneText>> = {
       name: "货仓后巷",
       description: "箱子堆得比人还高，大多已经受潮变软。最近的一堆后面，有什么——有个人——动了一下。",
       ambience: "房梁上的老鼠，焦油和旧绳索的气味。",
-      npcRoles: ["偷渡者"],
+      npcRoles: ["偷渡者", "港口线人"],
       exitLabels: ["从酒馆后门回去", "爬上通向灯塔的检修梯"],
       itemLabels: ["一封塞在箱子后面的封蜡信件"],
     },

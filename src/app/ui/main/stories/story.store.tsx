@@ -166,6 +166,7 @@ interface StoryStore {
     characterId: CharacterId | undefined,
     text: string
   ) => void;
+  makeDialogueChoice: (setFlags: string[]) => void;
   // Manual save export/import — same shape autosave uses.
   exportSave: () => void;
   importSave: (file: File) => Promise<{ success: boolean; error?: string }>;
@@ -441,46 +442,56 @@ export const StoryContextProvider = ({
   const runEvent = useCallback(
     (event: ProgressEvent) => {
       if (!activeStory || !progress) return;
-      const result = applyProgressEvent({
-        progress,
-        story: activeStory,
-        scenes: localizedScenes,
-        quests: localizedQuests,
-        storyEvents: localizedStoryEvents,
-        event,
-      });
-      // When this story has a party, attribute the effects to whoever is
-      // currently at the controls and append them to the shared activity
-      // log — attribution happens here at the store layer, so
-      // applyProgressEvent stays a pure progress calculator with no notion
-      // of parties at all.
-      const party = partiesByStoryId[activeStory.id];
-      let nextProgress = result.progress;
-      if (party) {
-        const activeMember = party.members.find(
-          (m) => m.id === party.activeMemberId
-        );
-        if (activeMember) {
-          const newEntries = buildPartyActivityEntries({
-            effects: result.effects,
-            activeMember,
-            quests: localizedQuests,
-            scenes: localizedScenes,
-            items: localizedItems,
-          });
-          if (newEntries.length > 0) {
-            nextProgress = {
-              ...nextProgress,
-              activityLog: [...(nextProgress.activityLog ?? []), ...newEntries],
-            };
+      // Read the progress to apply against from the LATEST state rather than
+      // this render's closure — two events dispatched back-to-back in the
+      // same handler (e.g. a dialogue choice's flags followed immediately by
+      // the talkToNpc it triggers) would otherwise both start from the same
+      // stale snapshot, and the second would overwrite the first.
+      let latestEffects: ProgressEffect[] = [];
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id] ?? progress;
+        const result = applyProgressEvent({
+          progress: current,
+          story: activeStory,
+          scenes: localizedScenes,
+          quests: localizedQuests,
+          storyEvents: localizedStoryEvents,
+          event,
+        });
+        latestEffects = result.effects;
+        // When this story has a party, attribute the effects to whoever is
+        // currently at the controls and append them to the shared activity
+        // log — attribution happens here at the store layer, so
+        // applyProgressEvent stays a pure progress calculator with no notion
+        // of parties at all.
+        const party = partiesByStoryId[activeStory.id];
+        let nextProgress = result.progress;
+        if (party) {
+          const activeMember = party.members.find(
+            (m) => m.id === party.activeMemberId
+          );
+          if (activeMember) {
+            const newEntries = buildPartyActivityEntries({
+              effects: result.effects,
+              activeMember,
+              quests: localizedQuests,
+              scenes: localizedScenes,
+              items: localizedItems,
+            });
+            if (newEntries.length > 0) {
+              nextProgress = {
+                ...nextProgress,
+                activityLog: [
+                  ...(nextProgress.activityLog ?? []),
+                  ...newEntries,
+                ],
+              };
+            }
           }
         }
-      }
-      setProgressByStoryId((prev) => ({
-        ...prev,
-        [activeStory.id]: nextProgress,
-      }));
-      setLastEffects(result.effects);
+        return { ...prev, [activeStory.id]: nextProgress };
+      });
+      setLastEffects(() => latestEffects);
     },
     [
       activeStory,
@@ -954,6 +965,15 @@ export const StoryContextProvider = ({
     [runEvent]
   );
 
+  // Applies a dialogue choice's flags directly (see DialogueChoice on
+  // SceneNpc) — no quest involved. This is the real branching mechanism:
+  // whichever flag ends up set is read by other NPCs' reply logic and by
+  // quest available/excludedBy conditions elsewhere.
+  const makeDialogueChoice = useCallback(
+    (setFlags: string[]) => runEvent({ type: "makeDialogueChoice", setFlags }),
+    [runEvent]
+  );
+
   const getOrCreateSceneSession = useCallback(
     (sceneId: SceneId, characterId: CharacterId): ChatSession => {
       const key = `${sceneId}:${characterId}`;
@@ -1085,6 +1105,7 @@ export const StoryContextProvider = ({
     registerSceneRoom,
     recordNpcTalk,
     recordSentMessage,
+    makeDialogueChoice,
     exportSave,
     importSave,
     lastSavedAt,

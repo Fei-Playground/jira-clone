@@ -420,6 +420,7 @@ export const en = {
     },
     dialogue: {
       backToScene: "Back to {{name}}",
+      choicePrompt: "How do you respond?",
     },
     editor: {
       enterEditing: "Edit this story",
@@ -459,6 +460,7 @@ export const en = {
         titlePlaceholder: "Quest title",
         descriptionPlaceholder: "Quest description",
         availableCondition: "Available when",
+        excludedByCondition: "Withdrawn (recalled to locked) when",
         objectivesCount: "objectives",
       },
       condition: {

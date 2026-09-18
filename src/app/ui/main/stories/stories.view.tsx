@@ -19,7 +19,13 @@ import {
   WEATHER_EMOJI,
   DEFAULT_ENVIRONMENT,
 } from "@domain/environment";
-import { checkStoryReachability, deriveSceneBackground } from "@domain/scene";
+import {
+  checkStoryReachability,
+  deriveSceneBackground,
+  getBranchedGreeting,
+  getDialogueChoiceText,
+  DialogueChoice,
+} from "@domain/scene";
 import { deriveSceneMood } from "@domain/music";
 import { buildQuickActions } from "@domain/quick-action";
 import { RelationshipIndicator } from "./relationship-indicator";
@@ -835,6 +841,7 @@ const SceneDialogue = ({
     appendSceneSessionMessage,
     recordNpcTalk,
     recordSentMessage,
+    makeDialogueChoice,
   } = useStoryStore();
 
   const character = characters.find((c) => c.id === characterId);
@@ -859,6 +866,18 @@ const SceneDialogue = ({
     locale,
   });
 
+  // A dialogue choice a player hasn't made yet — e.g. an opposing choice's
+  // flag being set already removes this one, keeping the pair mutually
+  // exclusive purely through visibleWhen rather than any special-cased UI
+  // state.
+  const visibleChoices = (npc?.dialogueChoices ?? []).filter((choice) =>
+    choice.visibleWhen ? evaluateCondition(choice.visibleWhen, progress) : true
+  );
+
+  const replyToSend = (): string =>
+    getBranchedGreeting(characterId, character.name, progress, locale) ??
+    character.greeting;
+
   const handleSend = (text: string) => {
     appendSceneSessionMessage(session.id, text, "user");
     recordNpcTalk(
@@ -868,7 +887,37 @@ const SceneDialogue = ({
     );
     recordSentMessage(characterId, text);
     setTimeout(() => {
-      appendSceneSessionMessage(session.id, character.greeting, "character");
+      appendSceneSessionMessage(session.id, replyToSend(), "character");
+    }, 800);
+  };
+
+  // A dialogue CHOICE: sets its flags immediately (real state, read by
+  // other NPCs' replies and by quest available/excludedBy), THEN sends the
+  // choice's line and replies with whatever the NOW-updated flags produce —
+  // so the very same exchange already shows the branch taking effect.
+  const handleChoice = (choice: DialogueChoice) => {
+    makeDialogueChoice(choice.setFlags);
+    const localizedLine =
+      getDialogueChoiceText(choice.id, locale)?.line ?? choice.line;
+    appendSceneSessionMessage(session.id, localizedLine, "user");
+    recordNpcTalk(
+      characterId,
+      currentScene.id,
+      `${currentScene.id}:${characterId}`
+    );
+    const updatedProgress: typeof progress = {
+      ...progress,
+      flags: Array.from(new Set([...progress.flags, ...choice.setFlags])),
+    };
+    const reply =
+      getBranchedGreeting(
+        characterId,
+        character.name,
+        updatedProgress,
+        locale
+      ) ?? character.greeting;
+    setTimeout(() => {
+      appendSceneSessionMessage(session.id, reply, "character");
     }, 800);
   };
 
@@ -883,6 +932,25 @@ const SceneDialogue = ({
           {t("stories.dialogue.backToScene", { name: currentScene.name })}
         </button>
       </div>
+      {visibleChoices.length > 0 && (
+        <div className="flex flex-col gap-2 border-b border-border bg-elevation-surface-sunken px-6 py-3">
+          <p className="text-2xs font-bold text-font-subtlest">
+            {t("stories.dialogue.choicePrompt")}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {visibleChoices.map((choice) => (
+              <button
+                key={choice.id}
+                onClick={() => handleChoice(choice)}
+                className="rounded-md border border-border-brand bg-background-brand-subtlest px-3 py-1.5 text-left font-primary-bold text-xs text-font-brand hover:bg-background-brand-subtlest-hovered"
+              >
+                {getDialogueChoiceText(choice.id, locale)?.label ??
+                  choice.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <ChatWindow
         character={character}
         session={session}

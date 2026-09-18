@@ -417,6 +417,7 @@ export const zh = {
     },
     dialogue: {
       backToScene: "返回{{name}}",
+      choicePrompt: "你怎么回应？",
     },
     editor: {
       enterEditing: "编辑此故事",
@@ -456,6 +457,7 @@ export const zh = {
         titlePlaceholder: "任务标题",
         descriptionPlaceholder: "任务描述",
         availableCondition: "可接取条件",
+        excludedByCondition: "满足时收回（重新锁定）",
         objectivesCount: "个目标",
       },
       condition: {

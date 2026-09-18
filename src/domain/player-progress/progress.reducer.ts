@@ -48,7 +48,12 @@ export type ProgressEvent =
     }
   | { type: "acceptQuest"; questId: QuestId }
   | { type: "turnInQuest"; questId: QuestId }
-  | { type: "setEnvironment"; timeOfDay?: TimeOfDay; weather?: Weather };
+  | { type: "setEnvironment"; timeOfDay?: TimeOfDay; weather?: Weather }
+  // A dialogue CHOICE (see DialogueChoice on SceneNpc) — sets flags directly,
+  // no quest involved. This is the real mechanism behind "picking a line of
+  // dialogue changes an NPC's future attitude/content": the flag this sets
+  // is read by other NPCs' reply logic and by quest available/excludedBy.
+  | { type: "makeDialogueChoice"; setFlags: string[] };
 
 export type ProgressEffect =
   | {
@@ -61,6 +66,10 @@ export type ProgressEffect =
   | { type: "questReadyToTurnIn"; questId: QuestId }
   | { type: "questCompleted"; questId: QuestId }
   | { type: "questAvailable"; questId: QuestId }
+  // A quest offer that was sitting "available" (not yet accepted) got
+  // withdrawn because its `excludedBy` condition became true — e.g. the
+  // player committed to the opposing branch of a mutually-exclusive pair.
+  | { type: "questExcluded"; questId: QuestId }
   | { type: "sceneUnlocked"; sceneId: SceneId }
   | { type: "itemObtained"; itemId: ItemId; count: number }
   | { type: "storyEventFired"; eventId: StoryEventId; narration: string };
@@ -181,7 +190,34 @@ const refreshDerivedState = (
 
   quests.forEach((quest) => {
     const state = next.questStates[quest.id];
+
+    // A quest the player has been OFFERED but not yet accepted can still be
+    // genuinely withdrawn — e.g. because they committed to the opposing
+    // branch of a mutually-exclusive pair. Recalling it to "locked" here is
+    // real retraction: it disappears from the quest panel, and if the
+    // player somehow still meets `available` later (e.g. re-imports a save)
+    // it can only ever come back "available", never silently "active".
+    // Once accepted ("active" or further) this is never re-checked, so
+    // accepting a quest commits the player — exclusion only bites on offers
+    // still sitting on the table.
+    if (
+      state?.status === "available" &&
+      quest.excludedBy &&
+      evaluateCondition(quest.excludedBy, next)
+    ) {
+      next = {
+        ...next,
+        questStates: {
+          ...next.questStates,
+          [quest.id]: { status: "locked", objectiveProgress: {} },
+        },
+      };
+      effects.push({ type: "questExcluded", questId: quest.id });
+      return;
+    }
+
     if (state && state.status !== "locked") return;
+    if (quest.excludedBy && evaluateCondition(quest.excludedBy, next)) return;
     if (evaluateCondition(quest.available, next)) {
       next = {
         ...next,
@@ -407,6 +443,14 @@ export const applyProgressEvent = ({
           timeOfDay: event.timeOfDay ?? next.environment.timeOfDay,
           weather: event.weather ?? next.environment.weather,
         },
+      };
+      break;
+    }
+
+    case "makeDialogueChoice": {
+      next = {
+        ...next,
+        flags: Array.from(new Set([...next.flags, ...event.setFlags])),
       };
       break;
     }
