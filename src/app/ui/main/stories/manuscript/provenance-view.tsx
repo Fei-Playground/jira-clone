@@ -6,8 +6,7 @@ import { NarrativeBlock, NarrativeOrigin } from "@domain/narrative";
 // does NOT go through renderManuscript(), because this view's whole job is
 // to show the RAW source material per block (what's really stored), not a
 // rendered/composed sentence that mixes origins together.
-const rawBlockText = (block: NarrativeBlock): string => {
-  const payload = block.payload;
+const rawPayloadText = (payload: NarrativeBlock["payload"]): string => {
   switch (payload.kind) {
     case "chapterBreak":
       return `#${payload.index}`;
@@ -27,6 +26,8 @@ const rawBlockText = (block: NarrativeBlock): string => {
       return JSON.stringify(payload.params);
   }
 };
+
+const rawBlockText = (block: NarrativeBlock): string => rawPayloadText(block.payload);
 
 const ORIGIN_BADGE_STYLE: Record<NarrativeOrigin, string> = {
   authored: "bg-background-success text-font-success",
@@ -72,8 +73,52 @@ export const ProvenanceView = ({
     { authored: 0, dialogue: 0, composed: 0 } as Record<NarrativeOrigin, number>
   );
 
+  // Rewrite history (plan §10.4): every block that has been through a
+  // structured revision (retone/rechoose/reenvironment) or a cosmetic
+  // edit, with who changed it, what it was before, and the real
+  // consequence it had — this is the "改写记录" section the audit view
+  // was missing. It reads the SAME `revision` field the badge/undo button
+  // in manuscript-view.tsx use, so this list and the inline badge never
+  // disagree about what happened.
+  const revisedBlocks = blocks.filter((b) => b.revision);
+
   return (
     <div className="flex max-h-[70vh] flex-col gap-3">
+      <div>
+        <p className="mb-1.5 text-2xs font-bold text-font-subtlest">
+          {t("stories.manuscript.revision.auditSectionTitle")}
+        </p>
+        {revisedBlocks.length === 0 ? (
+          <p className="text-2xs text-font-subtlest">
+            {t("stories.manuscript.revision.auditNone")}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-1.5">
+            {revisedBlocks.map((block) => (
+              <li
+                key={block.id}
+                className="rounded-md border border-border-brand bg-background-brand-subtlest p-2 text-2xs text-font"
+              >
+                <p className="font-bold text-font-brand">
+                  {t("stories.manuscript.revision.badge", {
+                    name: block.revision!.byMemberName ?? "",
+                  })}
+                </p>
+                {block.revision!.previousPayload && (
+                  <p className="mt-0.5 text-font-subtlest">
+                    {rawPayloadText(block.revision!.previousPayload)}
+                  </p>
+                )}
+                {block.revision!.consequenceSummary?.map((line, i) => (
+                  <p key={i} className="mt-0.5">
+                    {line}
+                  </p>
+                ))}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <div className="flex flex-wrap gap-2 text-2xs">
         {(["authored", "dialogue", "composed"] as NarrativeOrigin[]).map(
           (origin) => (

@@ -149,6 +149,7 @@ const StoryLibrary = (): JSX.Element => {
 
 const SceneShell = (): JSX.Element => {
   const { t } = useTranslation();
+  const { characters } = useCompanionsStore();
   const {
     activeStory,
     activeWorld,
@@ -160,6 +161,7 @@ const SceneShell = (): JSX.Element => {
     setIsEditingStory,
     lastEffects,
     environment,
+    scenes,
   } = useStoryStore();
   const [openDialogueNpcId, setOpenDialogueNpcId] =
     useState<CharacterId | null>(null);
@@ -181,6 +183,7 @@ const SceneShell = (): JSX.Element => {
     editManuscriptBlock,
     toggleManuscriptBlockHidden,
     undoManuscriptRevision,
+    reviseManuscriptBlock,
     party,
   } = useStoryStore();
 
@@ -357,6 +360,9 @@ const SceneShell = (): JSX.Element => {
             onEditBlock={editManuscriptBlock}
             onToggleHidden={toggleManuscriptBlockHidden}
             onUndoRevision={undoManuscriptRevision}
+            onRevise={reviseManuscriptBlock}
+            scenes={scenes}
+            characters={characters}
             partyMembers={party?.members}
           />
         </div>

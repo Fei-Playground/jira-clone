@@ -1284,28 +1284,41 @@ export const StoryContextProvider = ({
           }
         }
 
-        const revisedBlocks = (nextProgress.manuscript ?? current.manuscript ?? []).map((b) =>
-          b.id === blockId
-            ? {
-                ...b,
-                revision: {
-                  at: Date.now(),
-                  kind: revisionInput.kind,
-                  byMemberId: activeMember?.id,
-                  byMemberName: activeMember?.name,
-                  previousPayload: b.payload,
-                  previousEditedText: b.editedText,
-                  consequenceSummary,
-                },
-              }
-            : b
-        );
+        // retone is the one revision kind that should change what's ON
+        // the page, not just the game state behind it — otherwise the
+        // block still reads in its old tone and "undo" has nothing real
+        // to revert. Only a `dialogue` block's payload carries a
+        // toneHint, so this only applies there.
+        const byMemberName =
+          activeMember?.name ??
+          (locale === Locale.ZH ? "主角" : "the protagonist");
+        const revisedBlocks = (nextProgress.manuscript ?? current.manuscript ?? []).map((b) => {
+          if (b.id !== blockId) return b;
+          const nextPayload =
+            revisionInput.kind === "retone" && b.payload.kind === "dialogue"
+              ? { ...b.payload, toneHint: revisionInput.tone }
+              : b.payload;
+          return {
+            ...b,
+            payload: nextPayload,
+            revision: {
+              at: Date.now(),
+              kind: revisionInput.kind,
+              byMemberId: activeMember?.id,
+              byMemberName,
+              previousPayload: b.payload,
+              previousEditedText: b.editedText,
+              consequenceSummary,
+            },
+          };
+        });
         const revisionBlock = composeRevisionBlock({
           kind: revisionInput.kind,
           consequenceSummary,
           sceneId: currentScene?.id,
           sceneName: currentScene?.name,
           activeMember,
+          revisedBlockId: blockId,
         });
         nextProgress = {
           ...nextProgress,
@@ -1339,16 +1352,29 @@ export const StoryContextProvider = ({
         const current = prev[activeStory.id];
         const block = current?.manuscript?.find((b) => b.id === blockId);
         if (!current || !block?.revision) return prev;
-        const restoredManuscript = current.manuscript!.map((b) =>
-          b.id === blockId
-            ? {
-                ...b,
-                payload: block.revision!.previousPayload ?? b.payload,
-                editedText: block.revision!.previousEditedText,
-                revision: undefined,
-              }
-            : b
-        );
+        // Also drop the turningPoint paragraph that documented THIS
+        // revision (linked via params.revisedBlockId) — otherwise "this
+        // path was later rewritten" survives an undo that reverted it,
+        // which would read as a leftover from a change that no longer
+        // happened.
+        const restoredManuscript = current.manuscript!
+          .filter(
+            (b) =>
+              !(
+                b.payload.kind === "turningPoint" &&
+                b.payload.params?.revisedBlockId === blockId
+              )
+          )
+          .map((b) =>
+            b.id === blockId
+              ? {
+                  ...b,
+                  payload: block.revision!.previousPayload ?? b.payload,
+                  editedText: block.revision!.previousEditedText,
+                  revision: undefined,
+                }
+              : b
+          );
         return {
           ...prev,
           [activeStory.id]: { ...current, manuscript: restoredManuscript },

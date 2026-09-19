@@ -8,11 +8,14 @@ import {
   RiPencilLine,
   RiListCheck2,
   RiArrowGoBackLine,
+  RiFlowChart,
 } from "react-icons/ri";
 import { Tooltip } from "@app/components/tooltip";
 import { useTranslation } from "@app/store/locale.store";
-import { NarrativeBlock } from "@domain/narrative";
+import { NarrativeBlock, NarrativeRevisionInput } from "@domain/narrative";
 import { PlayerProfile } from "@domain/party";
+import { Scene } from "@domain/scene";
+import { CharacterId } from "@domain/character";
 import {
   ManuscriptOptions,
   ManuscriptMode,
@@ -22,6 +25,7 @@ import {
 } from "./manuscript.renderer";
 import { ManuscriptLine } from "./manuscript-block";
 import { ProvenanceView } from "./provenance-view";
+import { RevisionPicker } from "./revision-picker";
 
 export interface ManuscriptViewProps {
   blocks: NarrativeBlock[];
@@ -34,6 +38,15 @@ export interface ManuscriptViewProps {
   // full picker (choosing retone/rechoose/reenvironment) is offered
   // elsewhere; here we surface only the ability to revert one already made.
   onUndoRevision?: (blockId: string) => void;
+  // Structured "rewrite the outcome" revision — opens the picker for a
+  // block. Absent = the ⌘ trigger and picker dialog are not rendered
+  // (creator mode still works for cosmetic edit/hide/undo).
+  onRevise?: (
+    blockId: string,
+    revision: NarrativeRevisionInput
+  ) => { success: boolean; reason?: string };
+  scenes?: Scene[];
+  characters?: { id: CharacterId; name: string }[];
   // Present only when the active story has a party — lets the toolbar
   // offer a POV picker. Absent = single-protagonist mode, no picker shown.
   partyMembers?: PlayerProfile[];
@@ -47,12 +60,16 @@ export const ManuscriptView = ({
   onEditBlock,
   onToggleHidden,
   onUndoRevision,
+  onRevise,
+  scenes,
+  characters,
   partyMembers,
 }: ManuscriptViewProps): JSX.Element => {
   const { t, locale } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [revisingBlockId, setRevisingBlockId] = useState<string | null>(null);
   const [isProvenanceViewOpen, setIsProvenanceViewOpen] = useState(false);
   const prevBlockCount = useRef(0);
 
@@ -284,6 +301,24 @@ export const ManuscriptView = ({
                           </button>
                         </Tooltip>
                       )}
+                      {onRevise &&
+                        block.kind !== "beat" &&
+                        (block.kind === "dialogue"
+                          ? Boolean(block.speakerId)
+                          : block.kind === "sceneSetting" ||
+                            block.kind === "innerVoice" ||
+                            block.kind === "turningPoint") && (
+                          <Tooltip title={t("stories.manuscript.revision.pickerTitle")}>
+                            <button
+                              type="button"
+                              aria-label={t("stories.manuscript.revision.pickerTitle")}
+                              onClick={() => setRevisingBlockId(block.id)}
+                              className="text-icon-subtlest flex h-5 w-5 items-center justify-center rounded hover:bg-background-neutral"
+                            >
+                              <RiFlowChart size={13} />
+                            </button>
+                          </Tooltip>
+                        )}
                     </div>
                   )}
                   {block.revision && (
@@ -366,6 +401,32 @@ export const ManuscriptView = ({
           </Dialog.Overlay>
         </Dialog.Portal>
       </Dialog.Root>
+
+      {onRevise && (
+        <Dialog.Root
+          open={revisingBlockId !== null}
+          onOpenChange={(open) => !open && setRevisingBlockId(null)}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay>
+              {revisingBlockId &&
+                (() => {
+                  const block = blocks.find((b) => b.id === revisingBlockId);
+                  if (!block) return null;
+                  return (
+                    <RevisionPicker
+                      block={block}
+                      scenes={scenes ?? []}
+                      characters={characters ?? []}
+                      onRevise={onRevise}
+                      onClose={() => setRevisingBlockId(null)}
+                    />
+                  );
+                })()}
+            </Dialog.Overlay>
+          </Dialog.Portal>
+        </Dialog.Root>
+      )}
     </div>
   );
 };

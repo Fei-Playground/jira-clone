@@ -13,7 +13,7 @@ import { Item, ItemId } from "@domain/item";
 import { PlayerProgress } from "@domain/player-progress";
 import { ProgressEffect, ProgressEvent } from "@domain/player-progress";
 import { PlayerProfile } from "@domain/party";
-import { NarrativeBlock, NarrativeToneHint, MANUSCRIPT_BLOCK_LIMIT } from "./narrative";
+import { NarrativeBlock, NarrativeBlockId, NarrativeToneHint, MANUSCRIPT_BLOCK_LIMIT } from "./narrative";
 import { deriveToneHint } from "./narrative.tone";
 import {
   ENVIRONMENT_CLAUSE_TEMPLATE,
@@ -353,6 +353,11 @@ export const composeRevisionBlock = (args: {
   sceneId?: SceneId;
   sceneName?: string;
   activeMember?: PlayerProfile;
+  // The block this revision was made TO — stashed in params so
+  // undoManuscriptRevision can find and remove this documenting block
+  // again when the revision it documents is itself undone (otherwise a
+  // stale "this changed" paragraph survives an undo that reverted it).
+  revisedBlockId: NarrativeBlockId;
 }): NarrativeBlock => ({
   id: uuid(),
   at: Date.now(),
@@ -361,6 +366,7 @@ export const composeRevisionBlock = (args: {
     kind: "turningPoint",
     tpKind: "branchTaken",
     text: args.consequenceSummary.join(" "),
+    params: { revisedBlockId: args.revisedBlockId },
   },
   provenance: { origin: "composed", templateId: `revision.${args.kind}` },
   sceneId: args.sceneId,

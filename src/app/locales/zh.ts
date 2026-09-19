@@ -362,6 +362,17 @@ export const zh = {
       revision: {
         undo: "撤销这个修改",
         badge: "由{{name}}改写——这个改动已体现在剧情里。",
+        pickerTitle: "改写这一段的走向",
+        pickerHint: "从下面选一个真实的改动——不是自由输入——这样剧情才会可预测地跟着变。",
+        toneWarm: "变得更热络",
+        toneNeutral: "变得中性",
+        toneCold: "变得更冷淡",
+        retoneSection: "{{name}}的态度",
+        rechooseSection: "改选{{name}}的分支",
+        reenvironmentSection: "改变场景的时段/天气",
+        noOptions: "这一段没有可用的结构化改写。",
+        auditSectionTitle: "改写记录",
+        auditNone: "还没有段落被结构化改写过。",
       },
     },
     quickAction: {

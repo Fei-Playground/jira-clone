@@ -365,6 +365,18 @@ export const en = {
       revision: {
         undo: "Undo this change",
         badge: "Rewritten by {{name}} — this change is reflected in the plot.",
+        pickerTitle: "Rewrite the outcome",
+        pickerHint:
+          "Pick a real change from the list below — not free text — so the plot updates predictably.",
+        toneWarm: "Make warmer",
+        toneNeutral: "Make neutral",
+        toneCold: "Make colder",
+        retoneSection: "{{name}}'s attitude",
+        rechooseSection: "Switch {{name}}'s branch",
+        reenvironmentSection: "Change the scene's time / weather",
+        noOptions: "No structured rewrite applies to this paragraph.",
+        auditSectionTitle: "Rewrite history",
+        auditNone: "No paragraph has been structurally rewritten yet.",
       },
     },
     quickAction: {
