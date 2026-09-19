@@ -7,6 +7,7 @@ import {
   RiEyeLine,
   RiPencilLine,
   RiListCheck2,
+  RiArrowGoBackLine,
 } from "react-icons/ri";
 import { Tooltip } from "@app/components/tooltip";
 import { useTranslation } from "@app/store/locale.store";
@@ -29,6 +30,10 @@ export interface ManuscriptViewProps {
   creatorMode: boolean;
   onEditBlock?: (blockId: string, text: string) => void;
   onToggleHidden?: (blockId: string) => void;
+  // Structured revision — only committing consequence is undo, since the
+  // full picker (choosing retone/rechoose/reenvironment) is offered
+  // elsewhere; here we surface only the ability to revert one already made.
+  onUndoRevision?: (blockId: string) => void;
   // Present only when the active story has a party — lets the toolbar
   // offer a POV picker. Absent = single-protagonist mode, no picker shown.
   partyMembers?: PlayerProfile[];
@@ -41,6 +46,7 @@ export const ManuscriptView = ({
   creatorMode,
   onEditBlock,
   onToggleHidden,
+  onUndoRevision,
   partyMembers,
 }: ManuscriptViewProps): JSX.Element => {
   const { t, locale } = useTranslation();
@@ -266,7 +272,26 @@ export const ManuscriptView = ({
                           )}
                         </button>
                       )}
+                      {block.revision && onUndoRevision && (
+                        <Tooltip title={t("stories.manuscript.revision.undo")}>
+                          <button
+                            type="button"
+                            aria-label={t("stories.manuscript.revision.undo")}
+                            onClick={() => onUndoRevision(block.id)}
+                            className="text-icon-subtlest flex h-5 w-5 items-center justify-center rounded hover:bg-background-neutral"
+                          >
+                            <RiArrowGoBackLine size={13} />
+                          </button>
+                        </Tooltip>
+                      )}
                     </div>
+                  )}
+                  {block.revision && (
+                    <p className="mb-1 text-2xs italic text-font-brand">
+                      {t("stories.manuscript.revision.badge", {
+                        name: block.revision.byMemberName ?? "",
+                      })}
+                    </p>
                   )}
                   {editingBlockId === block.id ? (
                     <div className="mb-3 flex flex-col gap-2">

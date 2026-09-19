@@ -362,6 +362,10 @@ export const en = {
       povOf: "Viewpoint: {{name}}",
       povNarrator: "Narrator (default)",
       creatorMode: "Creator controls (edit / hide / sources)",
+      revision: {
+        undo: "Undo this change",
+        badge: "Rewritten by {{name}} — this change is reflected in the plot.",
+      },
     },
     quickAction: {
       more: "More",

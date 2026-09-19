@@ -180,6 +180,7 @@ const SceneShell = (): JSX.Element => {
     setManuscriptOptions,
     editManuscriptBlock,
     toggleManuscriptBlockHidden,
+    undoManuscriptRevision,
     party,
   } = useStoryStore();
 
@@ -355,6 +356,7 @@ const SceneShell = (): JSX.Element => {
             creatorMode={isManuscriptCreatorMode}
             onEditBlock={editManuscriptBlock}
             onToggleHidden={toggleManuscriptBlockHidden}
+            onUndoRevision={undoManuscriptRevision}
             partyMembers={party?.members}
           />
         </div>
@@ -1044,14 +1046,31 @@ const SceneDialogue = ({
 const SceneGroupChat = ({ onBack }: { onBack: () => void }): JSX.Element => {
   const { t, locale } = useTranslation();
   const { lorebooks } = useLorebookStore();
-  const { currentScene, quests, progress, roomIdBySceneId, registerSceneRoom } =
-    useStoryStore();
+  const {
+    currentScene,
+    quests,
+    progress,
+    roomIdBySceneId,
+    registerSceneRoom,
+    appendGroupChatLines,
+  } = useStoryStore();
   const { rooms, createRoom, deleteRoom } = useChatRoomStore();
 
   const existingRoomId = currentScene
     ? roomIdBySceneId[currentScene.id]
     : undefined;
   const room = rooms.find((r) => r.id === existingRoomId);
+
+  // The manuscript is written to incrementally as NPCs speak (they reply
+  // one at a time, 700-1200ms apart via the turn scheduler) — so this
+  // watches the room's message count rather than writing once when the
+  // player sends. appendGroupChatLines itself dedupes by message id, so a
+  // re-render or leaving/returning to the scene never double-writes a line.
+  useEffect(() => {
+    if (!currentScene || !room) return;
+    appendGroupChatLines(room.id, currentScene.id, room.messages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentScene?.id, room?.id, room?.messages.length]);
 
   useEffect(() => {
     if (!currentScene || room || !progress) return;

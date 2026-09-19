@@ -67,5 +67,11 @@ export interface PlayerProgress {
   // @domain/narrative). Optional so v1/v2 saves read in with an empty
   // manuscript rather than being rejected.
   manuscript?: NarrativeBlock[];
+  // Dedup keys (`groupLine:${roomId}:${messageId}`) for group-chat messages
+  // already synced into the manuscript — authoritative de-dup so a
+  // component remount / scene revisit / save restore never writes the same
+  // group-chat line into the manuscript twice. Optional so older saves
+  // read in as "nothing synced yet" rather than being rejected.
+  syncedGroupLineKeys?: string[];
   updatedAt: number;
 }

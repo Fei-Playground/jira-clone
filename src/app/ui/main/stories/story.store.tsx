@@ -15,8 +15,15 @@ import {
   SceneExit,
   scenesMock,
   getSceneText,
+  checkStoryReachability,
 } from "@domain/scene";
-import { Quest, QuestId, questsMock, getQuestText } from "@domain/quest";
+import {
+  Quest,
+  QuestId,
+  questsMock,
+  getQuestText,
+  checkQuestReachability,
+} from "@domain/quest";
 import { Item, itemsMock, getItemText } from "@domain/item";
 import {
   StoryEvent,
@@ -32,6 +39,7 @@ import {
   getCharacterText,
 } from "@domain/character";
 import {
+  ChatMessage,
   ChatSession,
   ChatSessionId,
   createCharacterMessage,
@@ -58,14 +66,18 @@ import {
   NarrativeBlock,
   composeBlocksForEvent,
   composeDialogueBlock,
+  composeRevisionBlock,
   appendToManuscript,
   deriveToneHint,
+  NarrativeRevisionInput,
+  buildConsequenceSummary,
 } from "@domain/narrative";
 import {
   ManuscriptOptions,
   DEFAULT_MANUSCRIPT_OPTIONS,
 } from "@app/ui/main/stories/manuscript";
 import { useTranslation } from "@app/store/locale.store";
+import { Locale } from "@app/locales";
 
 const AUTOSAVE_STORAGE_KEY = "jira-clone.stories.autosave.v1";
 // v2 adds partiesByStoryId (multiplayer). v1 saves are read as single-player
@@ -191,6 +203,16 @@ interface StoryStore {
   setManuscriptOptions: (options: ManuscriptOptions) => void;
   editManuscriptBlock: (blockId: string, text: string) => void;
   toggleManuscriptBlockHidden: (blockId: string) => void;
+  reviseManuscriptBlock: (
+    blockId: string,
+    revision: NarrativeRevisionInput
+  ) => { success: boolean; reason?: string };
+  undoManuscriptRevision: (blockId: string) => void;
+  appendGroupChatLines: (
+    roomId: ChatRoomId,
+    sceneId: SceneId,
+    messages: ChatMessage[]
+  ) => void;
   // Manual save export/import — same shape autosave uses.
   exportSave: () => void;
   importSave: (file: File) => Promise<{ success: boolean; error?: string }>;
@@ -1128,6 +1150,214 @@ export const StoryContextProvider = ({
     [activeStory]
   );
 
+  const checkRevisionSafety = useCallback(
+    (
+      progressEvent: Extract<ProgressEvent, { type: "reviseNarrative" }>,
+      progressBefore: PlayerProgress
+    ): { safe: boolean; reason?: string } => {
+      if (!activeStory) return { safe: false, reason: "no-active-story" };
+      const storyScenes = localizedScenes.filter((s) =>
+        activeStory.sceneIds.includes(s.id)
+      );
+      const storyQuests = localizedQuests.filter((q) => q.storyId === activeStory.id);
+
+      const preExistingReach = checkStoryReachability(storyScenes, activeStory.startSceneId);
+      const preExistingQuestReach = checkQuestReachability(
+        storyQuests,
+        preExistingReach.reachableSceneIds
+      );
+      if (
+        preExistingReach.unreachableSceneIds.length > 0 ||
+        preExistingQuestReach.unreachableQuestIds.length > 0
+      ) {
+        return {
+          safe: false,
+          reason:
+            locale === Locale.ZH
+              ? "这个故事本身已经有到不了的场景或情节线，请先在创作者模式里修好再改写。"
+              : "This story already has an unreachable scene or plot thread; fix that in creator mode before revising.",
+        };
+      }
+
+      const currentScenePlayerIsIn = storyScenes.find(
+        (s) => s.id === progressBefore.currentSceneId
+      );
+      if (currentScenePlayerIsIn) {
+        const wasUnlocked = evaluateCondition(currentScenePlayerIsIn.unlock, progressBefore);
+        const afterRevision = applyProgressEvent({
+          progress: progressBefore,
+          story: activeStory,
+          scenes: localizedScenes,
+          quests: localizedQuests,
+          storyEvents: localizedStoryEvents,
+          event: progressEvent,
+        });
+        const isStillUnlocked = evaluateCondition(
+          currentScenePlayerIsIn.unlock,
+          afterRevision.progress
+        );
+        if (wasUnlocked && !isStillUnlocked) {
+          const sceneName = currentScenePlayerIsIn.name;
+          return {
+            safe: false,
+            reason:
+              locale === Locale.ZH
+                ? "这样改会让现在所在的场景\u300c" + sceneName + "\u300d反而锁上，会把主角困在里面。"
+                : "This would lock the scene \"" + sceneName + "\" the protagonist is currently standing in.",
+          };
+        }
+      }
+
+      return { safe: true };
+    },
+    [activeStory, localizedScenes, localizedQuests, localizedStoryEvents, locale]
+  );
+
+  const reviseManuscriptBlock = useCallback(
+    (
+      blockId: string,
+      revisionInput: NarrativeRevisionInput
+    ): { success: boolean; reason?: string } => {
+      if (!activeStory || !progress) return { success: false, reason: "no-active-story" };
+      const block = progress.manuscript?.find((b) => b.id === blockId);
+      if (!block) return { success: false, reason: "block-not-found" };
+      if (block.kind === "beat") {
+        return {
+          success: false,
+          reason:
+            locale === Locale.ZH
+              ? "这类段落是情节引擎自己算出来的结果，不能改写。"
+              : "This block is the quest engine's own output and can't be revised.",
+        };
+      }
+
+      const revision: Extract<ProgressEvent, { type: "reviseNarrative" }>["revision"] =
+        revisionInput.kind === "rechoose"
+          ? {
+              kind: "rechoose",
+              characterId: revisionInput.characterId,
+              revokeFlags: revisionInput.revokeFlags,
+              setFlags: revisionInput.setFlags,
+            }
+          : revisionInput;
+
+      const progressEvent: ProgressEvent = { type: "reviseNarrative", blockId, revision };
+
+      const safety = checkRevisionSafety(
+        progressEvent as Extract<ProgressEvent, { type: "reviseNarrative" }>,
+        progress
+      );
+      if (!safety.safe) return { success: false, reason: safety.reason };
+
+      const characterName =
+        revisionInput.kind !== "reenvironment"
+          ? (localizedCharacters.find((c) => c.id === revisionInput.characterId)?.name ?? "")
+          : "";
+      const consequenceSummary = buildConsequenceSummary(revisionInput, locale, characterName);
+
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id];
+        if (!current) return prev;
+        const result = applyProgressEvent({
+          progress: current,
+          story: activeStory,
+          scenes: localizedScenes,
+          quests: localizedQuests,
+          storyEvents: localizedStoryEvents,
+          event: progressEvent,
+        });
+        const activeMember = party?.members.find((m) => m.id === party.activeMemberId);
+        let nextProgress = result.progress;
+        if (party && activeMember) {
+          const newEntries = buildPartyActivityEntries({
+            effects: result.effects,
+            activeMember,
+            quests: localizedQuests,
+            scenes: localizedScenes,
+            items: localizedItems,
+          });
+          if (newEntries.length > 0) {
+            nextProgress = {
+              ...nextProgress,
+              activityLog: [...(nextProgress.activityLog ?? []), ...newEntries],
+            };
+          }
+        }
+
+        const revisedBlocks = (nextProgress.manuscript ?? current.manuscript ?? []).map((b) =>
+          b.id === blockId
+            ? {
+                ...b,
+                revision: {
+                  at: Date.now(),
+                  kind: revisionInput.kind,
+                  byMemberId: activeMember?.id,
+                  byMemberName: activeMember?.name,
+                  previousPayload: b.payload,
+                  previousEditedText: b.editedText,
+                  consequenceSummary,
+                },
+              }
+            : b
+        );
+        const revisionBlock = composeRevisionBlock({
+          kind: revisionInput.kind,
+          consequenceSummary,
+          sceneId: currentScene?.id,
+          sceneName: currentScene?.name,
+          activeMember,
+        });
+        nextProgress = {
+          ...nextProgress,
+          manuscript: appendToManuscript(revisedBlocks, [revisionBlock], locale),
+        };
+
+        return { ...prev, [activeStory.id]: nextProgress };
+      });
+
+      return { success: true };
+    },
+    [
+      activeStory,
+      progress,
+      currentScene,
+      localizedScenes,
+      localizedQuests,
+      localizedStoryEvents,
+      localizedItems,
+      localizedCharacters,
+      party,
+      locale,
+      checkRevisionSafety,
+    ]
+  );
+
+  const undoManuscriptRevision = useCallback(
+    (blockId: string) => {
+      if (!activeStory) return;
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id];
+        const block = current?.manuscript?.find((b) => b.id === blockId);
+        if (!current || !block?.revision) return prev;
+        const restoredManuscript = current.manuscript!.map((b) =>
+          b.id === blockId
+            ? {
+                ...b,
+                payload: block.revision!.previousPayload ?? b.payload,
+                editedText: block.revision!.previousEditedText,
+                revision: undefined,
+              }
+            : b
+        );
+        return {
+          ...prev,
+          [activeStory.id]: { ...current, manuscript: restoredManuscript },
+        };
+      });
+    },
+    [activeStory]
+  );
+
   const getOrCreateSceneSession = useCallback(
     (sceneId: SceneId, characterId: CharacterId): ChatSession => {
       const key = `${sceneId}:${characterId}`;
@@ -1242,6 +1472,68 @@ export const StoryContextProvider = ({
     [activeStory, currentScene, progress, localizedCharacters, locale, party]
   );
 
+  const appendGroupChatLines = useCallback(
+    (roomId: ChatRoomId, sceneId: SceneId, messages: ChatMessage[]) => {
+      if (!activeStory) return;
+      const scene = localizedScenes.find((s) => s.id === sceneId);
+      setProgressByStoryId((prev) => {
+        const current = prev[activeStory.id];
+        if (!current) return prev;
+        const synced = new Set(current.syncedGroupLineKeys ?? []);
+        const activeMember = party?.members.find((m) => m.id === party.activeMemberId);
+        const newBlocks: NarrativeBlock[] = [];
+        const newKeys: string[] = [];
+        messages.forEach((message) => {
+          const key = "groupLine:" + roomId + ":" + message.id;
+          if (synced.has(key)) return;
+          if (message.sender === "system") {
+            newKeys.push(key);
+            return;
+          }
+          const character =
+            message.sender === "character"
+              ? charactersMock.find((c) => c.id === message.senderCharacterId)
+              : undefined;
+          const speakerName =
+            message.sender === "character"
+              ? (localizedCharacters.find((c) => c.id === character?.id)?.name ??
+                character?.name)
+              : undefined;
+          const memberForLine =
+            message.sender === "user"
+              ? party?.members.find((m) => m.id === message.senderProfileId) ?? activeMember
+              : undefined;
+          const block = composeDialogueBlock({
+            text: message.text,
+            speakerId: message.sender === "character" ? character?.id : undefined,
+            speakerName,
+            sceneId,
+            sceneName: scene?.name,
+            environment: current.environment,
+            toneHint:
+              message.sender === "character"
+                ? deriveToneHint(current.npcRelationships?.[character?.id ?? ""])
+                : undefined,
+            memberId: memberForLine?.id,
+            memberName: memberForLine?.name,
+          });
+          newBlocks.push({ ...block, at: message.createdAt });
+          newKeys.push(key);
+        });
+        if (newBlocks.length === 0 && newKeys.length === 0) return prev;
+        return {
+          ...prev,
+          [activeStory.id]: {
+            ...current,
+            manuscript: appendToManuscript(current.manuscript, newBlocks, locale),
+            syncedGroupLineKeys: [...(current.syncedGroupLineKeys ?? []), ...newKeys],
+          },
+        };
+      });
+    },
+    [activeStory, localizedScenes, localizedCharacters, locale, party]
+  );
+
   const registerSceneRoom = useCallback(
     (sceneId: SceneId, roomId: ChatRoomId) => {
       setRoomIdBySceneId((prev) => ({ ...prev, [sceneId]: roomId }));
@@ -1329,6 +1621,9 @@ export const StoryContextProvider = ({
     setManuscriptOptions,
     editManuscriptBlock,
     toggleManuscriptBlockHidden,
+    reviseManuscriptBlock,
+    undoManuscriptRevision,
+    appendGroupChatLines,
     exportSave,
     importSave,
     lastSavedAt,

@@ -6,6 +6,7 @@ import { CharacterId } from "@domain/character";
 import { evaluateCondition } from "@domain/condition";
 import { StoryEvent, StoryEventId } from "@domain/story-event";
 import { TimeOfDay, Weather } from "@domain/environment";
+import type { NarrativeBlockId, NarrativeToneHint } from "@domain/narrative";
 import { PlayerProgress, NpcRelationship } from "./player-progress";
 
 export const DEFAULT_RELATIONSHIP: NpcRelationship = {
@@ -53,7 +54,27 @@ export type ProgressEvent =
   // no quest involved. This is the real mechanism behind "picking a line of
   // dialogue changes an NPC's future attitude/content": the flag this sets
   // is read by other NPCs' reply logic and by quest available/excludedBy.
-  | { type: "makeDialogueChoice"; setFlags: string[] };
+  | { type: "makeDialogueChoice"; setFlags: string[] }
+  // A structured manuscript revision (see @domain/narrative's
+  // NarrativeRevisionInput) — the ONLY way editing the manuscript can
+  // affect real gameplay state. Deliberately a closed set of three shapes,
+  // never free text: `retone` sets an NPC's mood/affinity to a real target
+  // bucket, `rechoose` swaps one dialogue choice's flags for another
+  // (this is the one case that needs REMOVING flags, not just adding),
+  // `reenvironment` is exactly the existing setEnvironment behaviour.
+  | {
+      type: "reviseNarrative";
+      blockId: NarrativeBlockId;
+      revision:
+        | { kind: "retone"; characterId: CharacterId; tone: NarrativeToneHint }
+        | {
+            kind: "rechoose";
+            characterId: CharacterId;
+            revokeFlags: string[];
+            setFlags: string[];
+          }
+        | { kind: "reenvironment"; timeOfDay?: TimeOfDay; weather?: Weather };
+    };
 
 export type ProgressEffect =
   | {
@@ -72,7 +93,11 @@ export type ProgressEffect =
   | { type: "questExcluded"; questId: QuestId }
   | { type: "sceneUnlocked"; sceneId: SceneId }
   | { type: "itemObtained"; itemId: ItemId; count: number }
-  | { type: "storyEventFired"; eventId: StoryEventId; narration: string };
+  | { type: "storyEventFired"; eventId: StoryEventId; narration: string }
+  // A structured manuscript revision was committed — the composer turns
+  // this into a real turningPoint/beat block, so the revision itself
+  // becomes part of the story (see plan §10.3's closing point).
+  | { type: "narrativeRevised"; blockId: NarrativeBlockId; kind: "retone" | "rechoose" | "reenvironment" };
 
 export interface ProgressResult {
   progress: PlayerProgress;
@@ -452,6 +477,56 @@ export const applyProgressEvent = ({
         ...next,
         flags: Array.from(new Set([...next.flags, ...event.setFlags])),
       };
+      break;
+    }
+
+    case "reviseNarrative": {
+      const { revision } = event;
+      switch (revision.kind) {
+        case "retone": {
+          // A REAL, absolute target — not a delta like bumpRelationship uses
+          // elsewhere. Retoning to "warm" should reliably land in the warm
+          // bucket regardless of the NPC's current relationship, not nudge
+          // it by a few points and maybe miss the threshold.
+          const current = next.npcRelationships?.[revision.characterId] ?? DEFAULT_RELATIONSHIP;
+          const target: NpcRelationship =
+            revision.tone === "warm"
+              ? { ...current, affinity: Math.max(current.affinity, 40), mood: 75, lastInteractionAt: Date.now() }
+              : revision.tone === "cold"
+                ? { ...current, mood: 25, lastInteractionAt: Date.now() }
+                : { ...current, mood: 50, lastInteractionAt: Date.now() };
+          next = {
+            ...next,
+            npcRelationships: { ...next.npcRelationships, [revision.characterId]: target },
+          };
+          break;
+        }
+        case "rechoose": {
+          // The ONE place flags are ever REMOVED, not just added — required
+          // so "switch to the other branch" doesn't leave both branches'
+          // flags set at once (a self-contradictory story state).
+          const revoked = new Set(revision.revokeFlags);
+          next = {
+            ...next,
+            flags: Array.from(
+              new Set([...next.flags.filter((f) => !revoked.has(f)), ...revision.setFlags])
+            ),
+          };
+          break;
+        }
+        case "reenvironment": {
+          next = {
+            ...next,
+            environment: {
+              ...next.environment,
+              timeOfDay: revision.timeOfDay ?? next.environment.timeOfDay,
+              weather: revision.weather ?? next.environment.weather,
+            },
+          };
+          break;
+        }
+      }
+      effects.push({ type: "narrativeRevised", blockId: event.blockId, kind: revision.kind });
       break;
     }
   }

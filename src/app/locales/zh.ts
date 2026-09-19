@@ -359,6 +359,10 @@ export const zh = {
       povOf: "视角：{{name}}",
       povNarrator: "旁观叙事（默认）",
       creatorMode: "创作者控制（改写 / 隐藏 / 查看来源）",
+      revision: {
+        undo: "撤销这个修改",
+        badge: "由{{name}}改写——这个改动已体现在剧情里。",
+      },
     },
     quickAction: {
       more: "更多",

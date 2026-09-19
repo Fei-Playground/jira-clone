@@ -7,9 +7,13 @@
 import { NpcRelationship } from "@domain/player-progress";
 import { NarrativeToneHint } from "./narrative";
 
-const WARM_AFFINITY_THRESHOLD = 40;
-const WARM_MOOD_THRESHOLD = 60;
-const COLD_MOOD_THRESHOLD = 35;
+// Exported so the reverse mapping (retone — "set this NPC's tone TO warm")
+// uses the exact same numbers as this forward derivation. Two copies of
+// these thresholds drifting apart would produce the bug the plan warns
+// about: "set to warm but still renders as neutral".
+export const WARM_AFFINITY_THRESHOLD = 40;
+export const WARM_MOOD_THRESHOLD = 60;
+export const COLD_MOOD_THRESHOLD = 35;
 
 export const deriveToneHint = (relationship: NpcRelationship | undefined): NarrativeToneHint => {
   if (!relationship) return "neutral";

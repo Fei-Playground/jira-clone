@@ -232,6 +232,13 @@ const composeBlocksForEffects = (
       // renderer's includeMinorBeats option decides whether to surface
       // them; we don't fabricate a block per tick here to keep the record
       // itself lean. (Left as a documented, deliberate omission.)
+      //
+      // narrativeRevised is deliberately NOT handled here either — the
+      // caller (story.store.tsx's reviseManuscriptBlock) already has the
+      // richer context (character name, the exact consequence summary
+      // shown in the picker) and builds its own turningPoint block via
+      // composeRevisionBlock below, so the revision's OWN block reads as
+      // specific prose rather than a generic "something changed" line.
       default:
         break;
     }
@@ -335,6 +342,31 @@ const foldOldestChapter = (blocks: NarrativeBlock[], locale: Locale): NarrativeB
 
   return [...blocks.slice(0, firstBreakIdx), summaryBlock, ...blocks.slice(secondBreakIdx)];
 };
+
+// The revision itself becomes part of the story (plan §10.3's closing
+// point): committing a structured revision appends ONE more block — a
+// turningPoint that names what changed, using the exact consequence text
+// the picker already showed the user before they committed.
+export const composeRevisionBlock = (args: {
+  kind: "retone" | "rechoose" | "reenvironment";
+  consequenceSummary: string[];
+  sceneId?: SceneId;
+  sceneName?: string;
+  activeMember?: PlayerProfile;
+}): NarrativeBlock => ({
+  id: uuid(),
+  at: Date.now(),
+  kind: "turningPoint",
+  payload: {
+    kind: "turningPoint",
+    tpKind: "branchTaken",
+    text: args.consequenceSummary.join(" "),
+  },
+  provenance: { origin: "composed", templateId: `revision.${args.kind}` },
+  sceneId: args.sceneId,
+  sceneName: args.sceneName,
+  ...memberFields(args.activeMember),
+});
 
 // The one place new blocks get appended to a story's manuscript — enforces
 // MANUSCRIPT_BLOCK_LIMIT by folding the oldest chapter (never truncating

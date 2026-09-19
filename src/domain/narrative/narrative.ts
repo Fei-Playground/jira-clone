@@ -94,6 +94,10 @@ export interface NarrativeBlock {
   // manually overridden.
   hidden?: boolean;
   editedText?: string;
+  // Structured revision audit trail (see narrative.revision.ts) — set only
+  // when this block has been through reviseManuscriptBlock. Absent means
+  // untouched, or only cosmetically re-worded via editedText above.
+  revision?: import("./narrative.revision").NarrativeRevision;
 }
 
 // Hard cap so an extremely long-running story can't grow the manuscript
