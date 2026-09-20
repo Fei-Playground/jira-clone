@@ -3,6 +3,8 @@ import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import cx from "classix";
+import { TbLayoutKanban, TbTimeline } from "react-icons/tb";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
@@ -11,10 +13,15 @@ import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
+import { GanttView } from "./gantt";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
+type BoardMode = "kanban" | "gantt";
+
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const [mode, setMode] = useState<BoardMode>("kanban");
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
@@ -26,10 +33,17 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <div className="inline">
             <SelectSort />
           </div>
+          <div className="ml-4 inline">
+            <BoardModeToggle mode={mode} setMode={setMode} />
+          </div>
         </section>
-        <DndProvider backend={HTML5Backend}>
-          <Categories categories={project.categories} />
-        </DndProvider>
+        {mode === "kanban" ? (
+          <DndProvider backend={HTML5Backend}>
+            <Categories categories={project.categories} />
+          </DndProvider>
+        ) : (
+          <GanttView categories={project.categories} />
+        )}
         <Outlet />
       </div>
     </ProjectContextProvider>
@@ -38,6 +52,49 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+}
+
+const BoardModeToggle = ({
+  mode,
+  setMode,
+}: BoardModeToggleProps): JSX.Element => (
+  <div className="flex rounded bg-background-neutral p-0.5">
+    <button
+      type="button"
+      aria-label="Switch to kanban view"
+      aria-pressed={mode === "kanban"}
+      onClick={() => setMode("kanban")}
+      className={cx(
+        "flex items-center gap-1.5 rounded px-2.5 py-1.5 text-xs duration-200 ease-in-out",
+        mode === "kanban"
+          ? "bg-background-selected text-font-brand"
+          : "text-font-subtlest hover:bg-background-neutral-hovered"
+      )}
+    >
+      <TbLayoutKanban size={16} />
+      Kanban
+    </button>
+    <button
+      type="button"
+      aria-label="Switch to gantt view"
+      aria-pressed={mode === "gantt"}
+      onClick={() => setMode("gantt")}
+      className={cx(
+        "flex items-center gap-1.5 rounded px-2.5 py-1.5 text-xs duration-200 ease-in-out",
+        mode === "gantt"
+          ? "bg-background-selected text-font-brand"
+          : "text-font-subtlest hover:bg-background-neutral-hovered"
+      )}
+    >
+      <TbTimeline size={16} />
+      Gantt
+    </button>
+  </div>
+);
+
+interface BoardModeToggleProps {
+  mode: BoardMode;
+  setMode: (mode: BoardMode) => void;
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {

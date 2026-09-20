@@ -25,6 +25,8 @@ export const todoIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 15:28").valueOf(),
+    startDate: new Date("2022-01-18").valueOf(),
+    endDate: new Date("2022-01-23").valueOf(),
   },
 ];
 
@@ -41,6 +43,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    startDate: new Date("2022-01-19").valueOf(),
+    endDate: new Date("2022-01-28").valueOf(),
   },
   {
     id: "23717058-379a-447a-a215-e425a124154f",
@@ -54,6 +58,8 @@ export const inProgressIssuesMock1: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
+    startDate: new Date("2022-01-21").valueOf(),
+    endDate: new Date("2022-02-02").valueOf(),
   },
 ];
 
@@ -70,6 +76,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 10:51").valueOf(),
+    startDate: new Date("2022-01-18").valueOf(),
+    endDate: new Date("2022-01-20").valueOf(),
   },
   {
     id: "8264e3fc-dd97-4abe-9612-deee6472e5c4",
@@ -83,6 +91,8 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 02:04").valueOf(),
+    startDate: new Date("2022-01-19").valueOf(),
+    endDate: new Date("2022-01-22").valueOf(),
   },
 ];
 
@@ -100,6 +110,8 @@ export const todoIssuesMock2: Issue[] = [
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
+    startDate: new Date("2022-01-24").valueOf(),
+    endDate: new Date("2022-02-04").valueOf(),
   },
   {
     id: "6bf6a1f4-20bb-492b-8ea4-4aa18efeb062",
@@ -113,6 +125,8 @@ export const todoIssuesMock2: Issue[] = [
     categoryType: "TODO",
     createdAt,
     updatedAt: new Date("2022-01-23 14:28").valueOf(),
+    startDate: new Date("2022-02-01").valueOf(),
+    endDate: new Date("2022-02-10").valueOf(),
   },
 ];
 
@@ -128,6 +142,8 @@ export const inProgressIssuesMock2: Issue[] = [
     categoryType: "IN_PROGRESS",
     createdAt,
     updatedAt: createdAt,
+    startDate: new Date("2022-01-20").valueOf(),
+    endDate: new Date("2022-02-08").valueOf(),
   },
 ];
 

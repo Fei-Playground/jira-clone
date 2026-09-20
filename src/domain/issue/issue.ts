@@ -15,4 +15,8 @@ export interface Issue {
   priority: Priority;
   createdAt: number;
   updatedAt: number;
+  // Used by the Gantt view to size timeline bars. Optional because the
+  // database-backed issue data does not populate them yet.
+  startDate?: number;
+  endDate?: number;
 }
