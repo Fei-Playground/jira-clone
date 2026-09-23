@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useFetcher } from "react-router";
+import { v4 as uuid } from "uuid";
 import cx from "classix";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
@@ -10,16 +11,22 @@ import { formatDateTime } from "@utils/formatDateTime";
 export const ViewComment = ({
   comment,
   removeComment,
+  addReply,
+  isReply = false,
 }: ViewCommentProps): JSX.Element => {
   const { user } = useUserStore();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isReplying, setIsReplying] = useState<boolean>(false);
   const [message, setMessage] = useState<string>(comment.message);
+  const [replies, setReplies] = useState<Comment[]>(comment.replies || []);
   const fetcher = useFetcher();
 
   const isNotSelfComment = comment.user.id !== user.id;
 
   const edit = () => setIsEditing(true);
   const cancel = () => setIsEditing(false);
+  const reply = () => setIsReplying(true);
+  const cancelReply = () => setIsReplying(false);
 
   const remove = () => {
     removeComment(comment.id);
@@ -37,39 +44,71 @@ export const ViewComment = ({
     setIsEditing(false);
   };
 
+  const saveReply = (replyText: string): void => {
+    const newReply: Comment = {
+      id: "temp-" + uuid(),
+      user,
+      message: replyText,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    setReplies([...replies, newReply]);
+    setIsReplying(false);
+    if (addReply) addReply(comment.id, newReply);
+  };
+
+  const removeReply = (replyId: CommentId): void => {
+    setReplies(replies.filter((reply) => reply.id !== replyId));
+  };
+
   const idleComment = (
     <div className="font-primary-light">
       <p>{message}</p>
-      <div
-        className={cx(
-          "mt-3 text-font-subtlest",
-          isNotSelfComment ? "hidden" : "visible"
-        )}
-      >
+      <div className="mt-3 text-font-subtlest">
         <button
           onClick={edit}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className={cx(
+            "font-primary-light text-xs hover:underline",
+            isNotSelfComment ? "hidden" : "visible"
+          )}
           aria-label="Edit comment"
         >
           Edit
         </button>
-        <span className="mx-2">{"·"}</span>
+        <span
+          className={cx("mx-2", isNotSelfComment ? "hidden" : "visible")}
+        >
+          {"·"}
+        </span>
         <button
           onClick={remove}
           disabled={isNotSelfComment}
-          className="font-primary-light text-xs hover:underline"
+          className={cx(
+            "font-primary-light text-xs hover:underline",
+            isNotSelfComment ? "hidden" : "visible"
+          )}
           aria-label="Delete comment"
         >
           Delete
         </button>
+        {!isNotSelfComment && !isReply && <span className="mx-2">{"·"}</span>}
+        {!isReply && (
+          <button
+            onClick={reply}
+            className="font-primary-light text-xs hover:underline"
+            aria-label="Reply to comment"
+          >
+            Reply
+          </button>
+        )}
       </div>
     </div>
   );
 
   return (
     <div className="flex gap-6">
-      <UserAvatar {...comment.user} />
+      <UserAvatar {...comment.user} size={isReply ? 28 : 36} />
       <div style={{ width: "100%" }}>
         <p className="mr-4 inline-block font-primary-bold">
           {comment.user.name}
@@ -99,6 +138,33 @@ export const ViewComment = ({
             idleComment
           )}
         </div>
+        {isReplying && (
+          <div className="mt-3 flex items-start gap-3">
+            <UserAvatar {...user} size={28} />
+            <EditBox
+              defaultMessage=""
+              save={saveReply}
+              cancel={cancelReply}
+              placeholder="Add a reply..."
+              saveLabel="Reply"
+              compact
+              autofocus
+            />
+          </div>
+        )}
+        {replies.length > 0 && (
+          <ul className="mt-4 space-y-4 border-l border-border pl-4">
+            {replies.map((replyComment) => (
+              <li key={replyComment.id}>
+                <ViewComment
+                  comment={replyComment}
+                  removeComment={removeReply}
+                  isReply
+                />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
@@ -114,4 +180,6 @@ const commentIsEdited = (comment: Comment): boolean => {
 interface ViewCommentProps {
   comment: Comment;
   removeComment: (commentId: CommentId) => void;
+  addReply?: (parentId: CommentId, reply: Comment) => void;
+  isReply?: boolean;
 }

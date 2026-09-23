@@ -9,10 +9,13 @@ export const EditBox = ({
   autofocus,
   save,
   cancel,
+  placeholder = "Add your comment...",
+  compact = false,
+  saveLabel = "Save",
 }: EditBoxProps): JSX.Element => {
   const [message, setMessage] = useState<string>(defaultMessage);
   const [initError, setInitError] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(Boolean(autofocus));
 
   const messageIsValid = (): boolean => {
     return message.length > 0 && !textAreOnlySpaces(message);
@@ -40,9 +43,7 @@ export const EditBox = ({
   const onFocus = () => setIsEditing(true);
 
   const isError = initError && !messageIsValid();
-  const placeholder = isError
-    ? "Message cannot be empty"
-    : "Add your comment...";
+  const activePlaceholder = isError ? "Message cannot be empty" : placeholder;
 
   return (
     <div className="w-full">
@@ -50,11 +51,12 @@ export const EditBox = ({
         name="comment"
         value={message}
         setValue={setMessage}
-        placeholder={placeholder}
+        placeholder={activePlaceholder}
         onFocus={onFocus}
         autofocus={autofocus}
         textareaClassName={cx(
-          "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
+          "bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
+          compact ? "min-h-[40px]" : "min-h-[80px]",
           isError &&
             "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
         )}
@@ -67,16 +69,16 @@ export const EditBox = ({
       >
         <Button
           type="button"
-          className="px-4 py-2.5"
+          className={compact ? "px-3 py-1.5 text-xs" : "px-4 py-2.5"}
           onClick={onSave}
-          aria-label="Save comment"
+          aria-label={`${saveLabel} comment`}
         >
-          Save
+          {saveLabel}
         </Button>
         <Button
           color="neutral"
           variant="text"
-          className="px-4 py-2.5"
+          className={compact ? "px-3 py-1.5 text-xs" : "px-4 py-2.5"}
           onClick={onCancel}
           aria-label="Cancel comment"
         >
@@ -92,4 +94,7 @@ interface EditBoxProps {
   autofocus?: boolean;
   save: (commentText: string) => void;
   cancel?: () => void;
+  placeholder?: string;
+  compact?: boolean;
+  saveLabel?: string;
 }

@@ -11,6 +11,15 @@ export const commentMock1: Comment = {
     "Depending on the user, some features are restricted. For example, only the reporter of an issue can edit the title and description.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "3a5f2f0e-8b64-4d2e-9b8f-2a1e6f5c9a11",
+      user: usersMock[2], // Buzz Lightyear
+      message: "Good to know, thanks for clarifying!",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock2: Comment = {
@@ -37,6 +46,22 @@ export const commentMock4: Comment = {
     "By the way, the 404 error will be triggered if you modify the URL to any non existing path.",
   createdAt,
   updatedAt,
+  replies: [
+    {
+      id: "7c9e4b3a-1d5f-4a8b-9c2e-6f3d8a2b5c40",
+      user: usersMock[6], // Ms. Potato
+      message: "Noted, I'll keep an eye on that when testing routes.",
+      createdAt,
+      updatedAt,
+    },
+    {
+      id: "0e2a7d1c-4f6b-4e9a-8d3c-1b5e9f7a2c60",
+      user: usersMock[1], // Woody
+      message: "Same here, ran into that on my first try!",
+      createdAt,
+      updatedAt,
+    },
+  ],
 };
 
 export const commentMock5: Comment = {
