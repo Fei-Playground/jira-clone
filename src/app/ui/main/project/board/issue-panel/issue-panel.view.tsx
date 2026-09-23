@@ -92,11 +92,17 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   };
 
   const removeComment = (commentId: CommentId): void => {
+    // A comment takes its replies with it, so no reply is left hanging.
     const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
+      (comment) => comment.id !== commentId && comment.parentId !== commentId
     );
     setComments(updatedComments);
   };
+
+  const topLevelComments = comments.filter((comment) => !comment.parentId);
+
+  const repliesOf = (commentId: CommentId): Comment[] =>
+    comments.filter((comment) => comment.parentId === commentId);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -173,10 +179,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
+                        {topLevelComments.map((comment) => (
                           <li key={comment.id}>
                             <ViewComment
                               comment={comment}
+                              replies={repliesOf(comment.id)}
+                              addComment={addComment}
                               removeComment={removeComment}
                             />
                           </li>
