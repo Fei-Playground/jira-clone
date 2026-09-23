@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { priorityHigh, priorityLow } from "@domain/priority";
 import { withRemixStub } from "@app/stories/utils";
 import { IssueCardContent } from "./issue-card";
 
@@ -21,10 +22,10 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "text",
       },
     },
-    priorityId: {
-      defaultValue: "high",
+    priority: {
+      defaultValue: priorityHigh,
       control: {
-        type: "text",
+        type: "object",
       },
     },
     idPrefix: {
@@ -61,7 +62,7 @@ export const Default: Story = {
           key={index}
           link={args?.link || "https://google.com"}
           name={args?.name || "Issue name"}
-          priorityId={args?.priorityId || "low"}
+          priority={args?.priority || priorityLow}
           idPrefix={args?.idPrefix || "1234"}
           isSubmitting={args?.isSubmitting || false}
         />
@@ -74,7 +75,7 @@ export const Standard: Story = {
   args: {
     link: "https://google.com",
     name: "Issue 1",
-    priorityId: "high",
+    priority: priorityHigh,
     idPrefix: "1234",
     isSubmitting: false,
   },
@@ -84,7 +85,7 @@ export const LongName: Story = {
   args: {
     link: "https://google.com",
     name: "This is a very long issue name that should be truncated",
-    priorityId: "high",
+    priority: priorityHigh,
     idPrefix: "1234",
     isSubmitting: false,
   },
@@ -94,7 +95,7 @@ export const Submitting: Story = {
   args: {
     link: "https://google.com",
     name: "Submitting issue",
-    priorityId: "low",
+    priority: priorityLow,
     idPrefix: "1234",
     isSubmitting: true,
   },
