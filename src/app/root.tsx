@@ -85,6 +85,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({ theme, preference });
 };
 
+// Renders the root HTML document shell for every route, wrapped in the theme provider.
 export default function AppWithProviders() {
   const { theme, preference } = useLoaderData<LoaderData>();
   return (
