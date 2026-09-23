@@ -47,3 +47,12 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+export const commentMock6: Comment = {
+  id: "a5f2e611-6b8d-4c2a-9e3f-1d7b6c4a9e02",
+  user: usersMock[1], // Woody
+  message: "Good catch, thanks for pointing that out!",
+  createdAt,
+  updatedAt,
+  parentCommentId: commentMock4.id,
+};

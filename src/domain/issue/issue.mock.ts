@@ -5,6 +5,7 @@ import {
   commentMock3,
   commentMock4,
   commentMock5,
+  commentMock6,
 } from "@domain/comment";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
 import { Issue } from "./issue";
@@ -20,7 +21,7 @@ export const todoIssuesMock1: Issue[] = [
       'There are two sections on the sidebar that will intentionally throw an error. The section "Server error" will trigger a 500 error response, while "Not found" returns a 404 error. You can check the status response on the browser network tab and see how it is handled on the UI.',
     reporter: userMock1,
     asignee: userMock1,
-    comments: [commentMock4, commentMock5],
+    comments: [commentMock4, commentMock6, commentMock5],
     priority: priorityMedium,
     categoryType: "DONE",
     createdAt,

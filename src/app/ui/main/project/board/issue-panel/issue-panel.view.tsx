@@ -173,14 +173,37 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <CreateComment addComment={addComment} />
                       </div>
                       <ul className="mt-8 space-y-6">
-                        {comments.map((comment) => (
-                          <li key={comment.id}>
-                            <ViewComment
-                              comment={comment}
-                              removeComment={removeComment}
-                            />
-                          </li>
-                        ))}
+                        {comments
+                          .filter((comment) => !comment.parentCommentId)
+                          .map((comment) => {
+                            const replies = comments.filter(
+                              (reply) => reply.parentCommentId === comment.id
+                            );
+
+                            return (
+                              <li key={comment.id}>
+                                <ViewComment
+                                  comment={comment}
+                                  removeComment={removeComment}
+                                  addComment={addComment}
+                                />
+                                {replies.length > 0 && (
+                                  <ul className="ml-[52px] mt-4 space-y-4">
+                                    {replies.map((reply) => (
+                                      <li key={reply.id}>
+                                        <ViewComment
+                                          comment={reply}
+                                          removeComment={removeComment}
+                                          addComment={addComment}
+                                          isReply
+                                        />
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </li>
+                            );
+                          })}
                       </ul>
                     </div>
                   </section>
