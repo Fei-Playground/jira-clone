@@ -206,7 +206,7 @@ const CopyButton = ({ colorValue }: CopyButtonProps) => {
         }, 1500);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

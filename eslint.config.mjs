@@ -41,6 +41,7 @@ export default [
       "react/prop-types": "off",
       "@typescript-eslint/consistent-type-imports": "off",
       "@typescript-eslint/no-explicit-any": "warn",
+      "no-console": ["error", { allow: ["warn", "error", "info"] }],
     },
     settings: {
       react: { version: "detect" },

@@ -141,7 +141,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (_action === "delete") {
-    console.log("DELETING ISSUE");
     await deleteIssue(id);
     emitter.emit(EVENTS.ISSUE_DELETED, Date.now());
   }
