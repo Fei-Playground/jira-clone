@@ -18,7 +18,7 @@ export const BoardView = ({ project }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
-        <section className="flex items-center">
+        <section className="flex flex-wrap items-center gap-y-2">
           <Search />
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
@@ -88,7 +88,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
         Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
       </span>
-      <div className="flex h-full gap-3">
+      <div className="flex h-full gap-3 overflow-x-auto">
         {categories.map((category) => (
           <CategoryColumn
             key={category.id}

@@ -149,7 +149,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                 }
               />
               <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
-                <div className="grid grid-cols-5 gap-16">
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-5 sm:gap-16">
                   <section className="col-span-3">
                     <div className="my-5 -ml-3 mb-6">
                       <Dialog.Title asChild>
@@ -218,11 +218,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                     </div>
                   </section>
                 </div>
-                <div className="mt-6 grid grid-cols-3 items-end">
-                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                <div className="mt-6 grid grid-cols-1 items-center gap-2 sm:grid-cols-3 sm:items-end">
+                  <span className="order-2 font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:order-none">
                     Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
                   </span>
-                  <div className="flex justify-center">
+                  <div className="order-1 flex justify-center sm:order-none">
                     <Button
                       type="submit"
                       size="lg"
@@ -240,7 +240,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       )}
                     </Button>
                   </div>
-                  <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                  <span className="order-3 justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:order-none">
                     Press <Kbd>Esc</Kbd> to close
                   </span>
                 </div>

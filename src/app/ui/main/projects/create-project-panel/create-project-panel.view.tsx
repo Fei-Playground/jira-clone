@@ -149,11 +149,11 @@ export const CreateProjectPanelView = ({
                     ))}
                   </ul>
                 </div>
-                <div className="mt-6 grid grid-cols-3 items-end justify-center">
-                  <span className="font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                <div className="mt-6 grid grid-cols-1 items-center justify-center gap-2 sm:grid-cols-3 sm:items-end">
+                  <span className="order-2 font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:order-none">
                     Press <Kbd>Shift</Kbd> + <Kbd>S</Kbd> to accept
                   </span>
-                  <div className="flex justify-center">
+                  <div className="order-1 flex justify-center sm:order-none">
                     <Button
                       color="primary"
                       type="submit"
@@ -173,7 +173,7 @@ export const CreateProjectPanelView = ({
                       )}
                     </Button>
                   </div>
-                  <span className="justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80">
+                  <span className="order-3 justify-self-end font-primary-light text-2xs text-font-subtlest text-opacity-80 sm:order-none">
                     Press <Kbd>Esc</Kbd> to close
                   </span>
                 </div>

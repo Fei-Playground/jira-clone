@@ -6,21 +6,38 @@ import { RiArrowDropLeftLine } from "react-icons/ri";
 import { ImStatsDots } from "react-icons/im";
 import { BsListNested, BsCloudSlash } from "react-icons/bs";
 import { TbError404 } from "react-icons/tb";
+import { useMediaQuery } from "@app/hooks/useMediaQuery";
 
 export const Sidebar = (props: Props): JSX.Element => {
   const { projectName, projectDescription, projectImage } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  // Sidebar starts collapsed on narrow screens and open on wider ones. The
+  // media query is read via useSyncExternalStore (see useMediaQuery) so its
+  // result is safe to derive during render, with `false` as the SSR default
+  // — this route is SSR'd and the server has no window to check against.
+  const isNarrowScreen = useMediaQuery("(max-width: 640px)");
+  const [userToggledOpen, setUserToggledOpen] = useState<boolean | null>(null);
+  const isOpen = userToggledOpen ?? !isNarrowScreen;
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    setUserToggledOpen(!isOpen);
   };
 
   return (
     <aside className="relative flex">
+      {/* Backdrop scrim behind the mobile overlay panel, so it's unambiguous
+          which content is behind the sidebar vs. clickable in front of it. */}
+      {isOpen && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 z-10 bg-black/40 sm:hidden"
+          aria-hidden="true"
+        />
+      )}
       <div
         className={cx(
-          "flex h-full max-w-0 flex-col whitespace-nowrap bg-elevation-surface-sunken opacity-0 duration-300 ease-out",
-          isOpen && "w-[240px] max-w-[240px] whitespace-normal opacity-100"
+          "absolute z-20 flex h-full max-w-0 flex-col overflow-hidden whitespace-nowrap bg-elevation-surface-sunken opacity-0 shadow-overlay duration-300 ease-out sm:relative sm:z-auto sm:shadow-none",
+          isOpen &&
+            "w-[240px] max-w-[240px] whitespace-normal border-r border-border-bold opacity-100 sm:border-r-0"
         )}
       >
         <section className="flex w-full items-start px-5 py-6">
@@ -53,7 +70,10 @@ export const Sidebar = (props: Props): JSX.Element => {
         </section>
       </div>
       <div
-        className={cx("r-0 relative z-10 h-full w-3", isOpen ? "ml-0" : "ml-7")}
+        className={cx(
+          "r-0 absolute z-30 h-full w-3 sm:relative",
+          isOpen ? "left-[240px] ml-0 sm:left-0" : "left-0 sm:ml-7"
+        )}
       >
         <div className="absolute -left-[3px] h-full w-[3px] bg-gradient-to-l from-[rgba(0,0,0,0.2)] to-[rgba(0,0,0,0.0)] opacity-50" />
         <button
