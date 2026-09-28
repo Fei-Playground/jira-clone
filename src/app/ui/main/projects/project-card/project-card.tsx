@@ -1,16 +1,11 @@
 import { Link, Form } from "react-router";
 import { MdDeleteOutline } from "react-icons/md";
 import cx from "classix";
-import { ProjectId, ProjectSummary } from "@domain/project";
-import { projectsMock } from "@domain/project/project.mock";
+import { ProjectSummary, defaultProjectIds } from "@domain/project";
 import * as AlertDialog from "@app/components/alert-dialog";
 
-const defaultProjectsIds: ProjectId[] = projectsMock.map(
-  (projectMock) => projectMock.id
-);
-
 export const ProjectCard = ({ project }: Props): JSX.Element => {
-  const isDefaultProject = defaultProjectsIds.includes(project.id);
+  const isDefaultProject = defaultProjectIds.includes(project.id);
 
   return (
     <div className="w-[400px]">
