@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useFetcher } from "react-router";
 import cx from "classix";
-import { Comment, CommentId } from "@domain/comment";
+import { Comment, CommentId } from "@domain/comment/comment";
 import { useUserStore } from "@app/store/user.store";
-import { UserAvatar } from "@app/components/user-avatar";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
 import { EditBox } from "./edit-box";
 import { formatDateTime } from "@utils/formatDateTime";
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { User, UserId } from "@domain/user";
-import { useProjectStore } from "@app/ui/main/project";
-import { UserAvatar } from "@app/components/user-avatar";
-import * as Select from "@app/components/select";
+import { User, UserId } from "@domain/user/user";
+import { useProjectStore } from "@app/ui/main/project/project.store";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
+import * as Select from "@app/components/select/select";
 
 export const SelectAsignee = ({ initAsignee }: Props): JSX.Element => {
   const projectStore = useProjectStore();

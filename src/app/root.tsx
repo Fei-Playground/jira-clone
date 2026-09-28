@@ -21,9 +21,9 @@ import {
 } from "@app/store/theme.store";
 import { formatTags, formatProperties } from "@utils/meta";
 import { getThemeSession } from "./session-storage/theme-storage.server";
-import { Toast } from "./components/toast";
-import { Error404 } from "./components/error-404";
-import { Error500 } from "./components/error-500";
+import { Toast } from "./components/toast/toast";
+import { Error404 } from "./components/error-404/error-404";
+import { Error500 } from "./components/error-500/error-500";
 import styles from "./styles/app-compiled.css?url";
 import fonts from "./styles/fonts.css?url";
 import fuck from "react-toastify/dist/ReactToastify.css?url";

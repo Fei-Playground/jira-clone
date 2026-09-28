@@ -1,8 +1,8 @@
 import { useState } from "react";
 import cx from "classix";
-import { CategoryId, CategoryType } from "@domain/category";
-import { useProjectStore } from "@app/ui/main/project";
-import * as Select from "@app/components/select";
+import { CategoryId, CategoryType } from "@domain/category/category";
+import { useProjectStore } from "@app/ui/main/project/project.store";
+import * as Select from "@app/components/select/select";
 
 export const SelectStatus = ({ initStatus }: Props): JSX.Element => {
   const projectStore = useProjectStore();

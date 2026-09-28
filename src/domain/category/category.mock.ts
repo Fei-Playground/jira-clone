@@ -1,4 +1,4 @@
-import { Category, categoryTypes, categoryTypeDict } from "@domain/category";
+import { Category, categoryTypes, categoryTypeDict } from "@domain/category/category";
 import {
   todoIssuesMock1,
   inProgressIssuesMock1,

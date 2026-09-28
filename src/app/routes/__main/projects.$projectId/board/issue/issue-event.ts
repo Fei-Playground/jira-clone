@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 import { eventStream } from "remix-utils/sse/server";
-import { EVENTS } from "@app/events";
+import { EVENTS } from "@app/events/events";
 import { emitter } from "@app/events/emitter.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {

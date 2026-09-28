@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
-import { Comment } from "@domain/comment";
+import { Comment } from "@domain/comment/comment";
 import { useUserStore } from "@app/store/user.store";
-import { UserAvatar } from "@app/components/user-avatar";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
 import { EditBox } from "./edit-box";
 
 export const CreateComment = ({

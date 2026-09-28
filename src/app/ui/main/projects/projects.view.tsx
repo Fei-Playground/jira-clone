@@ -1,8 +1,8 @@
 import { Link, Outlet } from "react-router";
 import { AiOutlinePlus } from "react-icons/ai";
-import { ProjectSummary } from "@domain/project";
-import { Button } from "@app/components/button";
-import { ProjectCard } from "./project-card";
+import { ProjectSummary } from "@domain/project/project";
+import { Button } from "@app/components/button/button";
+import { ProjectCard } from "./project-card/project-card";
 
 export const ProjectsView = ({
   projectsSummary,

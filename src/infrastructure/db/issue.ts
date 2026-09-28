@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
-import { UserId } from "@domain/user";
-import { CategoryType, CategoryId } from "@domain/category";
-import { IssueId, Issue } from "@domain/issue";
-import { Priority, PriorityId } from "@domain/priority";
-import { Comment } from "@domain/comment";
+import { UserId } from "@domain/user/user";
+import { CategoryType, CategoryId } from "@domain/category/category";
+import { IssueId, Issue } from "@domain/issue/issue";
+import { Priority, PriorityId } from "@domain/priority/priority";
+import { Comment } from "@domain/comment/comment";
 import { dnull } from "src/utils/dnull";
 import { db } from "./db.server";
 

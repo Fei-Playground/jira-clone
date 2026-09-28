@@ -1,4 +1,4 @@
-import { Issue } from "@domain/issue";
+import { Issue } from "@domain/issue/issue";
 import { formatDateTime } from "@utils/formatDateTime";
 
 export const CreatedUpdatedAt = ({ issue }: Props): JSX.Element => {

@@ -3,16 +3,16 @@ import { Outlet, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Project } from "@domain/project";
-import { Category } from "@domain/category";
-import { IssueId } from "@domain/issue";
+import { Project } from "@domain/project/project";
+import { Category } from "@domain/category/category";
+import { IssueId } from "@domain/issue/issue";
 import { Search } from "@app/ui/main/project/board/search";
-import { Kbd } from "@app/components/kbd-placeholder";
+import { Kbd } from "@app/components/kbd-placeholder/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
-import { CategoryColumn } from "./category-column";
+import { CategoryColumn } from "./category-column/category-column";
 import { ProjectContextProvider } from "../project.store";
-import { EVENTS } from "@app/events";
+import { EVENTS } from "@app/events/events";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
   return (

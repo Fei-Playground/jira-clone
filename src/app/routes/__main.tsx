@@ -1,10 +1,10 @@
 import type { LoaderFunction } from "react-router";
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
-import { User } from "@domain/user";
+import { User } from "@domain/user/user";
 import { getUserSession } from "@app/session-storage/user-storage.server";
 import { getUser } from "@infrastructure/db/user";
-import { MainLayout } from "@app/ui/main";
+import { MainLayout } from "@app/ui/main/main.layout";
 
 type LoaderData = {
   user: User;

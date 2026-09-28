@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { User } from "@domain/user";
-import { UserAvatar } from "@app/components/user-avatar";
-import { ScrollArea } from "@app/components/scroll-area";
+import { User } from "@domain/user/user";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
+import { ScrollArea } from "@app/components/scroll-area/scroll-area";
 
 const AVATAR_SIZE = 40;
 const MAX_DISPLAY_USERS = 4;

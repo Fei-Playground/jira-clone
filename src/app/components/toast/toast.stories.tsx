@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { toast } from "react-toastify";
 import { Theme } from "@app/store/theme.store";
-import { Button } from "../button";
+import { Button } from "../button/button";
 import { Toast } from "./toast";
 import "react-toastify/dist/ReactToastify.css";
 

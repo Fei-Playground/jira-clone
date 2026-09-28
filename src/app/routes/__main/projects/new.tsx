@@ -5,8 +5,12 @@ import type {
 } from "react-router";
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
-import { User, UserId } from "@domain/user";
-import { Category, categoryTypes, categoryTypeDict } from "@domain/category";
+import { User, UserId } from "@domain/user/user";
+import {
+  Category,
+  categoryTypes,
+  categoryTypeDict,
+} from "@domain/category/category";
 import { getUsers } from "@infrastructure/db/user";
 import { createProject } from "@infrastructure/db/project";
 import { CreateProjectPanelView } from "@app/ui/main/projects/create-project-panel/create-project-panel.view";

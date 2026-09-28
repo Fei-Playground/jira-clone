@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router";
-import { Sidebar } from "@app/ui/main/project/sidebar";
+import { Sidebar } from "@app/ui/main/project/sidebar/sidebar";
 
 const sectionTitles: Record<string, string> = {
   board: "Board",

@@ -1,8 +1,8 @@
 import { Link, Form } from "react-router";
 import { MdDeleteOutline } from "react-icons/md";
 import cx from "classix";
-import { ProjectSummary, defaultProjectIds } from "@domain/project";
-import * as AlertDialog from "@app/components/alert-dialog";
+import { ProjectSummary, defaultProjectIds } from "@domain/project/project";
+import * as AlertDialog from "@app/components/alert-dialog/alert-dialog";
 
 export const ProjectCard = ({ project }: Props): JSX.Element => {
   const isDefaultProject = defaultProjectIds.includes(project.id);

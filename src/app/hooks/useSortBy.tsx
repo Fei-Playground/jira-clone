@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { isValidSort } from "@domain/filter";
+import { isValidSort } from "@domain/filter/filter";
 
 export const useSortBy = (): string | null => {
   const [searchParams] = useSearchParams();

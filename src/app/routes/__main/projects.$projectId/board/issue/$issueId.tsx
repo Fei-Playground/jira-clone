@@ -8,13 +8,13 @@ import { useLoaderData, useLocation, useNavigate } from "react-router";
 import invariant from "tiny-invariant";
 import cx from "classix";
 import * as Dialog from "@radix-ui/react-dialog";
-import { UserId } from "@domain/user";
-import { ProjectId } from "@domain/project";
-import { CategoryId } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
-import { Comment, CommentId } from "@domain/comment";
-import { PriorityId } from "@domain/priority";
-import { isValidSort } from "@domain/filter";
+import { UserId } from "@domain/user/user";
+import { ProjectId } from "@domain/project/project";
+import { CategoryId } from "@domain/category/category";
+import { Issue, IssueId } from "@domain/issue/issue";
+import { Comment, CommentId } from "@domain/comment/comment";
+import { PriorityId } from "@domain/priority/priority";
+import { isValidSort } from "@domain/filter/filter";
 import {
   getIssue,
   updateIssue,
@@ -22,10 +22,10 @@ import {
   UpdateIssueInputData,
 } from "@infrastructure/db/issue";
 import { deleteComment } from "@infrastructure/db/comment";
-import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
-import { Error404 } from "@app/components/error-404";
+import { IssuePanel } from "@app/ui/main/project/board/issue-panel/issue-panel.view";
+import { Error404 } from "@app/components/error-404/error-404";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
-import { EVENTS } from "@app/events";
+import { EVENTS } from "@app/events/events";
 import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
 

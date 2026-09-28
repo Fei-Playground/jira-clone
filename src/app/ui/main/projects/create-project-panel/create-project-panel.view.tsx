@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Form, useNavigate, useFetcher, useActionData } from "react-router";
-import * as Dialog from "@app/components/dialog";
+import * as Dialog from "@app/components/dialog/dialog";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import cx from "classix";
 import { BsCheckLg } from "react-icons/bs";
-import { User } from "@domain/user";
-import { Project } from "@domain/project";
+import { User } from "@domain/user/user";
+import { Project } from "@domain/project/project";
 import { ActionData as ProjectActionData } from "@app/routes/__main/projects/new";
 import { useUserStore } from "@app/store/user.store";
-import { UserAvatar } from "@app/components/user-avatar";
-import { Button } from "@app/components/button";
-import { Title } from "@app/components/title";
-import { Description } from "@app/components/description";
-import { Kbd } from "@app/components/kbd-placeholder";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
+import { Button } from "@app/components/button/button";
+import { Title } from "@app/components/title/title";
+import { Description } from "@app/components/description/description";
+import { Kbd } from "@app/components/kbd-placeholder/kbd-placeholder";
 import { CreateProjectPanelHeader } from "./create-project-panel-header";
 
 export const CreateProjectPanelView = ({

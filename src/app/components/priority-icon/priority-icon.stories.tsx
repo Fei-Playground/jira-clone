@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { PriorityId } from "@domain/priority";
+import { PriorityId } from "@domain/priority/priority";
 import { PriorityIcon } from "./priority-icon";
 
 const meta: Meta<typeof PriorityIcon> = {

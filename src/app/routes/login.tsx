@@ -5,10 +5,10 @@ import type {
 } from "react-router";
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
-import { User } from "@domain/user";
+import { User } from "@domain/user/user";
 import { getUsers } from "@infrastructure/db/user";
-import { getUserSession } from "@app/session-storage";
-import { LoginView } from "@app/ui/login";
+import { getUserSession } from "@app/session-storage/user-storage.server";
+import { LoginView } from "@app/ui/login/login.view";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {

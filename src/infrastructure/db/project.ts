@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
 
-import { UserId } from "@domain/user";
-import { Project, ProjectSummary, ProjectId } from "@domain/project";
-import { Category, CategoryType } from "@domain/category";
-import { Priority } from "@domain/priority";
-import { Sort } from "@domain/filter";
+import { UserId } from "@domain/user/user";
+import { Project, ProjectSummary, ProjectId } from "@domain/project/project";
+import { Category, CategoryType } from "@domain/category/category";
+import { Priority } from "@domain/priority/priority";
+import { Sort } from "@domain/filter/filter";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
 

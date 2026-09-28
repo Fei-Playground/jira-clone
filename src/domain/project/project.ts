@@ -1,5 +1,5 @@
-import { User } from "@domain/user";
-import { Category } from "@domain/category";
+import { User } from "@domain/user/user";
+import { Category } from "@domain/category/category";
 
 export type ProjectId = string;
 

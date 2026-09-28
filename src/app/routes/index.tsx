@@ -1,5 +1,5 @@
 import { LoaderFunction, redirect } from "react-router";
-import { Error404 } from "@app/components/error-404";
+import { Error404 } from "@app/components/error-404/error-404";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);

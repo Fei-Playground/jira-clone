@@ -1,6 +1,6 @@
 import * as Avatar from "@radix-ui/react-avatar";
-import { User, getRandomPastelColor } from "@domain/user";
-import { Tooltip } from "@app/components/tooltip";
+import { User, getRandomPastelColor } from "@domain/user/user";
+import { Tooltip } from "@app/components/tooltip/tooltip";
 
 export const UserAvatar = ({
   name,

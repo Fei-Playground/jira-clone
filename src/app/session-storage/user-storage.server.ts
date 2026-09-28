@@ -1,5 +1,5 @@
 import { createCookieSessionStorage } from "react-router";
-import { UserId } from "@domain/user";
+import { UserId } from "@domain/user/user";
 import { SESSION_SECRET } from "./shared";
 
 const _30daysInSeconds = 60 * 60 * 24 * 30;

@@ -3,7 +3,7 @@ import * as Select from "@radix-ui/react-select";
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import { HiFlag } from "react-icons/hi";
 import { BsClockHistory } from "react-icons/bs";
-import { Sort, sortList, DEFAULT_SORT } from "@domain/filter";
+import { Sort, sortList, DEFAULT_SORT } from "@domain/filter/filter";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export const SelectSort = (): JSX.Element => {

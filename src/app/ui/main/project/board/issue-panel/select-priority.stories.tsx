@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { PriorityId } from "@domain/priority";
+import { PriorityId } from "@domain/priority/priority";
 import {
   priorityLow,
   priorityMedium,
