@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { projectMock1 } from "@domain/project";
+import { projectMock1 } from "@domain/project/project.mock";
 import { withRemixStub } from "@app/stories/utils";
 import { Sidebar } from "./sidebar";
 

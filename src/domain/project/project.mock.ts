@@ -1,6 +1,6 @@
 import { Project } from "./project";
-import { usersMock } from "@domain/user";
-import { categoriesMock1, categoriesMock2 } from "@domain/category";
+import { usersMock } from "@domain/user/user.mock";
+import { categoriesMock1, categoriesMock2 } from "@domain/category/category.mock";
 
 export const projectMock1: Project = {
   id: "jira-clone",

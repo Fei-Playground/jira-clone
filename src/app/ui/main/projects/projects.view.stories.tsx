@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
-import { projectsMock } from "@domain/project";
+import { projectsMock } from "@domain/project/project.mock";
 import { ProjectsView } from "./projects.view";
 
 const meta: Meta<typeof ProjectsView> = {

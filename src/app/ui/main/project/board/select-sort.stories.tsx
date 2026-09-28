@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withRemixStub } from "@app/stories/utils";
-import { projectMock1 } from "@domain/project";
+import { projectMock1 } from "@domain/project/project.mock";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { SelectSort } from "./select-sort";
 

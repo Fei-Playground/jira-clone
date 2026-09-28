@@ -1,12 +1,12 @@
-import { userMock1, userMock2, usersMock } from "@domain/user";
+import { userMock1, userMock2, usersMock } from "@domain/user/user.mock";
 import {
   commentMock1,
   commentMock2,
   commentMock3,
   commentMock4,
   commentMock5,
-} from "@domain/comment";
-import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
+} from "@domain/comment/comment.mock";
+import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority/priority.mock";
 import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();

@@ -112,6 +112,10 @@ const App = (): JSX.Element => {
       ? Theme.DARK
       : Theme.LIGHT;
 
+    // Session already matches the system theme: posting again would only
+    // trigger a needless revalidation of every loader on each page load.
+    if (sessionTheme === systemTheme) return;
+
     fetcher.submit(
       { theme: systemTheme, preference: Preference.SYSTEM },
       { action: "action/set-theme", method: "post" }

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { PriorityId, prioritiesMock } from "@domain/priority";
+import { PriorityId } from "@domain/priority";
+import { prioritiesMock } from "@domain/priority/priority.mock";
 import { PriorityIcon } from "@app/components/priority-icon";
 import * as Select from "@app/components/select";
 

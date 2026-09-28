@@ -1,7 +1,8 @@
 import { Link, Form } from "react-router";
 import { MdDeleteOutline } from "react-icons/md";
 import cx from "classix";
-import { ProjectId, ProjectSummary, projectsMock } from "@domain/project";
+import { ProjectId, ProjectSummary } from "@domain/project";
+import { projectsMock } from "@domain/project/project.mock";
 import * as AlertDialog from "@app/components/alert-dialog";
 
 const defaultProjectsIds: ProjectId[] = projectsMock.map(

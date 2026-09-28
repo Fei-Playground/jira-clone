@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form } from "react-router";
-import { User, UserId, userMock1 } from "@domain/user";
+import { User, UserId } from "@domain/user";
+import { userMock1 } from "@domain/user/user.mock";
 import { Button } from "@app/components/button";
 import { UserAvatar } from "@app/components/user-avatar";
 import * as Select from "@app/components/select";

@@ -5,11 +5,14 @@ import {
   Issue as IssueDB,
   Priority as PriorityDB,
 } from "@prisma/client";
-import { User, usersMock, getRandomPastelColor } from "@domain/user";
-import { Project, ProjectId, projectsMock } from "@domain/project";
+import { User, getRandomPastelColor } from "@domain/user";
+import { usersMock } from "@domain/user/user.mock";
+import { Project, ProjectId } from "@domain/project";
+import { projectsMock } from "@domain/project/project.mock";
 import { Category, CategoryId } from "@domain/category";
 import { Issue } from "@domain/issue";
-import { Priority, prioritiesMock } from "@domain/priority";
+import { Priority } from "@domain/priority";
+import { prioritiesMock } from "@domain/priority/priority.mock";
 import { db } from "./db.server";
 
 // Leaving the update empty will not update the record if it already exists

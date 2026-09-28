@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { projectMock1 } from "@domain/project";
+import { projectMock1 } from "@domain/project/project.mock";
 import { CategoryType } from "@domain/category";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { SelectStatus } from "./select-status";

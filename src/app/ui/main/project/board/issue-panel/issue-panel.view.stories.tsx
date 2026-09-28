@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
-import { projectMock1 } from "@domain/project";
-import { todoIssuesMock1 } from "@domain/issue";
+import { projectMock1 } from "@domain/project/project.mock";
+import { todoIssuesMock1 } from "@domain/issue/issue.mock";
 import { ProjectContextProvider } from "@app/ui/main/project";
 import { IssuePanel } from "./issue-panel.view";
 import "react-toastify/dist/ReactToastify.css";

@@ -11,7 +11,8 @@ import {
 import * as Dialog from "@app/components/dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
-import { Issue, defaultIssuesIds } from "@domain/issue";
+import { Issue } from "@domain/issue";
+import { defaultIssuesIds } from "@domain/issue/issue.mock";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";

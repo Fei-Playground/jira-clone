@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { createRoutesStub } from "react-router";
-import { usersMock } from "@domain/user";
+import { usersMock } from "@domain/user/user.mock";
 import { LoginView } from "./login.view";
 
 const meta: Meta<typeof LoginView> = {
