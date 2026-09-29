@@ -1,10 +1,12 @@
 # Jira clone v2.0
 
-A simplified Jira clone application with some custom modifications made with Remix Run. This is a personal project for practicing skills and it is not intended to work as a real Jira application. It is still in early development and some features and improves are coming.
+A simplified Jira clone application with some custom modifications made with React Router. This is a personal project for practicing skills and it is not intended to work as a real Jira application. It is still in early development and some features and improves are coming.
 
 For pragmatic purposes, many features are not included. Others have been modified according to my tastes. The application should serve the basic functionalities of a project management software. I have taken inspiration from the actual [Jira website](https://www.atlassian.com/es/software/jira), as well as from [Trello](https://trello.com/). Also, [Ivor's Jira clone](https://github.com/oldboyxx/jira_clone) has been a great inspiration for me (I have to admit I like his designs more than Jira's originals). I only took ideas and resources (fonts and icons) from the original projects, all developments have being from scratch and by myself.
 
 [LIVE DEMO](https://jira-clone.fly.dev)
+
+See [CHANGELOG.md](./CHANGELOG.md) for a running log of what changed recently.
 
 ## Table of Contents
 
@@ -29,7 +31,7 @@ For pragmatic purposes, many features are not included. Others have been modifie
 
 ### Install<a name="install"></a>
 
-The app setup is as simple as any other Remix Run project. First, clone the repository on your local folder.
+The app setup is as simple as any other React Router project. First, clone the repository on your local folder.
 
 ```
 git clone https://github.com/daniserrano7/jira-clone.git
@@ -53,6 +55,8 @@ It will be created in the path specified by the environmental variable DATABASE_
 ```
 npx prisma db seed
 ```
+
+(Both steps together are also available as `npm run setup-db`.)
 
 ### Run<a name="run"></a>
 
@@ -80,13 +84,19 @@ npm run start
 
 ### Test<a name="test"></a>
 
-To execute the test, execute the following command:
+To run the Playwright end-to-end tests, execute the following command:
 
 ```
 npm run test
 ```
 
-Alternatively, you can run ESLint linter, Typescript type checks and Vitest tests all at once with the following command:
+To run the Vitest unit tests with coverage instead, use:
+
+```
+npm run test-coverage
+```
+
+Alternatively, you can run the Typescript type checker, the ESLint linter and the Playwright tests all at once with the following command:
 
 ```
 npm run test-all
@@ -94,7 +104,7 @@ npm run test-all
 
 ## Overview<a name="overview"></a>
 
-The app simulates Jira's workspace, where you can create projects, assign users and create and update issues. It uses a SQLite database to store the data, which can be stored locally on your environment (in the live demo it is placed in the Fly's persistent storage). The content is rendered server-side thanks to Remix Run framework, and it barely uses client stores (only for session data and issues search).
+The app simulates Jira's workspace, where you can create projects, assign users and create and update issues. It uses a SQLite database to store the data, which can be stored locally on your environment (in the live demo it is placed in the Fly's persistent storage). The content is rendered server-side thanks to the React Router framework, and it barely uses client stores (only for session data and issues search).
 
 It is divided in three main sections: login, projects list and project space.
 
@@ -113,7 +123,7 @@ This sections whows the projects the logged in user has access to. It is possibl
 
 ### Project space<a name="project-space"></a>
 
-This is the main section of the app. It shows the project's board, where you can see the issues of the project. It also shows other tabs, such as analytics (which is not implemented yet) and backlog (this will never be implemented; it is only shown for UI puposes). There are also links that trigger page errors to show Remix error handling. There are both 404 and 500 errors.
+This is the main section of the app. It shows the project's board, where you can see the issues of the project. It also shows other tabs, such as analytics (which is not implemented yet) and backlog (this will never be implemented; it is only shown for UI puposes). There are also links that trigger page errors to show React Router error handling. There are both 404 and 500 errors.
 
 Related to that project board, you can create, edit and delete issues. You can modify issue's properties, change its category, add comments and assign it to different users. Also, it is possible to move an issue from one category to another by drag and drop. Every issue change is streamed to the server thanks to Server Sent Events, so the board is updated in real time (try it with two different tabs!).
 
@@ -125,7 +135,7 @@ Within the issue editing panel you can manage the issue and see its information.
 
 ## Technologies<a name="technologies"></a>
 
-The app is made with [React](https://reactjs.org/) (using ES6 and hooks), [Typescript](https://www.typescriptlang.org/), [Remix Run](https://remix.run/) as a SSR framework, [Radix](https://www.radix-ui.com/) for accesible UI components and [Tailwind CSS](https://tailwindcss.com/) for the styling. Thanks to Remix and its SSR paradigm, state management is reduced at its minimum. Regarding data storage, I've used a [SQLite](https://www.sqlite.org) database, which uses a single file. Depending on the environment, persistent storage is handled differently. Database location URL can be set via environment variables. To handle the database I've used [Prisma](https://www.prisma.io/), which is a great ORM for SQLite. For testing, I've used [Vitest](https://vitest.dev/), but due to the new entities approach I no longer need to test the domain level. I'm planning to test routing and HTTP requests in the future.
+The app is made with [React](https://reactjs.org/) (using ES6 and hooks), [Typescript](https://www.typescriptlang.org/), [React Router](https://reactrouter.com/) (v7, in framework/SSR mode) as a SSR framework, [Radix](https://www.radix-ui.com/) for accesible UI components and [Tailwind CSS](https://tailwindcss.com/) for the styling. Thanks to React Router and its SSR paradigm, state management is reduced at its minimum. Regarding data storage, I've used a [SQLite](https://www.sqlite.org) database, which uses a single file. Depending on the environment, persistent storage is handled differently. Database location URL can be set via environment variables. To handle the database I've used [Prisma](https://www.prisma.io/), which is a great ORM for SQLite. For testing, I've used [Vitest](https://vitest.dev/) and [Playwright](https://playwright.dev/), but due to the new entities approach I no longer need to test the domain level.
 
 I've used [ESLint](https://eslint.org/) for linting with low restrictive rules. For the formatting, I've relied on [Prettier](https://prettier.io/). The app is deployed at [Fly](https://fly.io/).
 
@@ -159,14 +169,14 @@ projects
 
 By infrastructure I mean those pieces of the application that are not part of the UI, but serves as a logic support. Those are not framework-related, just like entities. Here we find db, but in the future it may serve for other things e.g. localhost.
 
-Cookie session are not in this sections because they are framework-related to Remix. Store logic and components are also located in the app folder because how closed they are to the implementation.
+Cookie session are not in this sections because they are framework-related to React Router. Store logic and components are also located in the app folder because how closed they are to the implementation.
 
 ### APP<a name="app"></a>
 
-Everything related to the Remix application, including the UI and the backend. The folder structure is the following:
+Everything related to the React Router application, including the UI and the backend. The folder structure is the following:
 
 - Components -> Shared components accross all the Reacts elements. Usually they are small and generic components.
-- Routes -> Remix route folder. It includes the routes and the SSR logic to handle them.
+- Routes -> React Router route folder. It includes the routes and the SSR logic to handle them.
 - Session-storage -> Cookie session logic, related to both user authentication and theme.
 - Store -> Context API stores to handle easily share user and theme sessions data.
 - Styles -> Tailwind CSS global styles and fonts specifications.
@@ -193,6 +203,6 @@ In the case of componentes, to avoid using the same name I add the suffix "Props
 
 All my personal projects have a goal - something to practice. It can be a framework, a styling library or a programming concept. In this one, I tried to put in practice some Clean Architecture concepts, but limited to my understanding and the scope of the project. I did dome entity modeling and created boundaries between domain, infrastructure and ui/application. The goal was to follow the dependency rule and isolate the core parts (domain) from those with lower hierarchy. That is why I chose a Jira clone, in order to have a more or less complex domain to model.
 
-As the development of the application progressed, I also wanted to try the use of Tailwind CSS as styling library and a Server-Side Rendering paradigm. I opted for Remix because I already had experience with Next.js and I liked it's focus on web standards approach.
+As the development of the application progressed, I also wanted to try the use of Tailwind CSS as styling library and a Server-Side Rendering paradigm. I opted for Remix (later migrated to React Router v7, which absorbed Remix's framework mode) because I already had experience with Next.js and I liked it's focus on web standards approach.
 
-My last contribution was implementing a full Design System. I followed the [Atlasian's Design System](https://atlassian.design/components/tokens/all-tokens#color-text) to implement semantic color variables. To achieve this, I created a palette of base colors and a serie of semantic variables referring to each UI element (e.g. 'border', 'border-focus', 'border-selected', 'border-disabled', etc). Then, I created as many themes as I needed, each one in its own class name (e.g. 'theme-light', 'theme-dark', 'theme-dark-blue', etc). In every class theme, I listed all this semantic variables, each one with its own color implementation. This way, I can easily change the theme of the application by changing the class name of the root element, and all the theme colors will be applied accordingly. This serves two purposes: first, component styling is very easy because all of them follow the same pattern and cover all the possible states; second, it is very easy to change the theme of the application, and it is also very easy to create new themes, since we only need to add a new theme class and apply the semantic variables to it. So far I've created 6 themes, each of them fully customizable, and it will be trivial to add more. The goal is: the difficulty comes from the creative process, not from the technical implementation.
+My last contribution was implementing a full Design System. I followed the [Atlasian's Design System](https://atlassian.design/components/tokens/all-tokens#color-text) to implement semantic color variables. To achieve this, I created a palette of base colors and a serie of semantic variables referring to each UI element (e.g. 'border', 'border-focus', 'border-selected', 'border-disabled', etc). Then, I created as many themes as I needed, each one in its own class name (e.g. 'theme-light', 'theme-dark', 'theme-dark-blue', etc). In every class theme, I listed all this semantic variables, each one with its own color implementation. This way, I can easily change the theme of the application by changing the class name of the root element, and all the theme colors will be applied accordingly. This serves two purposes: first, component styling is very easy because all of them follow the same pattern and cover all the possible states; second, it is very easy to change the theme of the application, and it is also very easy to create new themes, since we only need to add a new theme class and apply the semantic variables to it. So far I've created 5 themes (Light, Dark, Lava, Lime, Barbie), each of them fully customizable, plus a "System" option in the theme picker that just follows the OS light/dark preference rather than being its own palette. Adding another theme is trivial. The goal is: the difficulty comes from the creative process, not from the technical implementation.
