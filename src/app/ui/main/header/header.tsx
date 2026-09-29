@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import cx from "classix";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
@@ -6,13 +6,18 @@ import { Tooltip } from "@app/components/tooltip";
 import { SelctTheme } from "./select-theme";
 import { UserProfile } from "./user-profile";
 
+const navItems: { href: string; name: string }[] = [
+  { href: "/projects", name: "Projects" },
+  { href: "/screener", name: "Screener" },
+];
+
 export const Header = (): JSX.Element => {
   const iconBaseClass =
     "w-[24px] h-[24px] text-icon rounded-full flex items-center justify-center hover:bg-background-brand-subtlest hover:text-icon-brand";
 
   return (
     <header className="relative z-10 flex w-full items-center justify-between bg-elevation-surface-raised px-5 py-2 shadow-[0_1px_5px_-1px_rgba(0,0,0,0.3)]">
-      <section>
+      <section className="flex items-center gap-2">
         <Link
           to="/"
           className="flex cursor-pointer items-center rounded px-3 py-2 text-font hover:bg-background-brand-subtlest hover:text-font-brand"
@@ -20,6 +25,22 @@ export const Header = (): JSX.Element => {
           <img src="/images/logo.png" width={24} height={24} alt="Logo" />
           <span className="ml-2">Jira Clone</span>
         </Link>
+        <nav className="flex items-center gap-1" aria-label="Primary">
+          {navItems.map(({ href, name }) => (
+            <NavLink
+              key={href}
+              to={href}
+              className={({ isActive }) =>
+                cx(
+                  "rounded px-3 py-2 text-sm",
+                  isActive ? "bg-background-neutral text-font-brand" : "text-font-subtlest hover:bg-background-neutral"
+                )
+              }
+            >
+              {name}
+            </NavLink>
+          ))}
+        </nav>
       </section>
       <section className="flex items-center gap-4">
         <Tooltip title="About">
