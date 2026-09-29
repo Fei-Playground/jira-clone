@@ -92,7 +92,7 @@ export const IssueCardContent = ({
         <div className="flex items-center justify-between pt-4">
           <span className="flex items-center">
             <TaskIcon size={18} />
-            <span className="ml-1.5 text-2xs text-font-subtlest">
+            <span className="ml-1.5 font-primary-bold text-2xs text-font-subtlest">
               {idPrefix}
             </span>
           </span>
