@@ -28,6 +28,10 @@ export const todoIssuesMock1: Issue[] = [
   },
 ];
 
+const oneDayMs = 24 * 60 * 60 * 1000;
+const overdueDueDate = Date.now() - 3 * oneDayMs; // 3 days ago -> delayed
+const upcomingDueDate = Date.now() + 4 * oneDayMs; // 4 days from now -> on track
+
 export const inProgressIssuesMock1: Issue[] = [
   {
     id: "ea07f7ca-13e9-4143-b623-f5713adef81a",
@@ -39,6 +43,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
+    dueDate: overdueDueDate,
     createdAt,
     updatedAt: createdAt,
   },
@@ -52,6 +57,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
+    dueDate: upcomingDueDate,
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
   },
@@ -98,6 +104,7 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityMedium,
     categoryType: "TODO",
+    dueDate: overdueDueDate,
     createdAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
   },
@@ -111,6 +118,7 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "TODO",
+    dueDate: upcomingDueDate,
     createdAt,
     updatedAt: new Date("2022-01-23 14:28").valueOf(),
   },

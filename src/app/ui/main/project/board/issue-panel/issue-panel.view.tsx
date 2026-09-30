@@ -11,7 +11,7 @@ import {
 import * as Dialog from "@app/components/dialog";
 import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
-import { Issue, defaultIssuesIds } from "@domain/issue";
+import { Issue, defaultIssuesIds, isIssueDelayed } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
@@ -20,6 +20,7 @@ import { Button } from "@app/components/button";
 import { Title } from "@app/components/title";
 import { Description } from "@app/components/description";
 import { Kbd } from "@app/components/kbd-placeholder";
+import { DelayedBadge } from "@app/components/delayed-badge";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";
@@ -148,6 +149,11 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                   defaultIssuesIds.includes(issue?.id || "")
                 }
               />
+              {issue && isIssueDelayed(issue) && (
+                <div className="-mt-2 mb-2">
+                  <DelayedBadge showLabel />
+                </div>
+              )}
               <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
                 <div className="grid grid-cols-5 gap-16">
                   <section className="col-span-3">

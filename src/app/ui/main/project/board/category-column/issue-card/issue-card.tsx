@@ -3,10 +3,11 @@ import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
+import { Issue, IssueId, isIssueDelayed } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
+import { DelayedBadge } from "@app/components/delayed-badge";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export interface DropItem {
@@ -60,6 +61,7 @@ export const IssueCard = ({
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
+        isDelayed={isIssueDelayed(issue)}
       />
     </div>
   );
@@ -78,11 +80,14 @@ export const IssueCardContent = ({
   priorityId,
   idPrefix,
   isSubmitting,
+  isDelayed = false,
 }: IssueCardContentProps): JSX.Element => (
   <div
     style={{ minWidth: "200px" }}
     className={cx(
       "flex w-full cursor-pointer flex-col rounded border-none bg-elevation-surface-raised p-3 text-left shadow-xs duration-200 ease-in-out hover:bg-elevation-surface-raised-hovered active:bg-elevation-surface-raised-pressed",
+      isDelayed &&
+        "border-l-[3px] border-l-border-danger [border-left-style:solid]",
       isSubmitting && "opacity-50"
     )}
   >
@@ -96,7 +101,10 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span className="flex items-center gap-2">
+            {isDelayed && <DelayedBadge size={16} />}
+            <PriorityIcon priority={priorityId} />
+          </span>
         </div>
       </>
     </Link>
@@ -109,6 +117,7 @@ interface IssueCardContentProps {
   priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
+  isDelayed?: boolean;
 }
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";
