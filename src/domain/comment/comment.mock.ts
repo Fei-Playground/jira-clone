@@ -47,3 +47,28 @@ export const commentMock5: Comment = {
   createdAt,
   updatedAt,
 };
+
+export const commentMock6: Comment = {
+  id: "16a07424-7538-4d91-bd97-83578f094e33",
+  user: usersMock[2], // Buzz Lightyear
+  message: "To infinity and beyond! I'll pick this up once the current sprint wraps up.",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock7: Comment = {
+  id: "fc861141-2f71-4a13-836e-5111e5a68660",
+  user: usersMock[4], // Emperor Zurg
+  message: "Blocked on the API response shape — can we align on the schema before continuing?",
+  createdAt,
+  updatedAt,
+};
+
+export const commentMock8: Comment = {
+  id: "2134fb31-91ce-41b8-9040-c39ed2a40e1a",
+  user: usersMock[1], // Woody
+  message:
+    "There's a sheriff in town, and this bug doesn't stand a chance. Fixed in the latest commit.",
+  createdAt,
+  updatedAt,
+};

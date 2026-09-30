@@ -5,6 +5,9 @@ import {
   commentMock3,
   commentMock4,
   commentMock5,
+  commentMock6,
+  commentMock7,
+  commentMock8,
 } from "@domain/comment/comment.mock";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority/priority.mock";
 import { Issue } from "./issue";
@@ -25,6 +28,32 @@ export const todoIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 15:28").valueOf(),
+  },
+  {
+    id: "4332695e-c35a-4a09-a202-cdab0a4ad290",
+    name: "Add a due date field to issues",
+    description:
+      "Reporters should be able to set an optional due date when creating or editing an issue. Show it on the issue card once set so the team can spot upcoming deadlines at a glance.",
+    reporter: usersMock[3], // Jessie
+    asignee: usersMock[9], // Andy Davis
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "TODO",
+    createdAt,
+    updatedAt: createdAt,
+  },
+  {
+    id: "8fdff4f4-641d-416d-82ec-09d78de62228",
+    name: "Add bulk actions to the board (multi-select issues)",
+    description:
+      "Allow selecting multiple issue cards at once to move them between categories or reassign them in one action, instead of one at a time.",
+    reporter: usersMock[2], // Buzz Lightyear
+    asignee: usersMock[2], // Buzz Lightyear
+    comments: [commentMock6],
+    priority: priorityLow,
+    categoryType: "TODO",
+    createdAt,
+    updatedAt: createdAt,
   },
 ];
 
@@ -55,6 +84,19 @@ export const inProgressIssuesMock1: Issue[] = [
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
   },
+  {
+    id: "aba9bec1-0dcd-4e97-88dd-95eef0ef93b0",
+    name: "Fix drag-and-drop glitch on Firefox",
+    description:
+      "Dragging an issue card between columns occasionally snaps back to its original position on Firefox before the category actually updates. Chrome and Safari are unaffected.",
+    reporter: usersMock[5], // Mr Potato
+    asignee: usersMock[4], // Emperor Zurg
+    comments: [commentMock7],
+    priority: priorityHigh,
+    categoryType: "IN_PROGRESS",
+    createdAt,
+    updatedAt: createdAt,
+  },
 ];
 
 export const doneIssuesMock1: Issue[] = [
@@ -83,6 +125,19 @@ export const doneIssuesMock1: Issue[] = [
     categoryType: "DONE",
     createdAt,
     updatedAt: new Date("2022-01-23 02:04").valueOf(),
+  },
+  {
+    id: "0cc44a2e-d3b2-464f-acdc-a179aa2201d3",
+    name: "Fix issue card drag ghost image on Firefox",
+    description:
+      "The drag preview showed a broken image icon instead of the card outline. Swapped to a custom drag layer so the preview renders consistently across browsers.",
+    reporter: usersMock[1], // Woody
+    asignee: usersMock[1], // Woody
+    comments: [commentMock8],
+    priority: priorityHigh,
+    categoryType: "DONE",
+    createdAt,
+    updatedAt: new Date("2022-01-24 09:15").valueOf(),
   },
 ];
 
@@ -129,9 +184,49 @@ export const inProgressIssuesMock2: Issue[] = [
     createdAt,
     updatedAt: createdAt,
   },
+  {
+    id: "47c076ae-cb75-442e-a785-f6fff4d51a68",
+    name: "Set up CI pipeline for automated tests",
+    description:
+      "Run type-check, lint and the Playwright suite on every pull request so regressions are caught before merge.",
+    reporter: usersMock[1], // Woody
+    asignee: userMock1, // Daniel Serrano
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "IN_PROGRESS",
+    createdAt,
+    updatedAt: createdAt,
+  },
 ];
 
-export const doneIssuesMock2: Issue[] = [];
+export const doneIssuesMock2: Issue[] = [
+  {
+    id: "5df09189-c0a1-45d6-bb9d-00313960bea6",
+    name: "Set up project structure and initial routing",
+    description:
+      "Scaffolded the Remix routes for the projects list, board and issue panel, plus the shared layout and sidebar navigation.",
+    reporter: userMock1,
+    asignee: userMock1,
+    comments: [],
+    priority: priorityMedium,
+    categoryType: "DONE",
+    createdAt,
+    updatedAt: new Date("2022-01-19 09:00").valueOf(),
+  },
+  {
+    id: "c4e89937-1e61-48e5-ad6a-882f2da2509b",
+    name: "Invite team members to the project",
+    description:
+      "Added Woody and Buzz Lightyear as members so they can see and work on this project's board.",
+    reporter: userMock1,
+    asignee: usersMock[1], // Woody
+    comments: [],
+    priority: priorityLow,
+    categoryType: "DONE",
+    createdAt,
+    updatedAt: new Date("2022-01-20 12:30").valueOf(),
+  },
+];
 
 export const defaultIssuesIds = [
   todoIssuesMock1,
