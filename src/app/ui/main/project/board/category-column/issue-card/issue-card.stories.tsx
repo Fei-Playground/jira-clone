@@ -39,6 +39,19 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "boolean",
       },
     },
+    agingLevel: {
+      defaultValue: "fresh",
+      control: {
+        type: "select",
+        options: ["fresh", "aging", "stale"],
+      },
+    },
+    ageInDays: {
+      defaultValue: 0,
+      control: {
+        type: "number",
+      },
+    },
   },
   decorators: [
     (Story) =>
@@ -56,7 +69,7 @@ type Story = StoryObj<typeof IssueCardContent>;
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {[Standard, LongName, Submitting].map(({ args }, index) => (
+      {[Standard, LongName, Submitting, Aging, Stale].map(({ args }, index) => (
         <IssueCardContent
           key={index}
           link={args?.link || "https://google.com"}
@@ -64,6 +77,8 @@ export const Default: Story = {
           priorityId={args?.priorityId || "low"}
           idPrefix={args?.idPrefix || "1234"}
           isSubmitting={args?.isSubmitting || false}
+          agingLevel={args?.agingLevel || "fresh"}
+          ageInDays={args?.ageInDays || 0}
         />
       ))}
     </div>
@@ -97,5 +112,29 @@ export const Submitting: Story = {
     priorityId: "low",
     idPrefix: "1234",
     isSubmitting: true,
+  },
+};
+
+export const Aging: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Issue sitting without progress for over a week",
+    priorityId: "medium",
+    idPrefix: "1234",
+    isSubmitting: false,
+    agingLevel: "aging",
+    ageInDays: 9,
+  },
+};
+
+export const Stale: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Issue sitting without progress for over two weeks",
+    priorityId: "high",
+    idPrefix: "1234",
+    isSubmitting: false,
+    agingLevel: "stale",
+    ageInDays: 21,
   },
 };

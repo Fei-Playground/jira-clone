@@ -133,6 +133,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
                     <IssueCard
                       issue={issue}
                       categoryId={category.id}
+                      categoryType={category.type}
                       isSubmitting={submittingIssues.includes(issue.id)}
                       handleDragging={handleDragging}
                     />

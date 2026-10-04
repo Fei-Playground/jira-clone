@@ -11,6 +11,14 @@ import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();
 
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+// Fresh: created recently, no aging indication expected.
+const freshCreatedAt = Date.now() - 2 * DAY_IN_MILLISECONDS;
+// Aging: sitting for over a week without progress.
+const agingCreatedAt = Date.now() - 9 * DAY_IN_MILLISECONDS;
+// Stale: sitting for over two weeks without progress.
+const staleCreatedAt = Date.now() - 21 * DAY_IN_MILLISECONDS;
+
 // PROJECT 1
 export const todoIssuesMock1: Issue[] = [
   {
@@ -39,7 +47,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
+    createdAt: agingCreatedAt,
     updatedAt: createdAt,
   },
   {
@@ -52,7 +60,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
+    createdAt: staleCreatedAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
   },
 ];
@@ -98,7 +106,7 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityMedium,
     categoryType: "TODO",
-    createdAt,
+    createdAt: freshCreatedAt,
     updatedAt: new Date("2022-01-18 11:01").valueOf(),
   },
   {
@@ -111,7 +119,7 @@ export const todoIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityLow,
     categoryType: "TODO",
-    createdAt,
+    createdAt: agingCreatedAt,
     updatedAt: new Date("2022-01-23 14:28").valueOf(),
   },
 ];
@@ -126,7 +134,7 @@ export const inProgressIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
-    createdAt,
+    createdAt: staleCreatedAt,
     updatedAt: createdAt,
   },
 ];

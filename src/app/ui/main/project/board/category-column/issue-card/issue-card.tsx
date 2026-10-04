@@ -2,11 +2,18 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
-import { CategoryId } from "@domain/category/category";
-import { Issue, IssueId } from "@domain/issue/issue";
+import { CategoryId, CategoryType } from "@domain/category/category";
+import {
+  Issue,
+  IssueId,
+  AgingLevel,
+  getIssueAgingLevel,
+  getIssueAgeInDays,
+} from "@domain/issue/issue";
 import { PriorityId } from "@domain/priority/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon/priority-icon";
+import { AgingIndicator } from "@app/components/aging-indicator/aging-indicator";
 import { useSortBy } from "@app/hooks/useSortBy";
 
 export interface DropItem {
@@ -17,6 +24,7 @@ export interface DropItem {
 export const IssueCard = ({
   issue,
   categoryId,
+  categoryType,
   isSubmitting,
   handleDragging,
 }: Props): JSX.Element => {
@@ -60,6 +68,11 @@ export const IssueCard = ({
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
+        agingLevel={getIssueAgingLevel({
+          ...issue,
+          categoryType: categoryType || issue.categoryType,
+        })}
+        ageInDays={getIssueAgeInDays(issue.createdAt)}
       />
     </div>
   );
@@ -68,6 +81,7 @@ export const IssueCard = ({
 interface Props {
   issue: Issue;
   categoryId: CategoryId;
+  categoryType?: CategoryType;
   isSubmitting: boolean;
   handleDragging: (isDragging: boolean) => void;
 }
@@ -78,6 +92,8 @@ export const IssueCardContent = ({
   priorityId,
   idPrefix,
   isSubmitting,
+  agingLevel = "fresh",
+  ageInDays = 0,
 }: IssueCardContentProps): JSX.Element => (
   <div
     style={{ minWidth: "200px" }}
@@ -96,7 +112,10 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span className="flex items-center gap-2">
+            <AgingIndicator level={agingLevel} ageInDays={ageInDays} />
+            <PriorityIcon priority={priorityId} />
+          </span>
         </div>
       </>
     </Link>
@@ -109,6 +128,8 @@ interface IssueCardContentProps {
   priorityId: PriorityId;
   idPrefix: string;
   isSubmitting: boolean;
+  agingLevel?: AgingLevel;
+  ageInDays?: number;
 }
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";
