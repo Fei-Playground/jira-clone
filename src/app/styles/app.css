@@ -231,6 +231,11 @@
   --color-background-brand-boldest-hovered: var(--Blue900);
   --color-background-brand-boldest-pressed: var(--Blue800);
 
+  /* Primary action (primary contained button) */
+  --color-background-action-bold: var(--Orange700);
+  --color-background-action-bold-hovered: var(--Orange800);
+  --color-background-action-bold-pressed: var(--Orange900);
+
   --color-background-success: var(--Green100);
   --color-background-success-hovered: var(--Green200);
   --color-background-success-pressed: var(--Green300);

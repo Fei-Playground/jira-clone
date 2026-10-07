@@ -62,6 +62,13 @@ module.exports = {
         },
       },
       background: {
+        action: {
+          bold: {
+            DEFAULT: "var(--color-background-action-bold)",
+            hovered: "var(--color-background-action-bold-hovered)",
+            pressed: "var(--color-background-action-bold-pressed)",
+          },
+        },
         brand: {
           subtlest: {
             DEFAULT: "var(--color-background-brand-subtlest)",

@@ -15,7 +15,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
   ) => {
     const primaryStyle = (): string => {
       if (variant === "contained") {
-        return "bg-background-brand-bold text-font-inverse hover:bg-background-brand-bold-hovered active:bg-background-brand-bold-pressed";
+        return "bg-background-action-bold text-font-inverse hover:bg-background-action-bold-hovered active:bg-background-action-bold-pressed";
       }
 
       if (variant === "subtlest") {
