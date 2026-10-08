@@ -6,9 +6,11 @@ import { BsClockHistory } from "react-icons/bs";
 import { Sort, sortList, DEFAULT_SORT } from "@domain/filter";
 import { useSortBy } from "@app/hooks/useSortBy";
 
-export const SelectSort = (): JSX.Element => {
+export const SelectSort = ({
+  defaultSort = DEFAULT_SORT,
+}: Props): JSX.Element => {
   const submit = useSubmit();
-  const sortBy = useSortBy() || DEFAULT_SORT;
+  const sortBy = useSortBy() || defaultSort;
 
   const SortIcon = ({ sort }: { sort: Sort }): JSX.Element =>
     // prettier-ignore
@@ -52,3 +54,7 @@ export const SelectSort = (): JSX.Element => {
     </Form>
   );
 };
+
+interface Props {
+  defaultSort?: Sort;
+}

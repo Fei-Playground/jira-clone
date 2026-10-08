@@ -3,8 +3,11 @@ import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
 import { Priority, PriorityId } from "@domain/priority";
+import { ProjectId } from "@domain/project";
+import { Sort } from "@domain/filter";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
+import { getIssueOrderBy } from "./issue-order";
 import { db } from "./db.server";
 
 export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
@@ -55,6 +58,49 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
   };
 
   return issue;
+};
+
+export type GetBacklogIssuesOptions = {
+  sortIssuesBy: Sort;
+};
+export const getBacklogIssues = async (
+  projectId: ProjectId,
+  options?: GetBacklogIssuesOptions
+): Promise<Issue[]> => {
+  const issuesDb = await db.issue.findMany({
+    where: {
+      category: {
+        projectId,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      priority: true,
+      createdAt: true,
+      updatedAt: true,
+      reporter: true,
+      asignee: true,
+      category: {
+        select: {
+          type: true,
+        },
+      },
+    },
+    orderBy: getIssueOrderBy(options?.sortIssuesBy),
+  });
+
+  return issuesDb.map((issueDb) => ({
+    id: issueDb.id,
+    name: issueDb.name,
+    priority: issueDb.priority as Priority,
+    reporter: dnull(issueDb.reporter),
+    asignee: dnull(issueDb.asignee),
+    comments: [],
+    categoryType: issueDb.category.type as CategoryType,
+    createdAt: issueDb.createdAt.getTime(),
+    updatedAt: issueDb.updatedAt.getTime(),
+  }));
 };
 
 export type CreateIssueInputData = {

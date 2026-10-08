@@ -5,7 +5,7 @@ import { ProjectContextProvider } from "@app/ui/main/project";
 import { SelectSort } from "./select-sort";
 
 const meta: Meta<typeof SelectSort> = {
-  title: "Pages/Main/Project/Board/SelectSort",
+  title: "Pages/Main/Project/SelectSort",
   component: SelectSort,
   parameters: {
     layout: "centered",
