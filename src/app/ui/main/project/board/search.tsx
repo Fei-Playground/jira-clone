@@ -29,7 +29,9 @@ export const Search = (): JSX.Element => {
         placeholder="Filter issues"
         onChange={handleChange}
         className={cx(
-          "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
+          "h-[40px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
+          // A filter restored from a previous visit has to be readable without focusing the input
+          search.length > 0 ? "w-[190px]" : "w-[120px]",
           "border-1 box-border pl-2 pr-8 outline outline-2 outline-border-input duration-200 ease-in-out",
           "placeholder:font-primary-light placeholder:text-xs placeholder:text-font-subtlest",
           "placeholder:duration-200 placeholder:ease-in-out focus:w-[190px]",

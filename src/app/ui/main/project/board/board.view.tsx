@@ -9,6 +9,7 @@ import { IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
+import { AssigneeFilter } from "./assignee-filter";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
@@ -22,6 +23,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <Search />
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
+          </div>
+          <div className="mr-4 inline">
+            <AssigneeFilter />
           </div>
           <div className="inline">
             <SelectSort />
