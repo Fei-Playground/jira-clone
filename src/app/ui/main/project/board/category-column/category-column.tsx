@@ -5,7 +5,7 @@ import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
-import { ALL_ASSIGNEES } from "@domain/filter";
+import { ALL_ASSIGNEES, ALL_PRIORITIES } from "@domain/filter";
 import { IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
@@ -24,15 +24,17 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search, assignee } = useProjectStore();
+  const { search, assignee, priority } = useProjectStore();
   const visibleIssues = category.issues.filter((issue) => {
     const matchesSearch = issue.name
       .toLowerCase()
       .includes(search.trim().toLowerCase());
     const matchesAssignee =
       assignee === ALL_ASSIGNEES || issue.asignee.id === assignee;
+    const matchesPriority =
+      priority === ALL_PRIORITIES || issue.priority.id === priority;
 
-    return matchesSearch && matchesAssignee;
+    return matchesSearch && matchesAssignee && matchesPriority;
   });
   const emptyCategory = visibleIssues.length === 0;
   const issueLink = sortBy

@@ -10,6 +10,7 @@ import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { AssigneeFilter } from "./assignee-filter";
+import { PriorityFilter } from "./priority-filter";
 import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
@@ -26,6 +27,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           </div>
           <div className="mr-4 inline">
             <AssigneeFilter />
+          </div>
+          <div className="mr-4 inline">
+            <PriorityFilter />
           </div>
           <div className="inline">
             <SelectSort />
