@@ -5,7 +5,8 @@ import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
+import { ALL_ASSIGNEES, ALL_PRIORITIES } from "@domain/filter";
+import { IssueId } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -23,8 +24,19 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const columnRef = useRef<HTMLDivElement>(null);
   const fetcher = useFetcher();
   const sortBy = useSortBy();
-  const { search } = useProjectStore();
-  const emptyCategory = category.issues.length === 0;
+  const { search, assignee, priority } = useProjectStore();
+  const visibleIssues = category.issues.filter((issue) => {
+    const matchesSearch = issue.name
+      .toLowerCase()
+      .includes(search.trim().toLowerCase());
+    const matchesAssignee =
+      assignee === ALL_ASSIGNEES || issue.asignee.id === assignee;
+    const matchesPriority =
+      priority === ALL_PRIORITIES || issue.priority.id === priority;
+
+    return matchesSearch && matchesAssignee && matchesPriority;
+  });
+  const emptyCategory = visibleIssues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
     : `issue/new?category=${category.type}`;
@@ -60,11 +72,6 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     }),
     [category.id]
   );
-
-  const filteredIssues = (): Issue[] =>
-    category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
-    });
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
@@ -110,7 +117,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
         <span className="flex gap-2">
           <span>{category.name}</span>
-          {!emptyCategory && <span>( {category.issues.length} )</span>}
+          {!emptyCategory && <span>( {visibleIssues.length} )</span>}
         </span>
         <Link
           to={issueLink}
@@ -128,7 +135,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
               {emptyCategory ? (
                 <EmptyCategory />
               ) : (
-                filteredIssues().map((issue, index) => (
+                visibleIssues.map((issue, index) => (
                   <li key={index} className="mb-2">
                     <IssueCard
                       issue={issue}
