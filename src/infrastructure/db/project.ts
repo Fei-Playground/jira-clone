@@ -1,33 +1,17 @@
-import { Prisma } from "@prisma/client";
-
 import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
 import { Priority } from "@domain/priority";
 import { Sort } from "@domain/filter";
 import { db } from "./db.server";
+import { getIssueOrderBy } from "./issue-order";
 import { dnull } from "src/utils/dnull";
 
 export const getProject = async (
   projectId: ProjectId,
   options?: GetProjectOptions
 ): Promise<Project | null> => {
-  type PrismaSortType = Prisma.Enumerable<Prisma.IssueOrderByWithRelationInput>;
-
-  const sortIssuesBy = options?.sortIssuesBy;
-  const sortByDate: PrismaSortType = {
-    createdAt: "desc",
-  };
-  const sortByPriority: PrismaSortType = {
-    priority: {
-      order: "desc",
-    },
-  };
-
-  // prettier-ignore
-  const orderBy: PrismaSortType = sortIssuesBy === "date" 
-    ? [sortByDate, sortByPriority] 
-    : [sortByPriority, sortByDate];
+  const orderBy = getIssueOrderBy(options?.sortIssuesBy);
 
   const projectDb = await db.project.findUnique({
     where: {
