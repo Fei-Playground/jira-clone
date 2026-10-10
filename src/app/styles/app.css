@@ -242,8 +242,8 @@
   --color-background-danger-hovered: var(--Red200);
   --color-background-danger-pressed: var(--Red300);
   --color-background-danger-bold: var(--Red700);
-  --color-background-danger-bold-hovered: var(--Red800);
-  --color-background-danger-bold-pressed: var(--Red900);
+  --color-background-danger-bold-hovered: var(--Red900);
+  --color-background-danger-bold-pressed: var(--Red1000);
 
   --color-background-warning: var(--Yellow100);
   --color-background-warning-hovered: var(--Yellow200);
@@ -790,8 +790,8 @@
   --color-background-danger-hovered: var(--Red200);
   --color-background-danger-pressed: var(--Red300);
   --color-background-danger-bold: var(--Red700);
-  --color-background-danger-bold-hovered: var(--Red800);
-  --color-background-danger-bold-pressed: var(--Red900);
+  --color-background-danger-bold-hovered: var(--Red900);
+  --color-background-danger-bold-pressed: var(--Red1000);
 
   --color-background-warning: var(--Yellow100);
   --color-background-warning-hovered: var(--Yellow200);
