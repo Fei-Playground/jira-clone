@@ -176,13 +176,13 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                         <Button
                           type="button"
                           color="neutral"
-                          variant="subtlest"
-                          className="mt-1.5 shrink-0 text-sm"
+                          variant="text"
+                          className="mt-1.5 shrink-0 p-1.5"
                           onClick={handleCopyLink}
-                          aria-label="Copy issue link"
+                          aria-label="Copy link"
+                          title="Copy link"
                         >
-                          <MdLink size={18} />
-                          Copy link
+                          <MdLink size={22} />
                         </Button>
                       )}
                     </div>
