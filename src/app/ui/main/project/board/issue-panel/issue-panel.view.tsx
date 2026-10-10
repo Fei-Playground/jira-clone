@@ -10,6 +10,7 @@ import {
 } from "react-router";
 import * as Dialog from "@app/components/dialog/dialog";
 import { toast } from "react-toastify";
+import { MdLink } from "react-icons/md";
 import { CategoryType } from "@domain/category/category";
 import { Issue } from "@domain/issue/issue";
 import { defaultIssuesIds } from "@domain/issue/issue.mock";
@@ -88,6 +89,15 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
     setIsOpen(false);
   };
 
+  const handleCopyLink = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied", { autoClose: 2000 });
+    } catch {
+      toast.error("Could not copy the link");
+    }
+  };
+
   const addComment = (newComment: Comment): void => {
     setComments([...comments, newComment]);
   };
@@ -152,14 +162,29 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
               <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
                 <div className="grid grid-cols-5 gap-16">
                   <section className="col-span-3">
-                    <div className="my-5 -ml-3 mb-6">
-                      <Dialog.Title asChild>
-                        <Title
-                          initTitle={issue?.name || ""}
-                          readOnly={userIsNotReporter}
-                          error={actionData?.errors?.name}
-                        />
-                      </Dialog.Title>
+                    <div className="my-5 -ml-3 mb-6 flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <Dialog.Title asChild>
+                          <Title
+                            initTitle={issue?.name || ""}
+                            readOnly={userIsNotReporter}
+                            error={actionData?.errors?.name}
+                          />
+                        </Dialog.Title>
+                      </div>
+                      {issue?.id && (
+                        <Button
+                          type="button"
+                          color="neutral"
+                          variant="text"
+                          className="mt-1.5 shrink-0 p-1.5"
+                          onClick={handleCopyLink}
+                          aria-label="Copy link"
+                          title="Copy link"
+                        >
+                          <MdLink size={22} />
+                        </Button>
+                      )}
                     </div>
                     <p className="font-primary-black text-font">Description</p>
                     <div className="-ml-3 mb-6">
