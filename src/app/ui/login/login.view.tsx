@@ -58,6 +58,9 @@ export const LoginView = ({ users }: Props) => {
             <Select.ScrollDownButton />
           </Select.Content>
         </Select.Root>
+        <p className="mt-2 text-center font-primary-light text-xs text-font-subtlest">
+          Need help? Ask your project admin.
+        </p>
         <Button
           type="submit"
           name="_action"
