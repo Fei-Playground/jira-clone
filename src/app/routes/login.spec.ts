@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("has title", async ({ page }) => {
   await page.goto("/login");
-  await expect(page).toHaveTitle(/Jira clone - Login/);
+  await expect(page).toHaveTitle(/Jira clone - Sign in/);
 });
 
 test("page renders", async ({ page }) => {
@@ -12,7 +12,7 @@ test("page renders", async ({ page }) => {
 
 test("login and redirect", async ({ page }) => {
   await page.goto("/login");
-  await page.getByRole("button", { name: "Login" }).click();
+  await page.getByRole("button", { name: "Sign in" }).click();
 
   await expect(page).toHaveURL(/.*projects/);
 });
