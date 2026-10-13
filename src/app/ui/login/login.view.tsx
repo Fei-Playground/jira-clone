@@ -62,10 +62,10 @@ export const LoginView = ({ users }: Props) => {
           type="submit"
           name="_action"
           value="setUser"
-          aria-label="Login"
+          aria-label="Sign in"
           className="mt-2 w-full"
         >
-          Login
+          Sign in
         </Button>
       </Form>
     </div>
