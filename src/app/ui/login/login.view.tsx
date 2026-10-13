@@ -59,7 +59,7 @@ export const LoginView = ({ users }: Props) => {
           </Select.Content>
         </Select.Root>
         <p className="mt-2 text-center font-primary-light text-sm text-font-subtlest">
-          Need help? Ask your workspace admin.
+          Need help? Ask your workspace admin
         </p>
         <Button
           type="submit"
