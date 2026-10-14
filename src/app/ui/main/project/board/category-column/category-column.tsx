@@ -5,8 +5,8 @@ import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
-import { ALL_PRIORITIES, PriorityFilter } from "@domain/filter";
+import { IssueId } from "@domain/issue";
+import { filterIssues } from "@domain/filter";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -151,19 +151,6 @@ interface CategoryColumnProps {
   setSubmittingIssues: Dispatch<SetStateAction<IssueId[]>>;
   handleDragging: (isDragging: boolean) => void;
 }
-
-const filterIssues = (
-  issues: Issue[],
-  search: string,
-  priorityFilter: PriorityFilter
-): Issue[] =>
-  issues.filter((issue) => {
-    const matchesSearch = issue.name.toLowerCase().includes(search);
-    const matchesPriority =
-      priorityFilter === ALL_PRIORITIES || issue.priority.id === priorityFilter;
-
-    return matchesSearch && matchesPriority;
-  });
 
 const EmptyCategory = (): JSX.Element => (
   <li className="mt-4 flex flex-col items-center text-font-subtlest">

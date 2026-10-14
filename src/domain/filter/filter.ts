@@ -1,4 +1,5 @@
 import { PriorityId, prioritiesMock } from "@domain/priority";
+import { Issue } from "@domain/issue";
 
 export const sorts = ["date", "priority"] as const;
 export const DEFAULT_SORT: Sort = "date";
@@ -43,3 +44,16 @@ export const priorityFilterList: PriorityFilterList = [
     label: priority.name,
   })),
 ];
+
+export const filterIssues = (
+  issues: Issue[],
+  search: string,
+  priorityFilter: PriorityFilter
+): Issue[] =>
+  issues.filter((issue) => {
+    const matchesSearch = issue.name.toLowerCase().includes(search);
+    const matchesPriority =
+      priorityFilter === ALL_PRIORITIES || issue.priority.id === priorityFilter;
+
+    return matchesSearch && matchesPriority;
+  });
