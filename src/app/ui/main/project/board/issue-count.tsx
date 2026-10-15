@@ -24,9 +24,14 @@ const formatIssueCount = (
     return "No issues";
   }
 
+  const matchingLabel = issueLabel(matchingIssues);
+
   if (matchingIssues === totalIssues) {
-    return `${totalIssues} ${totalIssues === 1 ? "issue" : "issues"}`;
+    return matchingLabel;
   }
 
-  return `${matchingIssues} of ${totalIssues} issues`;
+  return `${matchingLabel} of ${totalIssues}`;
 };
+
+const issueLabel = (count: number): string =>
+  `${count} ${count === 1 ? "issue" : "issues"}`;
