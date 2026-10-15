@@ -10,6 +10,8 @@ import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
+import { SelectPriorityFilter } from "./select-priority-filter";
+import { IssueCount } from "./issue-count";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
@@ -20,6 +22,10 @@ export const BoardView = ({ project }: Props): JSX.Element => {
       <div className="box-border flex h-full flex-col">
         <section className="flex items-center">
           <Search />
+          <div className="ml-4 flex items-center gap-2">
+            <SelectPriorityFilter />
+            <IssueCount />
+          </div>
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
           </div>
