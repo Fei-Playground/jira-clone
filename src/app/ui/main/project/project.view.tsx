@@ -4,7 +4,7 @@ import { Sidebar } from "@app/ui/main/project/sidebar";
 const sectionTitles: Record<string, string> = {
   board: "Board",
   analytics: "Analytics",
-  backlog: "Backlog",
+  backlog: "Sprint backlog",
 };
 const defaultSection = "board";
 
