@@ -51,6 +51,11 @@ export const Sidebar = (props: Props): JSX.Element => {
             ))}
           </nav>
         </section>
+        <footer className="px-5 pb-4 pt-2">
+          <p className="font-primary-light text-2xs text-font-subtlest">
+            Made with love by the Jira Clone team.
+          </p>
+        </footer>
       </div>
       <div
         className={cx("r-0 relative z-10 h-full w-3", isOpen ? "ml-0" : "ml-7")}
