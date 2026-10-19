@@ -166,6 +166,7 @@
   --color-font-accent-blue: var(--Blue800);
   --color-font-accent-green: var(--Green800);
   --color-font-accent-grey: var(--Neutral800);
+  --color-font-accent-orange: var(--Orange800);
   --color-font-link: var(--Blue700);
   --color-font-link-hovered: var(--Blue800);
   --color-font-link-pressed: var(--Blue800);
@@ -282,6 +283,10 @@
   --color-background-accent-grey-subtler: var(--Neutral300);
   --color-background-accent-grey-subtle: var(--Neutral500);
   --color-background-accent-grey-bolder: var(--Neutral700);
+  --color-background-accent-orange-subtlest: var(--Orange100);
+  --color-background-accent-orange-subtler: var(--Orange200);
+  --color-background-accent-orange-subtle: var(--Orange400);
+  --color-background-accent-orange-bolder: var(--Orange600);
 
   --color-background-input: var(--Neutral0);
   --color-background-input-hovered: var(--Neutral100);
@@ -303,6 +308,7 @@
   --color-font-accent-blue: var(--Blue300);
   --color-font-accent-green: var(--Green300);
   --color-font-accent-grey: var(--DarkNeutral800);
+  --color-font-accent-orange: var(--Orange300);
   --color-font-link: var(--Blue400);
   --color-font-link-hovered: var(--Blue300);
   --color-font-link-pressed: var(--Blue300);
@@ -420,6 +426,10 @@
   --color-background-accent-grey-subtler: var(--DarkNeutral400);
   --color-background-accent-grey-subtle: var(--DarkNeutral500);
   --color-background-accent-grey-bolder: var(--DarkNeutral700);
+  --color-background-accent-orange-subtlest: var(--Orange1000);
+  --color-background-accent-orange-subtler: var(--Orange900);
+  --color-background-accent-orange-subtle: var(--Orange800);
+  --color-background-accent-orange-bolder: var(--Orange400);
 
   --color-background-input: var(--DarkNeutral200);
   --color-background-input-hovered: var(--DarkNeutral250);
@@ -441,6 +451,7 @@
   --color-font-accent-blue: var(--Blue300);
   --color-font-accent-green: var(--Green300);
   --color-font-accent-grey: var(--DarkNeutral800);
+  --color-font-accent-orange: var(--Orange300);
   --color-font-link: var(--Blue400);
   --color-font-link-hovered: var(--Blue300);
   --color-font-link-pressed: var(--Blue300);
@@ -558,6 +569,10 @@
   --color-background-accent-grey-subtler: var(--DarkNeutral400);
   --color-background-accent-grey-subtle: var(--DarkNeutral500);
   --color-background-accent-grey-bolder: var(--DarkNeutral700);
+  --color-background-accent-orange-subtlest: var(--Orange1000);
+  --color-background-accent-orange-subtler: var(--Orange900);
+  --color-background-accent-orange-subtle: var(--Orange800);
+  --color-background-accent-orange-bolder: var(--Orange400);
 
   --color-background-input: var(--DarkNeutral200);
   --color-background-input-hovered: var(--DarkNeutral250);
@@ -579,6 +594,7 @@
   --color-font-accent-blue: var(--Blue300);
   --color-font-accent-green: var(--Green300);
   --color-font-accent-grey: var(--DarkNeutral800);
+  --color-font-accent-orange: var(--Orange300);
   --color-font-link: var(--Blue400);
   --color-font-link-hovered: var(--Blue300);
   --color-font-link-pressed: var(--Blue300);
@@ -696,6 +712,10 @@
   --color-background-accent-grey-subtler: var(--DarkNeutral400);
   --color-background-accent-grey-subtle: var(--DarkNeutral500);
   --color-background-accent-grey-bolder: var(--DarkNeutral700);
+  --color-background-accent-orange-subtlest: var(--Orange1000);
+  --color-background-accent-orange-subtler: var(--Orange900);
+  --color-background-accent-orange-subtle: var(--Orange800);
+  --color-background-accent-orange-bolder: var(--Orange400);
 
   --color-background-input: var(--DarkNeutral200);
   --color-background-input-hovered: var(--DarkNeutral250);
@@ -719,6 +739,7 @@
   --color-font-accent-blue: var(--Blue800);
   --color-font-accent-green: var(--Green800);
   --color-font-accent-grey: var(--Neutral800);
+  --color-font-accent-orange: var(--Orange800);
   --color-font-disabled: var(--Neutral400A);
   --color-font-inverse: var(--Neutral0);
 
@@ -830,6 +851,10 @@
   --color-background-accent-grey-subtler: var(--Neutral300);
   --color-background-accent-grey-subtle: var(--Neutral500);
   --color-background-accent-grey-bolder: var(--Neutral700);
+  --color-background-accent-orange-subtlest: var(--Orange100);
+  --color-background-accent-orange-subtler: var(--Orange200);
+  --color-background-accent-orange-subtle: var(--Orange400);
+  --color-background-accent-orange-bolder: var(--Orange600);
 
   --color-background-input: var(--Magenta100);
   --color-background-input-hovered: var(--Neutral100);
