@@ -32,7 +32,14 @@ export const Sidebar = (props: Props): JSX.Element => {
             className="rounded-[3px]"
           />
           <div className="ml-4 w-full text-font">
-            <p className="font-primary-bold text-lg leading-4">{projectName}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-primary-bold text-lg leading-4">
+                {projectName}
+              </p>
+              <span className="flex w-fit shrink-0 items-center rounded bg-background-accent-orange-subtler px-1 py-0.5 text-2xs uppercase text-font-accent-orange">
+                Beta
+              </span>
+            </div>
             <p className="mt-2 line-clamp-2 whitespace-normal font-primary-light text-sm leading-4">
               {projectDescription}
             </p>
