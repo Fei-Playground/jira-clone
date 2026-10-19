@@ -50,6 +50,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 type LoaderData = {
   projectSummary: ProjectSummary;
+  lastUpdatedAt: number;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -70,7 +71,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect(`/projects/${projectId}/board`);
   }
 
-  return json<LoaderData>({ projectSummary: projectSummary });
+  return json<LoaderData>({
+    projectSummary: projectSummary,
+    lastUpdatedAt: Date.now(),
+  });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -94,7 +98,14 @@ export function CatchBoundary() {
 }
 
 export default function ProjectRoute() {
-  const { projectSummary } = useLoaderData() as LoaderData;
+  const { projectSummary, lastUpdatedAt } = useLoaderData() as LoaderData;
   const { name, description, image } = projectSummary;
-  return <ProjectView name={name} description={description} image={image} />;
+  return (
+    <ProjectView
+      name={name}
+      description={description}
+      image={image}
+      lastUpdatedAt={lastUpdatedAt}
+    />
+  );
 }

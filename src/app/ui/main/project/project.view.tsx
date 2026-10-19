@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
+import { formatDate } from "@utils/formatDateTime";
 
 const sectionTitles: Record<string, string> = {
   board: "Board",
@@ -12,6 +13,7 @@ export const ProjectView = ({
   name,
   description,
   image,
+  lastUpdatedAt,
 }: Props): JSX.Element => {
   const location = useLocation();
   const section = location.pathname.split("/").slice(-1)[0];
@@ -32,9 +34,12 @@ export const ProjectView = ({
           </Link>
           <span className="mx-2">/</span>
           <span>{name}</span>
-          <h1 className="mb-5 mt-4 font-primary-black text-2xl">
-            {sectionTitle}
-          </h1>
+          <h1 className="mt-4 font-primary-black text-2xl">{sectionTitle}</h1>
+          {lastUpdatedAt !== undefined && (
+            <p className="mb-5 mt-1 font-primary-light text-2xs text-font-subtlest">
+              Last updated {formatDate(lastUpdatedAt)}
+            </p>
+          )}
         </section>
         <Outlet />
       </div>
@@ -46,4 +51,5 @@ interface Props {
   name: string;
   description?: string;
   image: string;
+  lastUpdatedAt?: number;
 }
