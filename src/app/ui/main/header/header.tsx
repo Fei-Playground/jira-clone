@@ -1,10 +1,13 @@
 import { Link } from "react-router";
 import cx from "classix";
-import { HiQuestionMarkCircle } from "react-icons/hi";
+import { HiOutlineBookOpen, HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
 import { Tooltip } from "@app/components/tooltip";
 import { SelctTheme } from "./select-theme";
 import { UserProfile } from "./user-profile";
+
+const GITHUB_REPOSITORY_URL = "https://github.com/daniserrano7/jira-clone";
+const README_URL = `${GITHUB_REPOSITORY_URL}#readme`;
 
 export const Header = (): JSX.Element => {
   const iconBaseClass =
@@ -33,11 +36,22 @@ export const Header = (): JSX.Element => {
         </Tooltip>
         <Tooltip title="Github">
           <a
-            href="https://github.com/daniserrano7/jira-clone"
+            href={GITHUB_REPOSITORY_URL}
             className={iconBaseClass}
             aria-label="Go to my Github"
           >
             <AiFillGithub size={24} />
+          </a>
+        </Tooltip>
+        <Tooltip title="Help">
+          <a
+            href={README_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={iconBaseClass}
+            aria-label="Open the project README on GitHub"
+          >
+            <HiOutlineBookOpen size={24} />
           </a>
         </Tooltip>
         <SelctTheme />
