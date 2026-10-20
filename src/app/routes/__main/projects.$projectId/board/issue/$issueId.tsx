@@ -24,6 +24,7 @@ import {
 import { deleteComment } from "@infrastructure/db/comment";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
+import { getUserSession } from "@app/session-storage";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
@@ -99,6 +100,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const id = params.issueId as IssueId;
   const projectId = params.projectId as ProjectId;
+  const userSession = await getUserSession(request);
+  const userId = userSession.getUser();
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
   const url = new URL(request.url);
@@ -126,6 +129,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       priority,
       asigneeId,
       reporterId,
+      updatedById: userId ?? undefined,
       comments,
     };
 

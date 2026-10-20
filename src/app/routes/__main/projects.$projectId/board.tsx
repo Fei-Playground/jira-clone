@@ -8,15 +8,16 @@ import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { Project, ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
-import { IssueId } from "@domain/issue";
+import { BoardLastUpdated, IssueId } from "@domain/issue";
 import { isValidSort, DEFAULT_SORT } from "@domain/filter";
 import { getProject } from "@infrastructure/db/project";
 import {
-  getBoardLastUpdatedAt,
+  getBoardLastUpdated,
   updateIssueCategory,
   UpdateIssueCategoryData,
 } from "@infrastructure/db/issue";
 import { Error500 } from "@app/components/error-500";
+import { getUserSession } from "@app/session-storage";
 import { BoardView } from "@app/ui/main/project/board";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
@@ -63,7 +64,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 type LoaderData = {
   project: Project;
-  lastUpdatedAt: number | null;
+  lastUpdated: BoardLastUpdated | null;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -74,11 +75,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.projectId, `params.projectId is required`);
 
-  const [project, lastUpdatedAt] = await Promise.all([
+  const [project, lastUpdated] = await Promise.all([
     getProject(projectId, {
       sortIssuesBy: sortBy,
     }),
-    getBoardLastUpdatedAt(projectId),
+    getBoardLastUpdated(projectId),
   ]);
 
   if (!project) {
@@ -91,12 +92,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect(`/projects/${projectId}/board`);
   }
 
-  return json<LoaderData>({ project, lastUpdatedAt });
+  return json<LoaderData>({ project, lastUpdated });
 };
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
+  const userSession = await getUserSession(request);
+  const userId = userSession.getUser();
 
   if (_action === "updateIssueCategory") {
     const categoryId = formData.get("categoryId") as CategoryId;
@@ -104,6 +107,7 @@ export const action: ActionFunction = async ({ request }) => {
     const inputData: UpdateIssueCategoryData = {
       categoryId,
       issueId,
+      updatedById: userId ?? undefined,
     };
 
     try {
@@ -133,6 +137,6 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function BoardRoute() {
-  const { project, lastUpdatedAt } = useLoaderData() as LoaderData;
-  return <BoardView project={project} lastUpdatedAt={lastUpdatedAt} />;
+  const { project, lastUpdated } = useLoaderData() as LoaderData;
+  return <BoardView project={project} lastUpdated={lastUpdated} />;
 }
