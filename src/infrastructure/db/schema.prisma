@@ -16,6 +16,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   issueReporters Issue[]   @relation("issue_reporter")
   issueAssignees Issue[]   @relation("issue_assignee")
+  issueUpdates   Issue[]   @relation("issue_updated_by")
   issueComments  Comment[]
 }
 
@@ -52,6 +53,8 @@ model Issue {
   reporterId  String
   asignee     User      @relation("issue_assignee", fields: [asigneeId], references: [id])
   asigneeId   String
+  updatedBy   User?     @relation("issue_updated_by", fields: [updatedById], references: [id])
+  updatedById String?
   comments    Comment[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

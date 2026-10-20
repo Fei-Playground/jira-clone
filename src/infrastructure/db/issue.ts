@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
-import { IssueId, Issue } from "@domain/issue";
+import { BoardLastUpdated, IssueId, Issue } from "@domain/issue";
+import { ProjectId } from "@domain/project";
 import { Priority, PriorityId } from "@domain/priority";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
@@ -57,6 +58,33 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
   return issue;
 };
 
+export const getBoardLastUpdated = async (
+  projectId: ProjectId
+): Promise<BoardLastUpdated | null> => {
+  const latestIssue = await db.issue.findFirst({
+    where: {
+      category: {
+        projectId,
+      },
+    },
+    include: {
+      updatedBy: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  if (!latestIssue) {
+    return null;
+  }
+
+  return {
+    updatedAt: latestIssue.updatedAt.getTime(),
+    user: latestIssue.updatedBy ? dnull(latestIssue.updatedBy) : null,
+  };
+};
+
 export type CreateIssueInputData = {
   name: string;
   description: string;
@@ -64,6 +92,8 @@ export type CreateIssueInputData = {
   priority: PriorityId;
   asigneeId: UserId;
   reporterId: UserId;
+  /** The user performing the change. */
+  updatedById?: UserId;
   comments: Comment[];
 };
 export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId> => {
@@ -127,8 +157,14 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
 export type UpdateIssueCategoryData = {
   issueId: IssueId;
   categoryId: CategoryId;
+  /** The user performing the change. */
+  updatedById?: UserId;
 };
-export const updateIssueCategory = async ({ issueId, categoryId }: UpdateIssueCategoryData) => {
+export const updateIssueCategory = async ({
+  issueId,
+  categoryId,
+  updatedById,
+}: UpdateIssueCategoryData) => {
   await db.issue.update({
     where: {
       id: issueId,
@@ -139,6 +175,7 @@ export const updateIssueCategory = async ({ issueId, categoryId }: UpdateIssueCa
           id: categoryId,
         },
       },
+      updatedBy: updatedById ? { connect: { id: updatedById } } : undefined,
     },
   });
 };

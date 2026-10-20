@@ -13,6 +13,7 @@ import { PriorityId } from "@domain/priority";
 import { isValidSort } from "@domain/filter";
 import { createIssue, CreateIssueInputData } from "@infrastructure/db/issue";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
+import { getUserSession } from "@app/session-storage";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
@@ -76,6 +77,8 @@ export type ActionData = {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const projectId = params.projectId as ProjectId;
+  const userSession = await getUserSession(request);
+  const userId = userSession.getUser();
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
   const url = new URL(request.url);
@@ -102,6 +105,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       priority,
       asigneeId,
       reporterId,
+      updatedById: userId ?? undefined,
       comments,
     };
 

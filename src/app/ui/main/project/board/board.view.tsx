@@ -5,7 +5,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Project } from "@domain/project";
 import { Category } from "@domain/category";
-import { IssueId } from "@domain/issue";
+import { BoardLastUpdated, IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
@@ -13,11 +13,18 @@ import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
+import { formatDateTime } from "@utils/formatDateTime";
 
-export const BoardView = ({ project }: Props): JSX.Element => {
+export const BoardView = ({ project, lastUpdated }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
+        {lastUpdated ? (
+          <p className="mb-3 font-primary-light text-2xs text-font-subtlest">
+            Last updated {formatDateTime(lastUpdated.updatedAt)}
+            {lastUpdated.user ? ` by ${lastUpdated.user.name}` : null}
+          </p>
+        ) : null}
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">
@@ -38,6 +45,7 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+  lastUpdated?: BoardLastUpdated | null;
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {
