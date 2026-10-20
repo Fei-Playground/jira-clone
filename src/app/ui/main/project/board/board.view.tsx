@@ -13,11 +13,20 @@ import { SelectSort } from "./select-sort";
 import { CategoryColumn } from "./category-column";
 import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
+import { formatDateTime } from "@utils/formatDateTime";
 
-export const BoardView = ({ project }: Props): JSX.Element => {
+export const BoardView = ({
+  project,
+  lastUpdatedAt,
+}: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
+        {lastUpdatedAt ? (
+          <p className="mb-3 font-primary-light text-2xs text-font-subtlest">
+            Last updated {formatDateTime(lastUpdatedAt)}
+          </p>
+        ) : null}
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">
@@ -38,6 +47,7 @@ export const BoardView = ({ project }: Props): JSX.Element => {
 
 interface Props {
   project: Project;
+  lastUpdatedAt?: number | null;
 }
 
 const Categories = ({ categories }: CategoriesProps): JSX.Element => {

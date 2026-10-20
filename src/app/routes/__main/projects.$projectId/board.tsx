@@ -12,6 +12,7 @@ import { IssueId } from "@domain/issue";
 import { isValidSort, DEFAULT_SORT } from "@domain/filter";
 import { getProject } from "@infrastructure/db/project";
 import {
+  getBoardLastUpdatedAt,
   updateIssueCategory,
   UpdateIssueCategoryData,
 } from "@infrastructure/db/issue";
@@ -62,6 +63,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 type LoaderData = {
   project: Project;
+  lastUpdatedAt: number | null;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -72,9 +74,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.projectId, `params.projectId is required`);
 
-  const project: Project | null = await getProject(projectId, {
-    sortIssuesBy: sortBy,
-  });
+  const [project, lastUpdatedAt] = await Promise.all([
+    getProject(projectId, {
+      sortIssuesBy: sortBy,
+    }),
+    getBoardLastUpdatedAt(projectId),
+  ]);
 
   if (!project) {
     throw new Response("Not Found", {
@@ -86,7 +91,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect(`/projects/${projectId}/board`);
   }
 
-  return json<LoaderData>({ project });
+  return json<LoaderData>({ project, lastUpdatedAt });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -128,6 +133,6 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function BoardRoute() {
-  const { project } = useLoaderData() as LoaderData;
-  return <BoardView project={project} />;
+  const { project, lastUpdatedAt } = useLoaderData() as LoaderData;
+  return <BoardView project={project} lastUpdatedAt={lastUpdatedAt} />;
 }
