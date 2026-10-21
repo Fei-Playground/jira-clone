@@ -6,11 +6,14 @@ import {
   SetStateAction,
 } from "react";
 import { Project } from "@domain/project";
+import { ALL_PRIORITIES, PriorityFilter } from "@domain/filter";
 
 interface ProjectStore {
   project: Project;
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
+  priority: PriorityFilter;
+  setPriority: Dispatch<SetStateAction<PriorityFilter>>;
 }
 
 const ProjectContext = createContext<ProjectStore | undefined>(undefined);
@@ -23,9 +26,12 @@ export const ProjectContextProvider = ({
   children: JSX.Element;
 }): JSX.Element => {
   const [search, setSearch] = useState("");
+  const [priority, setPriority] = useState<PriorityFilter>(ALL_PRIORITIES);
 
   return (
-    <ProjectContext.Provider value={{ project, search, setSearch }}>
+    <ProjectContext.Provider
+      value={{ project, search, setSearch, priority, setPriority }}
+    >
       {children}
     </ProjectContext.Provider>
   );
