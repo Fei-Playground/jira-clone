@@ -61,10 +61,9 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     [category.id]
   );
 
-  const filteredIssues = (): Issue[] =>
-    category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
-    });
+  const filteredIssues: Issue[] = category.issues.filter((issue) => {
+    return issue.name.toLowerCase().includes(search);
+  });
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
@@ -108,9 +107,9 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       </div>
       {/* Column header */}
       <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
-        <span className="flex gap-2">
+        <span className="flex items-center gap-2">
           <span>{category.name}</span>
-          {!emptyCategory && <span>( {category.issues.length} )</span>}
+          <IssueCountBadge count={filteredIssues.length} />
         </span>
         <Link
           to={issueLink}
@@ -128,7 +127,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
               {emptyCategory ? (
                 <EmptyCategory />
               ) : (
-                filteredIssues().map((issue, index) => (
+                filteredIssues.map((issue, index) => (
                   <li key={index} className="mb-2">
                     <IssueCard
                       issue={issue}
@@ -153,6 +152,16 @@ interface CategoryColumnProps {
   submittingIssues: IssueId[];
   setSubmittingIssues: Dispatch<SetStateAction<IssueId[]>>;
   handleDragging: (isDragging: boolean) => void;
+}
+
+const IssueCountBadge = ({ count }: IssueCountBadgeProps): JSX.Element => (
+  <span className="flex min-w-[20px] items-center justify-center rounded bg-background-neutral px-1 py-0.5 text-2xs text-font-subtle">
+    {count}
+  </span>
+);
+
+interface IssueCountBadgeProps {
+  count: number;
 }
 
 const EmptyCategory = (): JSX.Element => (
