@@ -1,3 +1,5 @@
+import { PriorityId } from "@domain/priority";
+
 export const sorts = ["date", "priority"] as const;
 export const DEFAULT_SORT: Sort = "date";
 
@@ -22,3 +24,8 @@ export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][])
 );
 
 export const isValidSort = (sort: string): sort is Sort => sorts.includes(sort as Sort);
+
+/** Value of the priority filter when every priority is shown. */
+export const ALL_PRIORITIES = "all";
+
+export type PriorityFilter = PriorityId | typeof ALL_PRIORITIES;
