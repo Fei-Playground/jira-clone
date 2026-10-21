@@ -7,6 +7,7 @@ import { Project } from "@domain/project";
 import { Category } from "@domain/category";
 import { IssueId } from "@domain/issue";
 import { Search } from "@app/ui/main/project/board/search";
+import { SelectPriorityFilter } from "@app/ui/main/project/board/select-priority-filter";
 import { Kbd } from "@app/components/kbd-placeholder";
 import { UserAvatarList } from "./avatar-list";
 import { SelectSort } from "./select-sort";
@@ -20,6 +21,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
       <div className="box-border flex h-full flex-col">
         <section className="flex items-center">
           <Search />
+          <div className="ml-4 inline">
+            <SelectPriorityFilter />
+          </div>
           <div className="mx-4 my-0 inline">
             <UserAvatarList users={project.users} />
           </div>

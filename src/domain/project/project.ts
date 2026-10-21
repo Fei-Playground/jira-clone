@@ -1,5 +1,6 @@
 import { User } from "@domain/user";
 import { Category } from "@domain/category";
+import { Priority, PriorityId } from "@domain/priority";
 
 export type ProjectId = string;
 export interface Project {
@@ -23,3 +24,16 @@ export const projectToProjectSummary = (project: Project): ProjectSummary => ({
   image: project.image,
   createdAt: project.createdAt,
 });
+
+/** Priorities used by at least one issue of the project, ordered from lowest to highest. */
+export const getPrioritiesInUse = (project: Project): Priority[] => {
+  const priorities = new Map<PriorityId, Priority>();
+
+  project.categories.forEach((category) =>
+    category.issues.forEach((issue) => {
+      priorities.set(issue.priority.id, issue.priority);
+    })
+  );
+
+  return [...priorities.values()].sort((a, b) => a.order - b.order);
+};
