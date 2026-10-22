@@ -67,6 +67,18 @@ export const LoginView = ({ users }: Props) => {
         >
           Login
         </Button>
+        <div className="mt-2 text-center font-primary-light text-sm text-font-subtlest">
+          <p>
+            Need help? Contact{" "}
+            <a
+              href="mailto:support@example.com"
+              className="text-link hover:underline active:text-link-pressed"
+            >
+              support@example.com
+            </a>
+          </p>
+          <p className="mt-1">Forgot your password?</p>
+        </div>
       </Form>
     </div>
   );
