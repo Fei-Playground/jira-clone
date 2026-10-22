@@ -1,0 +1,15 @@
+:root {
+  --brand: #4950f6;
+  --surface: #ffffff;
+  --ink: #16161d;
+  --muted: #6b7280;
+  --radius: 10px;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--surface);
+}
