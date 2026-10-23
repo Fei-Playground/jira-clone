@@ -200,3 +200,4 @@ My last contribution was implementing a full Design System. I followed the [Atla
 ## Testing
 
 Run `npm test` to run the test suite.
+Run `npm run lint` before pushing.
