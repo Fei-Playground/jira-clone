@@ -91,7 +91,7 @@ const navItems: NavItemProps[] = [
   {
     href: "backlog",
     icon: <BsListNested size={24} />,
-    name: "Backlog",
+    name: "Team Backlog",
     disabled: true,
   },
   {
