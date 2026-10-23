@@ -24,7 +24,7 @@ import { formatTags, formatProperties } from "@utils/meta";
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
   const { project } = data as unknown as LoaderData;
-  const title = "Jira clone - Board";
+  const title = "Jira clone - Team Board";
   const description =
     "Manage your project. Create, edit, delete new issues and assigne them.";
   const image = "https://jira-clone.fly.dev/static/images/readme/project.png";
