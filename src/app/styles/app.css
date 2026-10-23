@@ -171,6 +171,7 @@
   --color-font-link-pressed: var(--Blue800);
   --color-font-subtle: var(--Neutral800);
   --color-font-subtlest: var(--Neutral700);
+  --color-font-subtlest-lighter: var(--Neutral600);
   --color-font-disabled: var(--Neutral400A);
   --color-font-inverse: var(--Neutral0);
 
@@ -308,6 +309,7 @@
   --color-font-link-pressed: var(--Blue300);
   --color-font-subtle: var(--DarkNeutral800);
   --color-font-subtlest: var(--DarkNeutral700);
+  --color-font-subtlest-lighter: var(--DarkNeutral800);
   --color-font-disabled: var(--DarkNeutral400A);
   --color-font-inverse: var(--DarkNeutral100);
 
@@ -446,6 +448,7 @@
   --color-font-link-pressed: var(--Blue300);
   --color-font-subtle: var(--DarkNeutral800);
   --color-font-subtlest: var(--DarkNeutral700);
+  --color-font-subtlest-lighter: var(--DarkNeutral800);
   --color-font-disabled: var(--DarkNeutral400A);
   --color-font-inverse: var(--DarkNeutral100);
 
@@ -584,6 +587,7 @@
   --color-font-link-pressed: var(--Blue300);
   --color-font-subtle: var(--DarkNeutral800);
   --color-font-subtlest: var(--DarkNeutral700);
+  --color-font-subtlest-lighter: var(--DarkNeutral800);
   --color-font-disabled: var(--DarkNeutral400A);
   --color-font-inverse: var(--DarkNeutral100);
 
@@ -712,6 +716,7 @@
   --color-font-brand: var(--Teal700);
   --color-font-subtle: var(--Neutral600);
   --color-font-subtlest: var(--Neutral700);
+  --color-font-subtlest-lighter: var(--Neutral600);
   --color-font-success: var(--Green800);
   --color-font-danger: var(--Red800);
   --color-font-warning: var(--Orange800);
