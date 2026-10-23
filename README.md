@@ -200,3 +200,4 @@ My last contribution was implementing a full Design System. I followed the [Atla
 ## Changelog
 
 - 2026-10-23: test of PR version tracking.
+- second line for version 2.
