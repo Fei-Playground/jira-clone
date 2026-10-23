@@ -81,7 +81,7 @@ const navItems: NavItemProps[] = [
   {
     href: "board",
     icon: <HiOutlineViewBoards size={24} />,
-    name: "Board",
+    name: "Team Board",
   },
   {
     href: "analytics",
