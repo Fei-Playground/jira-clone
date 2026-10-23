@@ -202,3 +202,4 @@ My last contribution was implementing a full Design System. I followed the [Atla
 Run `npm test` to run the test suite.
 Run `npm run lint` before pushing.
 Run `npm run build` to check the production build.
+Run `npm run preview` to check the built app locally.
