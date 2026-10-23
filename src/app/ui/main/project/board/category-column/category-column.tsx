@@ -121,6 +121,8 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         >
           <AiOutlinePlus size={24} />
         </Link>
+        {/* Hairline divider under the column title */}
+        <div className="absolute bottom-0 left-0 h-px w-full bg-border" />
       </div>
       {/* Column body items */}
       <div ref={columnRef} className="h-full">
