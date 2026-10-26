@@ -3,3 +3,4 @@ Base moved: commit 2.
 Base moved: commit 3.
 Base moved: commit 4.
 Base moved: commit 5.
+Base moved: commit 6.
