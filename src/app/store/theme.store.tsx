@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useCallback,
+  useSyncExternalStore,
 } from "react";
 import { useFetcher } from "react-router";
 
@@ -37,28 +38,29 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 const prefersLightMQ = "(prefers-color-scheme: light)";
 export const getSystemTheme = (): Theme =>
   window.matchMedia(prefersLightMQ).matches ? Theme.LIGHT : Theme.DARK;
+const subscribeToSystemTheme = (onChange: () => void) => {
+  const mediaQuery = window.matchMedia(prefersLightMQ);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+};
 
 export const ThemeProvider = ({
   children,
   specifiedTheme,
   specifiedPreference,
 }: ThemeProviderProps) => {
-  const [theme, setThemeState] = useState<Theme | null>(() => {
-    // On the server, if we don't have a specified theme then we should
-    // return null and the clientThemeCode will set the theme for us
-    // before hydration. Then (during hydration), this code will get the same
-    // value that clientThemeCode got so hydration is happy.
-    if (specifiedTheme) {
-      if (themes.includes(specifiedTheme)) return specifiedTheme;
-      else return null;
-    }
-
-    // there's no way for us to know what the theme should be in this context
-    // the client will have to figure it out before hydration.
-    if (typeof window !== "object") return null;
-
-    return getSystemTheme();
-  });
+  const [storedTheme, setThemeState] = useState<Theme | null>(() =>
+    isValidTheme(specifiedTheme) ? specifiedTheme : null
+  );
+  // Without a theme in the session, fall back to the system theme. Its server
+  // snapshot is null, so hydration matches the server render and the system
+  // theme applies right after (the inline script in root.tsx covers the gap).
+  const systemTheme = useSyncExternalStore(
+    subscribeToSystemTheme,
+    getSystemTheme,
+    () => null
+  );
+  const theme = storedTheme ?? systemTheme;
   const [preference, setPreference] = useState<Preference | null>(() => {
     if (isValidPreference(specifiedPreference)) return specifiedPreference;
 
