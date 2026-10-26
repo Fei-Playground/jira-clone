@@ -5,16 +5,17 @@ import { emitter } from "@app/events/emitter.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return eventStream(request.signal, (send) => {
-    const handleIssueCreated = (message: string) => {
-      send({ event: EVENTS.ISSUE_CREATED, data: message });
+    // Emitters pass Date.now(); SSE data must be a string.
+    const handleIssueCreated = (timestamp: number) => {
+      send({ event: EVENTS.ISSUE_CREATED, data: String(timestamp) });
     };
 
-    const handleIssueChanged = (message: string) => {
-      send({ event: EVENTS.ISSUE_CHANGED, data: message });
+    const handleIssueChanged = (timestamp: number) => {
+      send({ event: EVENTS.ISSUE_CHANGED, data: String(timestamp) });
     };
 
-    const handleIssueDeleted = (message: string) => {
-      send({ event: EVENTS.ISSUE_DELETED, data: message });
+    const handleIssueDeleted = (timestamp: number) => {
+      send({ event: EVENTS.ISSUE_DELETED, data: String(timestamp) });
     };
 
     emitter.on(EVENTS.ISSUE_CREATED, handleIssueCreated);
