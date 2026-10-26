@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Outlet, useNavigate, useRevalidator } from "react-router";
+import { Outlet, useHref, useNavigate, useRevalidator } from "react-router";
 import { useEventSource } from "remix-utils/sse/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -46,6 +46,9 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   const [prevCategories, setPrevCategories] = useState(categories);
   const { revalidate } = useRevalidator();
   const navigate = useNavigate();
+  // Resolved against the board route, so it stays correct when the page was
+  // loaded on a child URL such as /board/issue/:issueId.
+  const issueEventUrl = useHref("issue/issue-event");
 
   // Reset optimistic submissions when the categories data changes
   if (categories !== prevCategories) {
@@ -54,11 +57,11 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   }
 
   // Data created
-  useEventSource("board/issue/issue-event", {
+  useEventSource(issueEventUrl, {
     event: EVENTS.ISSUE_CREATED,
   });
 
-  const dataUpdated = useEventSource("board/issue/issue-event", {
+  const dataUpdated = useEventSource(issueEventUrl, {
     event: EVENTS.ISSUE_CHANGED,
   });
 
