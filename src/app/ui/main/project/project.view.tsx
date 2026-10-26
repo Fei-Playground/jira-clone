@@ -35,7 +35,7 @@ export const ProjectView = ({
           <h1
             className="mb-5 mt-4 font-primary-black text-2xl"
             data-section="board"
-            data-row="h2"
+            data-row="h3"
           >
             {sectionTitle}
           </h1>
