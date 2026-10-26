@@ -120,7 +120,8 @@ const App = (): JSX.Element => {
   }, []);
 
   return (
-    <html lang="en" className={cx("h-full", theme)}>
+    // The inline theme script below may add "dark" before hydration.
+    <html lang="en" className={cx("h-full", theme)} suppressHydrationWarning>
       <head>
         <Meta />
         <Links />
