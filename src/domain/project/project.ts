@@ -13,8 +13,16 @@ export interface Project {
   updatedAt?: number;
 }
 
+const countIssues = (categories: Category[]): number =>
+  categories.reduce((total, category) => total + category.issues.length, 0);
+
 // TODO: Make createdAt and updatedAt mandatory
-export type ProjectSummary = Pick<Project, "id" | "name" | "description" | "image" | "createdAt">;
+export type ProjectSummary = Pick<
+  Project,
+  "id" | "name" | "description" | "image" | "createdAt"
+> & {
+  issuesCount: number;
+};
 
 export const projectToProjectSummary = (project: Project): ProjectSummary => ({
   id: project.id,
@@ -22,4 +30,5 @@ export const projectToProjectSummary = (project: Project): ProjectSummary => ({
   description: project.description,
   image: project.image,
   createdAt: project.createdAt,
+  issuesCount: countIssues(project.categories),
 });

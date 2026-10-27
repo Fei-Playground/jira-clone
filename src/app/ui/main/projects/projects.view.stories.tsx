@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
-import { projectsMock } from "@domain/project";
+import { projectsMock, projectToProjectSummary } from "@domain/project";
 import { ProjectsView } from "./projects.view";
 
 const meta: Meta<typeof ProjectsView> = {
@@ -19,13 +19,7 @@ const meta: Meta<typeof ProjectsView> = {
 export default meta;
 type Story = StoryObj<typeof ProjectsView>;
 
-const projectsSummary = projectsMock.map((project) => ({
-  id: project.id,
-  name: project.name,
-  description: project.description,
-  image: project.image,
-  createdAt: project.createdAt,
-}));
+const projectsSummary = projectsMock.map(projectToProjectSummary);
 
 export const Default: Story = {
   args: {

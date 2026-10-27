@@ -94,6 +94,13 @@ interface GetProjectOptions {
   sortIssuesBy: Sort;
 }
 
+const sumIssuesCount = (categories: CategoryIssuesCount[]): number =>
+  categories.reduce((total, category) => total + category._count.issues, 0);
+
+interface CategoryIssuesCount {
+  _count: { issues: number };
+}
+
 export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSummary | null> => {
   const projectSummaryDb = await db.project.findUnique({
     where: { id: projectId },
@@ -103,6 +110,15 @@ export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSu
       description: true,
       image: true,
       createdAt: true,
+      categories: {
+        select: {
+          _count: {
+            select: {
+              issues: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -116,6 +132,7 @@ export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSu
     description: projectSummaryDb.description || "",
     image: projectSummaryDb.image,
     createdAt: projectSummaryDb.createdAt.getDate(),
+    issuesCount: sumIssuesCount(projectSummaryDb.categories),
   };
 
   return projectSummary;
@@ -136,6 +153,15 @@ export const getProjectsSummary = async (userId: UserId): Promise<ProjectSummary
       description: true,
       image: true,
       createdAt: true,
+      categories: {
+        select: {
+          _count: {
+            select: {
+              issues: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       createdAt: "asc",
@@ -148,6 +174,7 @@ export const getProjectsSummary = async (userId: UserId): Promise<ProjectSummary
     image: projectSummaryDb.image,
     description: projectSummaryDb.description || "",
     createdAt: projectSummaryDb.createdAt.getDate(),
+    issuesCount: sumIssuesCount(projectSummaryDb.categories),
   }));
 
   return projectsSummary;

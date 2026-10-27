@@ -32,13 +32,17 @@ const mockProjectSummary: ProjectSummary = {
   description: "Project 1 description",
   image:
     "https://admin.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10400?size=xxlarge",
+  issuesCount: 8,
 };
 
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       {[Standard, WithLongDescription, NonDeletable].map(({ args }, index) => (
-        <ProjectCard key={index} project={args?.project || projectMock1} />
+        <ProjectCard
+          key={index}
+          project={args?.project || projectToProjectSummary(projectMock1)}
+        />
       ))}
     </div>
   ),
@@ -55,6 +59,7 @@ export const WithLongDescription: Story = {
     project: {
       ...mockProjectSummary,
       name: "Project 2",
+      issuesCount: 1,
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies aliquam, nunc nisl aliquet nunc, vitae aliqu",
     },
