@@ -8,6 +8,9 @@ const defaultProjectsIds: ProjectId[] = projectsMock.map(
   (projectMock) => projectMock.id
 );
 
+const issuesCountLabel = (count: number): string =>
+  `${count} ${count === 1 ? "issue" : "issues"}`;
+
 export const ProjectCard = ({ project }: Props): JSX.Element => {
   const isDefaultProject = defaultProjectsIds.includes(project.id);
 
@@ -16,7 +19,7 @@ export const ProjectCard = ({ project }: Props): JSX.Element => {
       <Link
         to={project.id}
         className={cx(
-          "group flex h-[112px] rounded bg-elevation-surface-raised text-font shadow-sm outline outline-2 outline-transparent duration-100 ease-linear",
+          "group flex min-h-[112px] rounded bg-elevation-surface-raised text-font shadow-sm outline outline-2 outline-transparent duration-100 ease-linear",
           "hover:-translate-y-0.5 hover:bg-background-brand-subtlest-hovered hover:text-font-brand hover:shadow-md hover:outline-border-brand"
         )}
       >
@@ -27,11 +30,14 @@ export const ProjectCard = ({ project }: Props): JSX.Element => {
           height="104px"
           className="h-auto w-[90px] rounded-l object-cover"
         />
-        <div className="flex flex-col gap-1 px-3 pb-4 pt-2">
+        <div className="flex flex-col gap-1 px-3 pb-3 pt-2">
           <h2 className="text-lg">{project.name}</h2>
           <h3 className="line-clamp-2 min-h-[40px] font-primary-light text-sm text-font-subtle text-opacity-100">
             {project.description}
           </h3>
+          <span className="font-primary-light text-2xs text-font-subtlest">
+            {issuesCountLabel(project.issuesCount)}
+          </span>
         </div>
       </Link>
       <AlertDialog.Root>
