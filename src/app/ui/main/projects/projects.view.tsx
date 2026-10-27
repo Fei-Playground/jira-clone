@@ -16,7 +16,7 @@ export const ProjectsView = ({
             <span>
               <AiOutlinePlus size={22} />
             </span>
-            <span className="leading-4">Add Project</span>
+            <span className="leading-4">Start a Project</span>
           </Button>
         </Link>
       </div>
