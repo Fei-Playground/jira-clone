@@ -1,16 +1,26 @@
+import { useState } from "react";
 import { Link, Outlet } from "react-router";
 import { AiOutlinePlus } from "react-icons/ai";
 import { ProjectSummary } from "@domain/project";
 import { Button } from "@app/components/button";
+import { SearchInput } from "@app/components/search";
 import { ProjectCard } from "./project-card";
 
 export const ProjectsView = ({
   projectsSummary,
 }: ProjectsViewProps): JSX.Element => {
+  const [search, setSearch] = useState<string>("");
+
+  const query = search.trim().toLowerCase();
+  const filteredProjects = projectsSummary.filter((project) =>
+    project.name.toLowerCase().includes(query)
+  );
+  const hasNoMatches = query.length > 0 && filteredProjects.length === 0;
+
   return (
     <div className="p-6">
       <h1 className="font-primary-black text-2xl">PROJECTS</h1>
-      <div className="mt-8">
+      <div className="mt-8 flex items-center justify-between gap-4">
         <Link to="new" className="flex w-fit">
           <Button color="neutral" variant="subtlest" className="py-3 pl-3 pr-4">
             <span>
@@ -19,12 +29,25 @@ export const ProjectsView = ({
             <span className="leading-4">Add Project</span>
           </Button>
         </Link>
+        <SearchInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search projects"
+          ariaLabel="Search projects by name"
+          className="w-[240px] focus:w-[280px]"
+        />
       </div>
-      <div className="mt-4 grid grid-cols-[repeat(auto-fit,_400px)] gap-8">
-        {projectsSummary.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
+      {hasNoMatches ? (
+        <p className="mt-4 font-primary-light text-sm text-font-subtle">
+          {`No projects match “${search.trim()}”.`}
+        </p>
+      ) : (
+        <div className="mt-4 grid grid-cols-[repeat(auto-fit,_400px)] gap-8">
+          {filteredProjects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      )}
       <Outlet />
     </div>
   );
