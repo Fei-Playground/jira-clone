@@ -103,6 +103,15 @@ export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSu
       description: true,
       image: true,
       createdAt: true,
+      categories: {
+        select: {
+          _count: {
+            select: {
+              issues: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -116,10 +125,14 @@ export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSu
     description: projectSummaryDb.description || "",
     image: projectSummaryDb.image,
     createdAt: projectSummaryDb.createdAt.getDate(),
+    issuesCount: countIssues(projectSummaryDb.categories),
   };
 
   return projectSummary;
 };
+
+const countIssues = (categories: Array<{ _count: { issues: number } }>): number =>
+  categories.reduce((total, category) => total + category._count.issues, 0);
 
 export const getProjectsSummary = async (userId: UserId): Promise<ProjectSummary[]> => {
   const projectsSummaryDb = await db.project.findMany({
@@ -136,6 +149,15 @@ export const getProjectsSummary = async (userId: UserId): Promise<ProjectSummary
       description: true,
       image: true,
       createdAt: true,
+      categories: {
+        select: {
+          _count: {
+            select: {
+              issues: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       createdAt: "asc",
@@ -148,6 +170,7 @@ export const getProjectsSummary = async (userId: UserId): Promise<ProjectSummary
     image: projectSummaryDb.image,
     description: projectSummaryDb.description || "",
     createdAt: projectSummaryDb.createdAt.getDate(),
+    issuesCount: countIssues(projectSummaryDb.categories),
   }));
 
   return projectsSummary;
