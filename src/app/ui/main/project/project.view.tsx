@@ -6,7 +6,7 @@ const sectionTitles: Record<string, string> = {
   analytics: "Analytics",
   backlog: "Backlog",
 };
-const defaultSection = "board";
+const fallbackSection = "board";
 
 export const ProjectView = ({
   name,
@@ -16,7 +16,7 @@ export const ProjectView = ({
   const location = useLocation();
   const section = location.pathname.split("/").slice(-1)[0];
 
-  const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
+  const sectionTitle = sectionTitles[section] || sectionTitles[fallbackSection];
 
   return (
     <div className="relative flex h-full flex-grow">
