@@ -51,7 +51,7 @@ export const ProjectCard = ({ project }: Props): JSX.Element => {
           disabled={isDefaultProject}
         >
           <MdDeleteOutline size={15} />
-          Delete project
+          Remove project
         </AlertDialog.Trigger>
 
         <AlertDialog.Portal>
