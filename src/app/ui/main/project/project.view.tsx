@@ -2,11 +2,11 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {
-  board: "Board",
+  board: "Sprint Board",
   analytics: "Analytics",
   backlog: "Backlog",
 };
-const defaultSection = "board";
+const fallbackSection = "board";
 
 export const ProjectView = ({
   name,
@@ -16,7 +16,7 @@ export const ProjectView = ({
   const location = useLocation();
   const section = location.pathname.split("/").slice(-1)[0];
 
-  const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
+  const sectionTitle = sectionTitles[section] || sectionTitles[fallbackSection];
 
   return (
     <div className="relative flex h-full flex-grow">
