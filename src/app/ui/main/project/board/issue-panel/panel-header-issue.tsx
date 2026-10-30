@@ -3,9 +3,9 @@ import * as AlertDialog from "@app/components/alert-dialog";
 import cx from "classix";
 import { MdContentCopy, MdDeleteOutline } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
-import { toast } from "react-toastify";
 import { IssueId } from "@domain/issue";
 import { TaskIcon } from "@app/components/icons";
+import { copyToClipboard } from "@utils/copy-to-clipboard";
 
 export const PanelHeaderIssue = ({
   id,
@@ -17,10 +17,7 @@ export const PanelHeaderIssue = ({
   const handleCopyClick = (): void => {
     if (!id) return;
 
-    navigator.clipboard
-      .writeText(id)
-      .then(() => toast.success("Issue ID copied"))
-      .catch(() => toast.error("Could not copy the issue ID"));
+    copyToClipboard(id, "Issue ID");
   };
 
   return (
