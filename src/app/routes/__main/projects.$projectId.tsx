@@ -4,6 +4,7 @@ import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
 import { ProjectSummary, ProjectId } from "@domain/project";
 import { getProjectSummary } from "@infrastructure/db/project";
+import { getIssuesCount } from "@infrastructure/db/issue";
 import { Error404 } from "@app/components/error-404";
 import { Error500 } from "@app/components/error-500";
 import { ProjectView } from "@app/ui/main/project";
@@ -50,6 +51,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 type LoaderData = {
   projectSummary: ProjectSummary;
+  issuesCount: number;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -58,7 +60,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.projectId, `params.projectId is required`);
 
-  const projectSummary = await getProjectSummary(projectId);
+  const [projectSummary, issuesCount] = await Promise.all([
+    getProjectSummary(projectId),
+    getIssuesCount(projectId),
+  ]);
 
   if (!projectSummary) {
     throw new Response("Not Found", {
@@ -70,7 +75,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return redirect(`/projects/${projectId}/board`);
   }
 
-  return json<LoaderData>({ projectSummary: projectSummary });
+  return json<LoaderData>({ projectSummary, issuesCount });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -94,7 +99,14 @@ export function CatchBoundary() {
 }
 
 export default function ProjectRoute() {
-  const { projectSummary } = useLoaderData() as LoaderData;
+  const { projectSummary, issuesCount } = useLoaderData<LoaderData>();
   const { name, description, image } = projectSummary;
-  return <ProjectView name={name} description={description} image={image} />;
+  return (
+    <ProjectView
+      name={name}
+      description={description}
+      image={image}
+      issuesCount={issuesCount}
+    />
+  );
 }

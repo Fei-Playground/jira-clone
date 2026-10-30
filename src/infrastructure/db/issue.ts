@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
+import { ProjectId } from "@domain/project";
 import { Priority, PriorityId } from "@domain/priority";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
@@ -55,6 +56,16 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
   };
 
   return issue;
+};
+
+export const getIssuesCount = async (projectId: ProjectId): Promise<number> => {
+  return db.issue.count({
+    where: {
+      category: {
+        projectId,
+      },
+    },
+  });
 };
 
 export type CreateIssueInputData = {
