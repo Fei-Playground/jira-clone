@@ -5,7 +5,7 @@ import { RxValueNone } from "react-icons/rx";
 import cx from "classix";
 import { useDrop } from "react-dnd";
 import { Category } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
+import { Issue, IssueId, isIssueMatchingSearch } from "@domain/issue";
 import { ScrollArea } from "@app/components/scroll-area";
 import { useProjectStore } from "@app/ui/main/project";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -62,9 +62,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   );
 
   const filteredIssues = (): Issue[] =>
-    category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
-    });
+    category.issues.filter((issue) => isIssueMatchingSearch(issue, search));
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
