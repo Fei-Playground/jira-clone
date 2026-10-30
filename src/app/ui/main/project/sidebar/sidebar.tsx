@@ -97,7 +97,7 @@ const navItems: NavItemProps[] = [
   {
     href: "server-error",
     icon: <BsCloudSlash size={24} />,
-    name: "Server error",
+    name: "Error demo",
   },
   {
     href: "not-found",
