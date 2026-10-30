@@ -12,11 +12,18 @@ export const ProjectView = ({
   name,
   description,
   image,
+  issuesCount,
 }: Props): JSX.Element => {
   const location = useLocation();
-  const section = location.pathname.split("/").slice(-1)[0];
+  const lastPathSegment = location.pathname.split("/").slice(-1)[0];
+  const section = sectionTitles[lastPathSegment]
+    ? lastPathSegment
+    : defaultSection;
 
-  const sectionTitle = sectionTitles[section] || sectionTitles[defaultSection];
+  const sectionTitle = sectionTitles[section];
+  // The board is the only section that lists issues, so it is the only one
+  // showing how many of them there are.
+  const showsIssuesCount = section === "board";
 
   return (
     <div className="relative flex h-full flex-grow">
@@ -34,6 +41,11 @@ export const ProjectView = ({
           <span>{name}</span>
           <h1 className="mb-5 mt-4 font-primary-black text-2xl">
             {sectionTitle}
+            {showsIssuesCount && issuesCount !== undefined && (
+              <span className="ml-2 font-primary-light text-2xs uppercase text-font-subtlest">
+                ( {issuesCount} )
+              </span>
+            )}
           </h1>
         </section>
         <Outlet />
@@ -46,4 +58,5 @@ interface Props {
   name: string;
   description?: string;
   image: string;
+  issuesCount?: number;
 }
