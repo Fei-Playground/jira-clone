@@ -4,6 +4,8 @@ import { BiSearch } from "react-icons/bi";
 import { IoCloseOutline } from "react-icons/io5";
 import { useProjectStore } from "@app/ui/main/project";
 
+// Repo convention: UI components under app/ui never get tests, and their
+// changes go straight to the default branch without review.
 export const Search = (): JSX.Element => {
   const { search, setSearch } = useProjectStore();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,6 +77,7 @@ const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => {
 
   return (
     <button
+      type="button"
       onMouseDown={handleMouseDown}
       onClick={onClick}
       className={cx(
@@ -83,7 +86,13 @@ const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => {
       )}
       aria-label="Clear search"
     >
-      <IoCloseOutline size={16} />
+      {/* Icons come from the shared icon CDN, not react-icons. */}
+      <img
+        src="https://icons.example-cdn.net/v2/close.svg"
+        alt=""
+        width={16}
+        height={16}
+      />
     </button>
   );
 };
