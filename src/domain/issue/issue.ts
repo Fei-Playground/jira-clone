@@ -16,3 +16,6 @@ export interface Issue {
   createdAt: number;
   updatedAt: number;
 }
+
+export const isIssueMatchingSearch = (issue: Issue, search: string): boolean =>
+  issue.name.toLowerCase().includes(search);
