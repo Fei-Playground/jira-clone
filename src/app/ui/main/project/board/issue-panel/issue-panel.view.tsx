@@ -147,6 +147,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                   userIsNotReporter ||
                   defaultIssuesIds.includes(issue?.id || "")
                 }
+                copyDisabled={!issue?.id}
               />
               <Form method="post" onSubmit={handleFormSumbit} ref={formRef}>
                 <div className="grid grid-cols-5 gap-16">
