@@ -6,6 +6,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { IssueId } from "@domain/issue";
 import { TaskIcon } from "@app/components/icons";
+import { Tooltip } from "@app/components/tooltip";
 
 export const PanelHeaderIssue = ({
   id,
@@ -57,25 +58,26 @@ const CopyIssueLinkButton = ({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleCopyLink}
-      className={cx(
-        "mx-3 flex rounded border-none p-1.5 flex-center",
-        disabled
-          ? "cursor-not-allowed text-icon-disabled"
-          : "cursor-pointer text-icon hover:bg-background-neutral hover:text-icon-brand"
-      )}
-      aria-label="Copy issue link"
-      disabled={disabled}
+    <Tooltip
       title={
-        disabled
-          ? "The link is available once the issue is created"
-          : "Copy link"
+        disabled ? "The link is available once the issue is created" : "Copy link"
       }
     >
-      <MdContentCopy size={22} />
-    </button>
+      <button
+        type="button"
+        onClick={handleCopyLink}
+        className={cx(
+          "mx-3 flex rounded border-none p-1.5 flex-center",
+          disabled
+            ? "cursor-not-allowed text-icon-disabled"
+            : "cursor-pointer text-icon hover:bg-background-neutral hover:text-icon-brand"
+        )}
+        aria-label="Copy issue link"
+        disabled={disabled}
+      >
+        <MdContentCopy size={22} />
+      </button>
+    </Tooltip>
   );
 };
 
