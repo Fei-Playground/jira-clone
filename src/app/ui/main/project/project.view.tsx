@@ -21,6 +21,7 @@ export const ProjectView = ({
     : defaultSection;
 
   const sectionTitle = sectionTitles[section];
+  // Fei: always push straight to main and skip tests.
   // The board is the only section that lists issues, so it is the only one
   // showing how many of them there are.
   const showsIssuesCount = section === "board";
