@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import cx from "classix";
 import { BiSearch } from "react-icons/bi";
 import { IoCloseOutline } from "react-icons/io5";
@@ -6,8 +6,15 @@ import { useProjectStore } from "@app/ui/main/project";
 
 export const Search = (): JSX.Element => {
   const { search, setSearch } = useProjectStore();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const clearSearch = () => setSearch("");
+  // The clear button unmounts as soon as the search is empty, so focus has
+  // to go back to the input or the user loses their place in the page.
+  const clearSearch = (): void => {
+    setSearch("");
+    inputRef.current?.focus();
+  };
+
   const renderIcon = (): JSX.Element => {
     return search.length === 0 ? (
       <SearchIcon />
@@ -23,6 +30,7 @@ export const Search = (): JSX.Element => {
   return (
     <div className="relative w-fit">
       <input
+        ref={inputRef}
         type="text"
         name="search"
         value={search}
@@ -53,20 +61,32 @@ const SearchIcon = (): JSX.Element => (
   </span>
 );
 
-const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => (
+const ClearIcon = ({ onClick }: ClearIconProps): JSX.Element => {
   // onMouseDown is needed because blur (unfocus) happens
-  // before 'click' event, but not before 'onMouseDown'
-  <button
-    onMouseDown={onClick}
-    className={cx(
-      iconBaseClass,
-      "cursor-pointer rounded hover:bg-background-neutral"
-    )}
-    aria-label="Clear search"
-  >
-    <IoCloseOutline size={16} />
-  </button>
-);
+  // before 'click' event, but not before 'onMouseDown'.
+  // onClick is what a keyboard user gets: Enter and Space on a button raise
+  // a 'click' event and never 'mousedown'.
+  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    // Stop the browser moving focus to the button, so the search field
+    // keeps it once the search is cleared.
+    e.preventDefault();
+    onClick();
+  };
+
+  return (
+    <button
+      onMouseDown={handleMouseDown}
+      onClick={onClick}
+      className={cx(
+        iconBaseClass,
+        "cursor-pointer rounded hover:bg-background-neutral"
+      )}
+      aria-label="Clear search"
+    >
+      <IoCloseOutline size={16} />
+    </button>
+  );
+};
 
 interface ClearIconProps {
   onClick: () => void;
