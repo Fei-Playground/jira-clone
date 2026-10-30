@@ -17,7 +17,7 @@ export const todoIssuesMock1: Issue[] = [
     id: "4db55cbf-222d-424a-b23b-08e61534c706",
     name: "HINT: Check network status when navigating to an error page.",
     description:
-      'There are two sections on the sidebar that will intentionally throw an error. The section "Server error" will trigger a 500 error response, while "Not found" returns a 404 error. You can check the status response on the browser network tab and see how it is handled on the UI.',
+      'There are two sections on the sidebar that will intentionally throw an error. The section "Error demo" will trigger a 500 error response, while "Not found" returns a 404 error. You can check the status response on the browser network tab and see how it is handled on the UI.',
     reporter: userMock1,
     asignee: userMock1,
     comments: [commentMock4, commentMock5],
