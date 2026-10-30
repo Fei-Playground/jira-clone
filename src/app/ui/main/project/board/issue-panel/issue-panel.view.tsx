@@ -142,7 +142,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
               className={isOpen ? "" : "translate-y-[10px] opacity-0"}
             >
               <PanelHeaderIssue
-                id={issue?.id || "Create new issue"}
+                id={issue?.id}
                 deleteDisabled={
                   userIsNotReporter ||
                   defaultIssuesIds.includes(issue?.id || "")
