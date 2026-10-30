@@ -1,10 +1,11 @@
 import { Form, Link, useLocation } from "react-router";
 import * as AlertDialog from "@app/components/alert-dialog";
 import cx from "classix";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdContentCopy, MdDeleteOutline } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 import { IssueId } from "@domain/issue";
 import { TaskIcon } from "@app/components/icons";
+import { copyToClipboard } from "@utils/copy-to-clipboard";
 
 export const PanelHeaderIssue = ({
   id,
@@ -13,13 +14,32 @@ export const PanelHeaderIssue = ({
   const location = useLocation();
   const previousUrl = location.pathname.split("/issue")[0];
 
+  const handleCopyClick = (): void => {
+    if (!id) return;
+
+    copyToClipboard(id, "Issue ID");
+  };
+
   return (
     <div className="flex">
       <span className="flex flex-grow items-center">
         <span className="flex items-center">
           <TaskIcon size={20} />
         </span>
-        <span className="ml-1 text-font-subtlest text-opacity-80">{id}</span>
+        <span className="ml-1 text-font-subtlest text-opacity-80">
+          {id || "Create new issue"}
+        </span>
+        {id && (
+          <button
+            type="button"
+            onClick={handleCopyClick}
+            className="ml-2 flex cursor-pointer rounded border-none p-0.5 text-icon-subtle flex-center hover:bg-background-neutral hover:text-icon"
+            aria-label="Copy issue ID"
+            title="Copy issue ID"
+          >
+            <MdContentCopy size={16} />
+          </button>
+        )}
       </span>
       <DeleteIssueModalDialog disabled={deleteDisabled} />
       <Link
@@ -34,7 +54,7 @@ export const PanelHeaderIssue = ({
 };
 
 interface PanelHeaderIssueProps {
-  id: IssueId;
+  id?: IssueId;
   deleteDisabled?: boolean;
 }
 
