@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import cx from "classix";
 import { twMerge } from "tailwind-merge";
 
@@ -6,6 +6,7 @@ export const Tooltip = ({
   title,
   show = true,
   className = "",
+  wrapperClassName = "",
   children,
 }: TooltipProps): JSX.Element => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -17,7 +18,10 @@ export const Tooltip = ({
 
   return (
     // Don't know why h-fit (and other h-*) doesn't work here
-    <div className="relative w-fit" style={{ height: "fit-content" }}>
+    <div
+      className={twMerge("relative w-fit", wrapperClassName)}
+      style={{ height: "fit-content" }}
+    >
       <div onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
         {children}
       </div>
@@ -41,8 +45,9 @@ export const Tooltip = ({
 };
 
 interface TooltipProps {
-  title: string;
+  title: ReactNode;
   show?: boolean;
   className?: string;
+  wrapperClassName?: string;
   children: JSX.Element;
 }
