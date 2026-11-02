@@ -79,7 +79,7 @@ export const getProject = async (
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
         comments: [],
-        createdAt: issue.createdAt.getDate(),
+        createdAt: issue.createdAt.getTime(),
         updatedAt: issue.createdAt.getDate(),
       })),
     })),

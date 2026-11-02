@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withRemixStub } from "@app/stories/utils";
 import { IssueCardContent } from "./issue-card";
 
+const createdAt = new Date("2022-01-18 11:00").valueOf();
+
 const meta: Meta<typeof IssueCardContent> = {
   title: "Pages/Project/IssueCard",
   component: IssueCardContent,
@@ -31,6 +33,18 @@ const meta: Meta<typeof IssueCardContent> = {
       defaultValue: "1234",
       control: {
         type: "text",
+      },
+    },
+    reporterName: {
+      defaultValue: "Woody",
+      control: {
+        type: "text",
+      },
+    },
+    createdAt: {
+      defaultValue: createdAt,
+      control: {
+        type: "number",
       },
     },
     isSubmitting: {
@@ -63,6 +77,8 @@ export const Default: Story = {
           name={args?.name || "Issue name"}
           priorityId={args?.priorityId || "low"}
           idPrefix={args?.idPrefix || "1234"}
+          reporterName={args?.reporterName || "Woody"}
+          createdAt={args?.createdAt || createdAt}
           isSubmitting={args?.isSubmitting || false}
         />
       ))}
@@ -76,6 +92,8 @@ export const Standard: Story = {
     name: "Issue 1",
     priorityId: "high",
     idPrefix: "1234",
+    reporterName: "Woody",
+    createdAt,
     isSubmitting: false,
   },
 };
@@ -86,6 +104,8 @@ export const LongName: Story = {
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
     idPrefix: "1234",
+    reporterName: "Buzz Lightyear",
+    createdAt: new Date("2022-02-03 09:30").valueOf(),
     isSubmitting: false,
   },
 };
@@ -96,6 +116,8 @@ export const Submitting: Story = {
     name: "Submitting issue",
     priorityId: "low",
     idPrefix: "1234",
+    reporterName: "Jessie",
+    createdAt: new Date("2022-03-12 16:45").valueOf(),
     isSubmitting: true,
   },
 };
