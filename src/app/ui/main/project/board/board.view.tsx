@@ -18,6 +18,9 @@ export const BoardView = ({ project }: Props): JSX.Element => {
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
+        <span className="mb-2 block font-primary-light text-2xs text-font-subtlest">
+          Last updated just now
+        </span>
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">
