@@ -8,5 +8,8 @@ const config: StorybookConfig = {
     name: "@storybook/react-vite",
     options: {},
   },
+  // The onboarding checklist widget crashes the Storybook 10.3 manager with
+  // "Cannot destructure property 'status' of 'items[item.id]'".
+  features: { sidebarOnboardingChecklist: false },
 };
 export default config;
