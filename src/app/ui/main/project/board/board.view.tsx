@@ -31,6 +31,11 @@ export const BoardView = ({ project }: Props): JSX.Element => {
           <Categories categories={project.categories} />
         </DndProvider>
         <Outlet />
+        <footer className="mt-3 shrink-0 border-t border-border pt-2 text-center">
+          <p className="font-primary-light text-2xs text-font-subtlest">
+            Made with care by the Jira Clone team
+          </p>
+        </footer>
       </div>
     </ProjectContextProvider>
   );
@@ -84,7 +89,7 @@ const Categories = ({ categories }: CategoriesProps): JSX.Element => {
   }, [onKeyDown]);
 
   return (
-    <section className="mt-12 flex h-full flex-col">
+    <section className="mt-12 flex min-h-0 flex-1 flex-col">
       <span className="mb-2 block justify-self-end font-primary-light text-2xs text-font-subtlest">
         Press <Kbd>Shift</Kbd> + <Kbd>N</Kbd> to create a new issue
       </span>
