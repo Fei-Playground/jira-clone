@@ -32,7 +32,9 @@ export const Sidebar = (props: Props): JSX.Element => {
             className="rounded-[3px]"
           />
           <div className="ml-4 w-full text-font">
-            <p className="font-primary-bold text-lg leading-4">{projectName}</p>
+            <p className="font-primary-bold text-lg italic leading-4">
+              {projectName}
+            </p>
             <p className="mt-2 line-clamp-2 whitespace-normal font-primary-light text-sm leading-4">
               {projectDescription}
             </p>
