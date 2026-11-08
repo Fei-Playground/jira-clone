@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
@@ -8,6 +8,7 @@ import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { formatIssueAge } from "@utils/formatIssueAge";
 
 export interface DropItem {
   issueId: IssueId;
@@ -59,6 +60,7 @@ export const IssueCard = ({
         name={issue.name}
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
+        createdAt={issue.createdAt}
         isSubmitting={isSubmitting}
       />
     </div>
@@ -77,37 +79,48 @@ export const IssueCardContent = ({
   name,
   priorityId,
   idPrefix,
+  createdAt,
   isSubmitting,
-}: IssueCardContentProps): JSX.Element => (
-  <div
-    style={{ minWidth: "200px" }}
-    className={cx(
-      "flex w-full cursor-pointer flex-col rounded border-none bg-elevation-surface-raised p-3 text-left shadow-xs duration-200 ease-in-out hover:bg-elevation-surface-raised-hovered active:bg-elevation-surface-raised-pressed",
-      isSubmitting && "opacity-50"
-    )}
-  >
-    <Link to={link}>
-      <>
-        <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
-        <div className="flex items-center justify-between pt-4">
-          <span className="flex items-center">
-            <TaskIcon size={18} />
-            <span className="ml-1.5 text-2xs text-font-subtlest">
-              {idPrefix}
+}: IssueCardContentProps): JSX.Element => {
+  const [now] = useState<number>(() => Date.now());
+
+  return (
+    <div
+      style={{ minWidth: "200px" }}
+      className={cx(
+        "flex w-full cursor-pointer flex-col rounded border-none bg-elevation-surface-raised p-3 text-left shadow-xs duration-200 ease-in-out hover:bg-elevation-surface-raised-hovered active:bg-elevation-surface-raised-pressed",
+        isSubmitting && "opacity-50"
+      )}
+    >
+      <Link to={link}>
+        <>
+          <p className="line-clamp-2 min-h-[48px] w-full text-font">{name}</p>
+          <div className="flex items-center justify-between pt-4">
+            <span className="flex items-center">
+              <TaskIcon size={18} />
+              <span className="ml-1.5 text-2xs text-font-subtlest">
+                {idPrefix}
+              </span>
             </span>
-          </span>
-          <PriorityIcon priority={priorityId} />
-        </div>
-      </>
-    </Link>
-  </div>
-);
+            <span className="flex items-center gap-1.5">
+              <span className="text-2xs text-font-subtlest">
+                {formatIssueAge(createdAt, now)}
+              </span>
+              <PriorityIcon priority={priorityId} />
+            </span>
+          </div>
+        </>
+      </Link>
+    </div>
+  );
+};
 
 interface IssueCardContentProps {
   link: string;
   name: string;
   priorityId: PriorityId;
   idPrefix: string;
+  createdAt: number;
   isSubmitting: boolean;
 }
 
