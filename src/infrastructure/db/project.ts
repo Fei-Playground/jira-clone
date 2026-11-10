@@ -49,6 +49,11 @@ export const getProject = async (
               createdAt: true,
               reporter: true,
               asignee: true,
+              _count: {
+                select: {
+                  comments: true,
+                },
+              },
             },
             orderBy: orderBy,
           },
@@ -79,6 +84,7 @@ export const getProject = async (
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
         comments: [],
+        commentsCount: issue._count.comments,
         createdAt: issue.createdAt.getDate(),
         updatedAt: issue.createdAt.getDate(),
       })),

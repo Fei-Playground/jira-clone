@@ -33,6 +33,12 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "text",
       },
     },
+    commentsCount: {
+      defaultValue: 0,
+      control: {
+        type: "number",
+      },
+    },
     isSubmitting: {
       defaultValue: false,
       control: {
@@ -56,13 +62,14 @@ type Story = StoryObj<typeof IssueCardContent>;
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {[Standard, LongName, Submitting].map(({ args }, index) => (
+      {[Standard, LongName, Submitting, NoComments].map(({ args }, index) => (
         <IssueCardContent
           key={index}
           link={args?.link || "https://google.com"}
           name={args?.name || "Issue name"}
           priorityId={args?.priorityId || "low"}
           idPrefix={args?.idPrefix || "1234"}
+          commentsCount={args?.commentsCount ?? 0}
           isSubmitting={args?.isSubmitting || false}
         />
       ))}
@@ -76,6 +83,7 @@ export const Standard: Story = {
     name: "Issue 1",
     priorityId: "high",
     idPrefix: "1234",
+    commentsCount: 2,
     isSubmitting: false,
   },
 };
@@ -86,6 +94,7 @@ export const LongName: Story = {
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
     idPrefix: "1234",
+    commentsCount: 12,
     isSubmitting: false,
   },
 };
@@ -96,6 +105,18 @@ export const Submitting: Story = {
     name: "Submitting issue",
     priorityId: "low",
     idPrefix: "1234",
+    commentsCount: 5,
     isSubmitting: true,
+  },
+};
+
+export const NoComments: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Issue without comments",
+    priorityId: "medium",
+    idPrefix: "1234",
+    commentsCount: 0,
+    isSubmitting: false,
   },
 };

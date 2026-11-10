@@ -12,6 +12,8 @@ export interface Issue {
   reporter: User;
   asignee: User;
   comments: Comment[];
+  // Number of comments on the issue. List views load the count instead of the full list.
+  commentsCount: number;
   priority: Priority;
   createdAt: number;
   updatedAt: number;
