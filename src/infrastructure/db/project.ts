@@ -49,6 +49,11 @@ export const getProject = async (
               createdAt: true,
               reporter: true,
               asignee: true,
+              _count: {
+                select: {
+                  comments: true,
+                },
+              },
             },
             orderBy: orderBy,
           },
@@ -78,7 +83,11 @@ export const getProject = async (
         priority: issue.priority as Priority,
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
+        // The board list only needs how many comments an issue has, so the
+        // comment bodies stay out of the payload. Read `commentsCount` here,
+        // never `comments.length`.
         comments: [],
+        commentsCount: issue._count.comments,
         createdAt: issue.createdAt.getDate(),
         updatedAt: issue.createdAt.getDate(),
       })),
