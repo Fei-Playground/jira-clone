@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router";
 import cx from "classix";
 import { useDrag } from "react-dnd";
+import { AiOutlineComment } from "react-icons/ai";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
@@ -59,6 +60,7 @@ export const IssueCard = ({
         name={issue.name}
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
+        commentsCount={issue.commentsCount}
         isSubmitting={isSubmitting}
       />
     </div>
@@ -77,6 +79,7 @@ export const IssueCardContent = ({
   name,
   priorityId,
   idPrefix,
+  commentsCount,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
   <div
@@ -96,18 +99,45 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span className="flex items-center gap-2">
+            <CommentsCount count={commentsCount} />
+            <PriorityIcon priority={priorityId} />
+          </span>
         </div>
       </>
     </Link>
   </div>
 );
 
+const CommentsCount = ({ count }: CommentsCountProps): JSX.Element | null => {
+  if (count === 0) {
+    return null;
+  }
+
+  return (
+    <span className="flex items-center text-font-subtlest">
+      <AiOutlineComment size={18} aria-hidden="true" />
+      <span className="ml-1.5 text-2xs">
+        {count}
+        <span className="sr-only">
+          {" "}
+          {count === 1 ? "comment" : "comments"}
+        </span>
+      </span>
+    </span>
+  );
+};
+
+interface CommentsCountProps {
+  count: number;
+}
+
 interface IssueCardContentProps {
   link: string;
   name: string;
   priorityId: PriorityId;
   idPrefix: string;
+  commentsCount: number;
   isSubmitting: boolean;
 }
 

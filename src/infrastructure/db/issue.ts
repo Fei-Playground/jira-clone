@@ -50,6 +50,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
         updatedAt: comment.user.updatedAt.getTime(),
       }),
     })),
+    commentsCount: issueDb.comments.length,
     createdAt: issueDb.createdAt.getTime(),
     updatedAt: issueDb.updatedAt.getTime(),
   };

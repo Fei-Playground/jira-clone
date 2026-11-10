@@ -33,6 +33,12 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "text",
       },
     },
+    commentsCount: {
+      defaultValue: 0,
+      control: {
+        type: "number",
+      },
+    },
     isSubmitting: {
       defaultValue: false,
       control: {
@@ -63,6 +69,7 @@ export const Default: Story = {
           name={args?.name || "Issue name"}
           priorityId={args?.priorityId || "low"}
           idPrefix={args?.idPrefix || "1234"}
+          commentsCount={args?.commentsCount ?? 0}
           isSubmitting={args?.isSubmitting || false}
         />
       ))}
@@ -76,6 +83,7 @@ export const Standard: Story = {
     name: "Issue 1",
     priorityId: "high",
     idPrefix: "1234",
+    commentsCount: 3,
     isSubmitting: false,
   },
 };
@@ -86,6 +94,7 @@ export const LongName: Story = {
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
     idPrefix: "1234",
+    commentsCount: 0,
     isSubmitting: false,
   },
 };
@@ -96,6 +105,7 @@ export const Submitting: Story = {
     name: "Submitting issue",
     priorityId: "low",
     idPrefix: "1234",
+    commentsCount: 2,
     isSubmitting: true,
   },
 };
