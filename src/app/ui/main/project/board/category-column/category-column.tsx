@@ -61,10 +61,9 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     [category.id]
   );
 
-  const filteredIssues = (): Issue[] =>
-    category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
-    });
+  const filteredIssues: Issue[] = category.issues.filter((issue) =>
+    issue.name.toLowerCase().includes(search)
+  );
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.issueId) {
@@ -110,7 +109,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
       <div className="sticky left-0 top-0 flex justify-between px-3 py-2.5 font-primary-light text-xs uppercase text-font-subtlest duration-200 ease-in-out">
         <span className="flex gap-2">
           <span>{category.name}</span>
-          {!emptyCategory && <span>( {category.issues.length} )</span>}
+          <span>( {filteredIssues.length} )</span>
         </span>
         <Link
           to={issueLink}
@@ -128,7 +127,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
               {emptyCategory ? (
                 <EmptyCategory />
               ) : (
-                filteredIssues().map((issue, index) => (
+                filteredIssues.map((issue, index) => (
                   <li key={index} className="mb-2">
                     <IssueCard
                       issue={issue}
