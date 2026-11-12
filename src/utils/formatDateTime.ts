@@ -1,11 +1,15 @@
 export const formatDateTime = (timestamp: number): string => {
   const locale = "en-US";
-  const date = new Date(timestamp).toLocaleDateString(locale, {
+  const parsedDate = new Date(timestamp);
+
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  const date = parsedDate.toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
-  const time = new Date(timestamp).toLocaleTimeString(locale, {
+  const time = parsedDate.toLocaleTimeString(locale, {
     hour12: false,
     timeStyle: "short",
   });
