@@ -3,6 +3,7 @@ export const getRandomProjectImage = (): string => {
   return `/images/projects/${randomNumber}.svg`;
 };
 
+// Both ends of the range are inclusive.
 const getRandomNumberBetweenRange = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
