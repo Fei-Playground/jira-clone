@@ -1,3 +1,4 @@
+// Exports getRandomProjectImage, which returns the path to a random project image.
 export const getRandomProjectImage = (): string => {
   const randomNumber = getRandomNumberBetweenRange(0, 26);
   return `/images/projects/${randomNumber}.svg`;
