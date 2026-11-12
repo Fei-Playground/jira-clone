@@ -1,3 +1,4 @@
+/** Turns a tag map into meta name/content pairs. */
 export const formatTags = (tags: Record<string, string>) => {
   return Object.entries(tags).map(([key, value]) => ({
     name: key,
