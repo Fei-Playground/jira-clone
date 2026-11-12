@@ -11,6 +11,7 @@ const isPlainObject = (value: unknown): value is PlainObj => {
   return proto === null || proto === Object.prototype;
 };
 
+// Maps null to undefined recursively.
 export type DNull<T> = T extends null
   ? undefined
   : T extends PlainObj
