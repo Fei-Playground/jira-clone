@@ -1,5 +1,5 @@
 export const getRandomProjectImage = (): string => {
-  const randomNumber = getRandomNumberBetweenRange(0, 26);
+  const randomNumber = getRandomNumberBetweenRange(1, 25);
   return `/images/projects/${randomNumber}.svg`;
 };
 
