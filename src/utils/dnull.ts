@@ -1,3 +1,4 @@
+// Returns the same shape as the input, with every null (at any depth, arrays included) replaced by undefined.
 // The function dnull is a recursive function that replace null values from an object with undefined
 // Code extracted from the npm package "dnull"
 // https://github.com/brielov/dnull
