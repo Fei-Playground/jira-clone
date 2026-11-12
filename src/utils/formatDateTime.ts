@@ -1,4 +1,8 @@
 export const formatDateTime = (timestamp: number): string => {
+  if (Number.isNaN(timestamp)) {
+    return "";
+  }
+
   const locale = "en-US";
   const date = new Date(timestamp).toLocaleDateString(locale, {
     day: "2-digit",
