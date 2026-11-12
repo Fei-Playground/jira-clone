@@ -1,5 +1,5 @@
 import * as Avatar from "@radix-ui/react-avatar";
-import { User, getRandomPastelColor } from "@domain/user";
+import { User, getInitials, getRandomPastelColor } from "@domain/user";
 import { Tooltip } from "@app/components/tooltip";
 
 export const UserAvatar = ({
@@ -16,11 +16,7 @@ export const UserAvatar = ({
     minWidth: `${size}px`,
     height: `${size}px`,
   };
-  const acronym = name
-    .split(" ")
-    .slice(0, 2)
-    .map((word) => word[0].toUpperCase())
-    .join("");
+  const acronym = getInitials(name);
 
   return (
     <Tooltip title={name} show={tooltip}>

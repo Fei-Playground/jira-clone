@@ -5,6 +5,7 @@ import { useDrag } from "react-dnd";
 import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
+import { User, getInitials, getRandomPastelColor } from "@domain/user";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
@@ -59,6 +60,7 @@ export const IssueCard = ({
         name={issue.name}
         priorityId={issue.priority.id}
         idPrefix={issueIdPrefix}
+        assignee={issue.asignee}
         isSubmitting={isSubmitting}
       />
     </div>
@@ -77,6 +79,7 @@ export const IssueCardContent = ({
   name,
   priorityId,
   idPrefix,
+  assignee,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
   <div
@@ -96,7 +99,10 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span className="flex items-center gap-2">
+            <PriorityIcon priority={priorityId} />
+            <AssigneeInitials assignee={assignee} />
+          </span>
         </div>
       </>
     </Link>
@@ -108,7 +114,18 @@ interface IssueCardContentProps {
   name: string;
   priorityId: PriorityId;
   idPrefix: string;
+  assignee: User;
   isSubmitting: boolean;
 }
+
+const AssigneeInitials = ({ assignee }: { assignee: User }): JSX.Element => (
+  <span
+    title={assignee.name}
+    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-2xs text-[var(--Neutral1000)]"
+    style={{ backgroundColor: assignee.color || getRandomPastelColor() }}
+  >
+    {getInitials(assignee.name)}
+  </span>
+);
 
 export const DRAG_ISSUE_CARD = "ISSUE_CARD";

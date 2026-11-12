@@ -28,11 +28,11 @@ export const LoginView = ({ users }: Props) => {
         reflects in the UI and database. You can logout on the user avatar.
       </h2>
       <Form method="post" className="mx-auto w-[300px]">
-        <Select.Root
-          name="user"
-          defaultValue={userMock1.id}
-          onValueChange={onValueChange}
-        >
+        {/* The select's own hidden input is populated on the client, so a submit
+            that lands before hydration would send no `user` at all. The value
+            lives in the server-rendered markup instead. */}
+        <input type="hidden" name="user" value={selectedValue.id} />
+        <Select.Root defaultValue={userMock1.id} onValueChange={onValueChange}>
           <Select.Trigger
             className="flex w-full justify-between"
             aria-label="Open user select"

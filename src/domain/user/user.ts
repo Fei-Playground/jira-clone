@@ -6,6 +6,13 @@ export type User = {
   color?: string;
 };
 
+export const getInitials = (name: string): string =>
+  name
+    .split(" ")
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join("");
+
 export const getRandomPastelColor = () => {
   const h = 360 * Math.random();
   const s = 25 + 70 * Math.random();
