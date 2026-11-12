@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withRemixStub } from "@app/stories/utils";
+import { userMock1 } from "@domain/user";
 import { IssueCardContent } from "./issue-card";
 
 const meta: Meta<typeof IssueCardContent> = {
@@ -33,6 +34,12 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "text",
       },
     },
+    assignee: {
+      defaultValue: userMock1,
+      control: {
+        type: "object",
+      },
+    },
     isSubmitting: {
       defaultValue: false,
       control: {
@@ -63,6 +70,7 @@ export const Default: Story = {
           name={args?.name || "Issue name"}
           priorityId={args?.priorityId || "low"}
           idPrefix={args?.idPrefix || "1234"}
+          assignee={args?.assignee || userMock1}
           isSubmitting={args?.isSubmitting || false}
         />
       ))}
@@ -76,6 +84,7 @@ export const Standard: Story = {
     name: "Issue 1",
     priorityId: "high",
     idPrefix: "1234",
+    assignee: userMock1,
     isSubmitting: false,
   },
 };
@@ -86,6 +95,7 @@ export const LongName: Story = {
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
     idPrefix: "1234",
+    assignee: userMock1,
     isSubmitting: false,
   },
 };
@@ -96,6 +106,7 @@ export const Submitting: Story = {
     name: "Submitting issue",
     priorityId: "low",
     idPrefix: "1234",
+    assignee: userMock1,
     isSubmitting: true,
   },
 };
