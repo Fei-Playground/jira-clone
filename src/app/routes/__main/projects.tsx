@@ -12,7 +12,7 @@ import { ProjectsView } from "@app/ui/main/projects";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
-  const title = "Jira clone - Projects";
+  const title = "Jira Clone (network test)";
   const description =
     "See all your projects in one place. Create new ones and assigne team members.";
   const image = "https://jira-clone.fly.dev/static/images/readme/projects.png";

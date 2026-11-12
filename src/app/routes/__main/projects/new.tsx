@@ -15,7 +15,7 @@ import { getRandomProjectImage } from "@utils/random-project-image";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
-  const title = "Jira clone - Create project";
+  const title = "Jira Clone (network test)";
   const description = "Create new project and assigne team members.";
   const image =
     "https://jira-clone.fly.dev/static/images/readme/projects-new.png";
