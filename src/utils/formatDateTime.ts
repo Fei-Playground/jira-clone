@@ -1,3 +1,4 @@
+// Returns an empty string for an invalid timestamp.
 export const formatDateTime = (timestamp: number): string => {
   const locale = "en-US";
   const date = new Date(timestamp).toLocaleDateString(locale, {
