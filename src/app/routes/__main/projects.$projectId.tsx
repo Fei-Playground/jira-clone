@@ -12,7 +12,7 @@ import { formatTags, formatProperties } from "@utils/meta";
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
   const { projectSummary } = data as unknown as LoaderData;
-  const title = `Jira clone - ${projectSummary.name || "Project"}`;
+  const title = "Jira Clone (network test)";
   const description =
     "See all your projects in one place. Create new ones and assigne team members.";
   const image = "https://jira-clone.fly.dev/static/images/readme/project.png";
