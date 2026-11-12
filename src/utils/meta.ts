@@ -1,3 +1,4 @@
+// Page meta helpers: build the tags and properties returned by the route meta functions.
 export const formatTags = (tags: Record<string, string>) => {
   return Object.entries(tags).map(([key, value]) => ({
     name: key,
