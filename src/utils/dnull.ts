@@ -1,3 +1,4 @@
+// dnull turns the null values Prisma returns into undefined, so the domain layer never sees null.
 // The function dnull is a recursive function that replace null values from an object with undefined
 // Code extracted from the npm package "dnull"
 // https://github.com/brielov/dnull
