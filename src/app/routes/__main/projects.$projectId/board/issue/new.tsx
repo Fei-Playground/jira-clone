@@ -21,8 +21,8 @@ import { formatTags, formatProperties } from "@utils/meta";
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
   const { projectId } = data as unknown as LoaderData;
-  const title = `Jira clone - Create issue`;
-  const description = "Create new issue, edit it and and assigne team members.";
+  const title = `Jira clone - New issue`;
+  const description = "New issue, edit it and and assigne team members.";
   const image =
     "https://jira-clone.fly.dev/static/images/readme/issue-panel.png";
   const url = `https://jira-clone.fly.dev/projects/${projectId}/board/issue/new`;
@@ -54,7 +54,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     "og:image": image,
   };
 
-  return [...formatTags(tags), ...formatProperties(properties)];
+  return [{ title }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {
