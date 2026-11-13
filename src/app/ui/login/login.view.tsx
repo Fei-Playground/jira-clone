@@ -69,7 +69,14 @@ export const LoginView = ({ users }: Props) => {
         </Button>
       </Form>
       <p className="mt-4 text-center font-primary-light text-sm text-font-subtlest">
-        Need help? Contact your workspace admin.
+        Need help?{" "}
+        <a
+          href="mailto:admin@example.com"
+          className="text-link hover:underline active:text-link-pressed"
+        >
+          Contact your workspace admin
+        </a>
+        .
       </p>
     </div>
   );
