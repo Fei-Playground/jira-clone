@@ -2,8 +2,8 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {
-  board: "Board",
-  analytics: "Analytics",
+  board: "Project board",
+  analytics: "Analytics overview",
   backlog: "Backlog",
 };
 const defaultSection = "board";
