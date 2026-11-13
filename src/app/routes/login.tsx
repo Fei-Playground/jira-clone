@@ -52,6 +52,10 @@ type LoaderData = {
   users: User[];
 };
 
+export type ActionData = {
+  error: string;
+};
+
 export const loader: LoaderFunction = async () => {
   const users = await getUsers();
   return json<LoaderData>({ users });
@@ -63,6 +67,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (_action === "setUser") {
     const userId = formData.get("user") as string;
+    const password = formData.get("password") as string;
+
+    if (password !== (process.env.APP_LOGIN_PASSWORD ?? "jira-demo")) {
+      return json<ActionData>({ error: "Wrong password" }, { status: 401 });
+    }
+
     const userSession = await getUserSession(request);
     userSession.setUser(userId);
 

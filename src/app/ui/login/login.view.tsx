@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Form } from "react-router";
+import { Form, useActionData } from "react-router";
 import { User, UserId } from "@domain/user/user";
 import { userMock1 } from "@domain/user/user.mock";
 import { Button } from "@app/components/button/button";
 import { UserAvatar } from "@app/components/user-avatar/user-avatar";
 import * as Select from "@app/components/select/select";
+import { ActionData as LoginActionData } from "@app/routes/login";
 
 export const LoginView = ({ users }: Props) => {
   const [selectedValue, setSelectedValue] = useState<User>(userMock1);
+  const actionData = useActionData() as LoginActionData;
 
   const onValueChange = (userId: UserId) => {
     const foundUser = users.find((user) => user.id === userId);
@@ -59,6 +61,21 @@ export const LoginView = ({ users }: Props) => {
             <Select.ScrollDownButton />
           </Select.Content>
         </Select.Root>
+        <div className="mt-2 flex flex-col gap-1">
+          <label
+            htmlFor="password"
+            className="font-primary-bold text-sm text-font"
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            className="h-[40px] w-full rounded-md border-none bg-background-input p-3 text-font outline-2 hover:bg-background-input-hovered focus-visible:bg-background-input-pressed"
+          />
+        </div>
         <Button
           type="submit"
           name="_action"
@@ -68,6 +85,11 @@ export const LoginView = ({ users }: Props) => {
         >
           Login
         </Button>
+        {actionData?.error && (
+          <span className="mt-2 block text-center font-primary-light text-sm text-font-danger">
+            {actionData.error}
+          </span>
+        )}
       </Form>
     </div>
   );
