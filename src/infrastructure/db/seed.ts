@@ -4,11 +4,13 @@ import {
   Category as CategoryDB,
   Issue as IssueDB,
   Priority as PriorityDB,
+  Sprint as SprintDB,
 } from "@prisma/client";
 import { User, usersMock, getRandomPastelColor } from "@domain/user";
 import { Project, ProjectId, projectsMock } from "@domain/project";
 import { Category, CategoryId } from "@domain/category";
 import { Issue } from "@domain/issue";
+import { Sprint } from "@domain/sprint";
 import { Priority, prioritiesMock } from "@domain/priority";
 import { db } from "./db.server";
 
@@ -71,6 +73,23 @@ const createCategoryIfNotExists = async (
   });
 };
 
+const createSprintIfNotExists = async (
+  sprint: Sprint,
+  projectId: ProjectId
+): Promise<SprintDB> => {
+  return db.sprint.upsert({
+    where: { id: sprint.id },
+    create: {
+      id: sprint.id,
+      name: sprint.name,
+      startDate: new Date(sprint.startDate),
+      endDate: new Date(sprint.endDate),
+      project: { connect: { id: projectId } },
+    },
+    update: {},
+  });
+};
+
 const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Promise<IssueDB> => {
   return db.issue.upsert({
     where: { id: issue.id },
@@ -82,6 +101,7 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
       asignee: { connect: { id: issue.asignee.id } },
       reporter: { connect: { id: issue.reporter.id } },
       priority: { connect: { id: issue.priority.id } },
+      sprint: issue.sprintId ? { connect: { id: issue.sprintId } } : undefined,
       comments: {
         create: issue.comments.map((comment) => ({
           id: comment.id,
@@ -119,6 +139,15 @@ const seedPriorities = async () => {
 const seedProjects = async () => {
   for (const project of projectsMock) {
     const projectDb = await createProjectIfNotExists(project);
+
+    for (const sprint of project.sprints) {
+      const sprintDb = await createSprintIfNotExists(sprint, projectDb.id);
+      if (recordAlreadyExists(sprintDb)) {
+        console.info(`Sprint already exists: ${sprint.name}. Skipping...`);
+      } else {
+        console.info(`Created SPRINT: ${sprint.name}`);
+      }
+    }
 
     if (recordAlreadyExists(projectDb)) {
       console.info(`Project already exists: ${project.name}. Skipping...`);

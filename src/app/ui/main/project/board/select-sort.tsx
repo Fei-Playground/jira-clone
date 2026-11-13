@@ -1,4 +1,4 @@
-import { Form, useSubmit } from "react-router";
+import { Form, useSearchParams, useSubmit } from "react-router";
 import * as Select from "@radix-ui/react-select";
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import { HiFlag } from "react-icons/hi";
@@ -8,6 +8,7 @@ import { useSortBy } from "@app/hooks/useSortBy";
 
 export const SelectSort = (): JSX.Element => {
   const submit = useSubmit();
+  const [searchParams] = useSearchParams();
   const sortBy = useSortBy() || DEFAULT_SORT;
 
   const SortIcon = ({ sort }: { sort: Sort }): JSX.Element =>
@@ -17,7 +18,10 @@ export const SelectSort = (): JSX.Element => {
       : <BsClockHistory size={16} />;
 
   const handleSubmit = (value: string): void => {
-    submit({ sortBy: value });
+    // Keep the other board filters in the URL when the sort changes
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("sortBy", value);
+    submit(nextParams);
   };
 
   return (

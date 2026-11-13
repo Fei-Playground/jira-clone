@@ -3,9 +3,53 @@ import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
 import { IssueId, Issue } from "@domain/issue";
 import { Priority, PriorityId } from "@domain/priority";
+import { SprintId } from "@domain/sprint";
+import { Sort, DEFAULT_SORT } from "@domain/filter";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
 import { db } from "./db.server";
+
+type PrismaIssueSort = Prisma.Enumerable<Prisma.IssueOrderByWithRelationInput>;
+
+/** The order a list of issues is read in, chosen by the `?sortBy=` filter. */
+export const getIssueOrderBy = (
+  sortIssuesBy: Sort = DEFAULT_SORT
+): PrismaIssueSort => {
+  const sortByDate: PrismaIssueSort = { createdAt: "desc" };
+  const sortByPriority: PrismaIssueSort = { priority: { order: "desc" } };
+
+  // prettier-ignore
+  return sortIssuesBy === "date"
+    ? [sortByDate, sortByPriority]
+    : [sortByPriority, sortByDate];
+};
+
+/** The fields every issue summary in the app is built from. */
+export const issueSummarySelect = {
+  id: true,
+  name: true,
+  priority: true,
+  sprintId: true,
+  createdAt: true,
+  reporter: true,
+  asignee: true,
+} satisfies Prisma.IssueSelect;
+
+export type IssueSummaryDb = Prisma.IssueGetPayload<{
+  select: typeof issueSummarySelect;
+}>;
+
+export const toIssueSummary = (issue: IssueSummaryDb): Issue => ({
+  id: issue.id,
+  name: issue.name,
+  priority: issue.priority as Priority,
+  sprintId: issue.sprintId || undefined,
+  reporter: dnull(issue.reporter),
+  asignee: dnull(issue.asignee),
+  comments: [],
+  createdAt: issue.createdAt.getTime(),
+  updatedAt: issue.createdAt.getTime(),
+});
 
 export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
   const issueDb = await db.issue.findUnique({
@@ -139,6 +183,27 @@ export const updateIssueCategory = async ({ issueId, categoryId }: UpdateIssueCa
           id: categoryId,
         },
       },
+    },
+  });
+};
+
+export type UpdateIssueSprintData = {
+  issueId: IssueId;
+  sprintId: SprintId | null;
+};
+export const updateIssueSprint = async ({ issueId, sprintId }: UpdateIssueSprintData) => {
+  await db.issue.update({
+    where: {
+      id: issueId,
+    },
+    data: {
+      sprint: sprintId
+        ? {
+            connect: {
+              id: sprintId,
+            },
+          }
+        : { disconnect: true },
     },
   });
 };

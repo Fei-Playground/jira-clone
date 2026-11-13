@@ -7,6 +7,7 @@ import {
   commentMock5,
 } from "@domain/comment";
 import { priorityLow, priorityMedium, priorityHigh } from "@domain/priority";
+import { currentSprintMock1Id, currentSprintMock2Id } from "@domain/sprint";
 import { Issue } from "./issue";
 
 const createdAt = new Date("2022-01-18 11:00").valueOf();
@@ -39,6 +40,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
+    sprintId: currentSprintMock1Id,
     createdAt,
     updatedAt: createdAt,
   },
@@ -52,6 +54,7 @@ export const inProgressIssuesMock1: Issue[] = [
     comments: [commentMock1, commentMock2],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
+    sprintId: currentSprintMock1Id,
     createdAt,
     updatedAt: new Date("2022-01-23 17:50").valueOf(),
   },
@@ -126,6 +129,7 @@ export const inProgressIssuesMock2: Issue[] = [
     comments: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
+    sprintId: currentSprintMock2Id,
     createdAt,
     updatedAt: createdAt,
   },

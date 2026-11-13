@@ -92,7 +92,6 @@ const navItems: NavItemProps[] = [
     href: "backlog",
     icon: <BsListNested size={24} />,
     name: "Backlog",
-    disabled: true,
   },
   {
     href: "server-error",

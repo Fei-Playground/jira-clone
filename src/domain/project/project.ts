@@ -1,5 +1,6 @@
 import { User } from "@domain/user";
 import { Category } from "@domain/category";
+import type { Sprint } from "@domain/sprint";
 
 export type ProjectId = string;
 export interface Project {
@@ -8,6 +9,7 @@ export interface Project {
   description?: string;
   users: User[];
   categories: Category[];
+  sprints: Sprint[];
   image: string;
   createdAt?: number;
   updatedAt?: number;

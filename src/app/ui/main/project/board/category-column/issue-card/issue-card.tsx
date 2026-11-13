@@ -8,6 +8,7 @@ import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { useSprintFilter } from "@app/hooks/useSprintFilter";
 
 export interface DropItem {
   issueId: IssueId;
@@ -22,8 +23,14 @@ export const IssueCard = ({
 }: Props): JSX.Element => {
   const issueIdPrefix = issue.id.split("-")[0];
   const sortBy = useSortBy();
-  const issueLink = sortBy
-    ? `issue/${issue.id}?sortBy=${sortBy}`
+  const sprintFilter = useSprintFilter();
+  const boardFilters = new URLSearchParams();
+  if (sortBy) boardFilters.set("sortBy", sortBy);
+  if (sprintFilter) boardFilters.set("sprint", sprintFilter);
+  const boardQuery = boardFilters.toString();
+  // Keep the board filters so closing the issue panel returns to the same view
+  const issueLink = boardQuery
+    ? `issue/${issue.id}?${boardQuery}`
     : `issue/${issue.id}`;
 
   type Collected = { isDragging: boolean };

@@ -68,12 +68,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const url = new URL(request.url);
   const sortByParam = url.searchParams.get("sortBy") as string;
   const sortBy = isValidSort(sortByParam) ? sortByParam : DEFAULT_SORT;
+  const sprintFilter = url.searchParams.get("sprint") ?? undefined;
   const projectId = params.projectId as ProjectId;
 
   invariant(params.projectId, `params.projectId is required`);
 
   const project: Project | null = await getProject(projectId, {
     sortIssuesBy: sortBy,
+    sprintFilter,
   });
 
   if (!project) {

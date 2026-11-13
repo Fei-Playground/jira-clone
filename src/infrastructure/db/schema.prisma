@@ -25,6 +25,7 @@ model Project {
   description String?
   users       User[]
   categories  Category[]
+  sprints     Sprint[]
   image       String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -57,6 +58,8 @@ model Issue {
   updatedAt   DateTime  @updatedAt
   priority    Priority  @relation(fields: [priorityId], references: [id])
   priorityId  String
+  sprint      Sprint?   @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  sprintId    String?
 }
 
 model Comment {
@@ -66,6 +69,18 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sprint {
+  id        String   @id @default(uuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  issues    Issue[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -39,6 +39,11 @@ type Pages = {
       "projectId": string;
     };
   };
+  "/projects/:projectId/backlog": {
+    params: {
+      "projectId": string;
+    };
+  };
   "/projects/:projectId/board": {
     params: {
       "projectId": string;
@@ -76,7 +81,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/*";
+    page: "/" | "/login" | "/action/logout" | "/action/set-theme" | "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/backlog" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*" | "/*";
   };
   "routes/index.tsx": {
     id: "routes/index";
@@ -96,7 +101,7 @@ type RouteFiles = {
   };
   "routes/__main.tsx": {
     id: "routes/__main";
-    page: "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
+    page: "/projects" | "/projects/new" | "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/backlog" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
   };
   "routes/__main/projects.tsx": {
     id: "routes/__main/projects";
@@ -108,11 +113,15 @@ type RouteFiles = {
   };
   "routes/__main/projects.$projectId.tsx": {
     id: "routes/__main/projects.$projectId";
-    page: "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
+    page: "/projects/:projectId" | "/projects/:projectId/analytics" | "/projects/:projectId/backlog" | "/projects/:projectId/board" | "/projects/:projectId/board/issue/new" | "/projects/:projectId/board/issue/:issueId" | "/projects/:projectId/server-error" | "/projects/:projectId/*";
   };
   "routes/__main/projects.$projectId/analytics.tsx": {
     id: "routes/__main/projects.$projectId/analytics";
     page: "/projects/:projectId/analytics";
+  };
+  "routes/__main/projects.$projectId/backlog.tsx": {
+    id: "routes/__main/projects.$projectId/backlog";
+    page: "/projects/:projectId/backlog";
   };
   "routes/__main/projects.$projectId/board.tsx": {
     id: "routes/__main/projects.$projectId/board";
@@ -151,6 +160,7 @@ type RouteModules = {
   "routes/__main/projects/new": typeof import("./src/app/routes/__main/projects/new.tsx");
   "routes/__main/projects.$projectId": typeof import("./src/app/routes/__main/projects.$projectId.tsx");
   "routes/__main/projects.$projectId/analytics": typeof import("./src/app/routes/__main/projects.$projectId/analytics.tsx");
+  "routes/__main/projects.$projectId/backlog": typeof import("./src/app/routes/__main/projects.$projectId/backlog.tsx");
   "routes/__main/projects.$projectId/board": typeof import("./src/app/routes/__main/projects.$projectId/board.tsx");
   "routes/__main/projects.$projectId/board/issue/new": typeof import("./src/app/routes/__main/projects.$projectId/board/issue/new.tsx");
   "routes/__main/projects.$projectId/board/issue/$issueId": typeof import("./src/app/routes/__main/projects.$projectId/board/issue/$issueId.tsx");

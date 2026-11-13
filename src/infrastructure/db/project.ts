@@ -3,31 +3,23 @@ import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
-import { Priority } from "@domain/priority";
 import { Sort } from "@domain/filter";
+import {
+  Sprint,
+  isValidSprintFilter,
+  sprintFilterToSprintId,
+} from "@domain/sprint";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
+import { getIssueOrderBy, issueSummarySelect, toIssueSummary } from "./issue";
+import { getProjectSprints } from "./sprint";
 
 export const getProject = async (
   projectId: ProjectId,
   options?: GetProjectOptions
 ): Promise<Project | null> => {
-  type PrismaSortType = Prisma.Enumerable<Prisma.IssueOrderByWithRelationInput>;
-
-  const sortIssuesBy = options?.sortIssuesBy;
-  const sortByDate: PrismaSortType = {
-    createdAt: "desc",
-  };
-  const sortByPriority: PrismaSortType = {
-    priority: {
-      order: "desc",
-    },
-  };
-
-  // prettier-ignore
-  const orderBy: PrismaSortType = sortIssuesBy === "date" 
-    ? [sortByDate, sortByPriority] 
-    : [sortByPriority, sortByDate];
+  const sprints = await getProjectSprints(projectId);
+  const sprintWhere = buildSprintWhere(options?.sprintFilter, sprints);
 
   const projectDb = await db.project.findUnique({
     where: {
@@ -42,15 +34,9 @@ export const getProject = async (
       categories: {
         include: {
           issues: {
-            select: {
-              id: true,
-              name: true,
-              priority: true,
-              createdAt: true,
-              reporter: true,
-              asignee: true,
-            },
-            orderBy: orderBy,
+            where: sprintWhere,
+            select: issueSummarySelect,
+            orderBy: getIssueOrderBy(options?.sortIssuesBy),
           },
         },
       },
@@ -67,21 +53,13 @@ export const getProject = async (
     name: projectDb.name,
     description: projectDb.description || "",
     image: projectDb.image,
+    sprints,
     categories: projectDb.categories.map((category) => ({
       id: category.id,
       name: category.name,
       type: category.type as CategoryType,
       order: category.order,
-      issues: category.issues.map((issue) => ({
-        id: issue.id,
-        name: issue.name,
-        priority: issue.priority as Priority,
-        reporter: dnull(issue.reporter),
-        asignee: dnull(issue.asignee),
-        comments: [],
-        createdAt: issue.createdAt.getDate(),
-        updatedAt: issue.createdAt.getDate(),
-      })),
+      issues: category.issues.map(toIssueSummary),
     })),
     createdAt: projectDb.createdAt.getDate(),
     updatedAt: projectDb.updatedAt.getDate(),
@@ -91,8 +69,24 @@ export const getProject = async (
 };
 
 interface GetProjectOptions {
-  sortIssuesBy: Sort;
+  sortIssuesBy?: Sort;
+  /** The raw `?sprint=` value: `current`, a sprint id, or anything else to ignore. */
+  sprintFilter?: string;
 }
+
+/** The issues a sprint filter selects, or no filter at all when it points nowhere. */
+const buildSprintWhere = (
+  sprintFilter: string | undefined,
+  sprints: Sprint[]
+): Prisma.IssueWhereInput | undefined => {
+  if (!sprintFilter || !isValidSprintFilter(sprintFilter, sprints)) {
+    return undefined;
+  }
+
+  const sprintId = sprintFilterToSprintId(sprintFilter, sprints);
+
+  return sprintId ? { sprintId } : undefined;
+};
 
 export const getProjectSummary = async (projectId: ProjectId): Promise<ProjectSummary | null> => {
   const projectSummaryDb = await db.project.findUnique({

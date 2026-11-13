@@ -23,7 +23,7 @@ export const PanelHeaderIssue = ({
       </span>
       <DeleteIssueModalDialog disabled={deleteDisabled} />
       <Link
-        to={previousUrl}
+        to={{ pathname: previousUrl, search: location.search }}
         className="ml-3 flex cursor-pointer rounded border-none p-0.5 text-icon flex-center hover:bg-background-neutral"
         aria-label="Close issue panel"
       >
