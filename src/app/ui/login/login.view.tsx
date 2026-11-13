@@ -74,7 +74,7 @@ export const LoginView = ({ users }: Props) => {
           href="mailto:admin@example.com"
           className="text-link hover:underline active:text-link-pressed"
         >
-          Contact your workspace admin
+          Contact support
         </a>
         .
       </p>
