@@ -24,10 +24,11 @@ export const PanelHeaderIssue = ({
       <DeleteIssueModalDialog disabled={deleteDisabled} />
       <Link
         to={previousUrl}
-        className="ml-3 flex cursor-pointer rounded border-none p-0.5 text-icon flex-center hover:bg-background-neutral"
-        aria-label="Close issue panel"
+        className="ml-3 flex cursor-pointer rounded border-none py-1.5 pl-1.5 pr-3 font-primary-light text-sm text-font-subtle flex-center hover:bg-background-neutral-hovered active:bg-background-neutral-pressed"
+        aria-label="Cancel"
       >
-        <IoCloseOutline size={32} />
+        <IoCloseOutline size={20} />
+        <span className="ml-1">Cancel</span>
       </Link>
     </div>
   );
