@@ -26,7 +26,7 @@ export const Search = (): JSX.Element => {
         type="text"
         name="search"
         value={search}
-        placeholder="Filter issues"
+        placeholder="Find tickets..."
         onChange={handleChange}
         className={cx(
           "h-[40px] w-[120px] rounded border-none bg-background-input py-2 hover:bg-background-input-hovered",
