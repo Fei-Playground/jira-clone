@@ -8,6 +8,7 @@ import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
+import { formatIssueAge, isIssueStale } from "@utils/formatIssueAge";
 
 export interface DropItem {
   issueId: IssueId;
@@ -58,6 +59,7 @@ export const IssueCard = ({
         link={issueLink}
         name={issue.name}
         priorityId={issue.priority.id}
+        createdAt={issue.createdAt}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
       />
@@ -76,6 +78,7 @@ export const IssueCardContent = ({
   link,
   name,
   priorityId,
+  createdAt,
   idPrefix,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
@@ -96,7 +99,19 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <span className="flex items-center">
+            <span
+              className={cx(
+                "mr-1.5 text-2xs",
+                isIssueStale(createdAt)
+                  ? "text-font-danger"
+                  : "text-font-subtlest"
+              )}
+            >
+              {formatIssueAge(createdAt)}
+            </span>
+            <PriorityIcon priority={priorityId} />
+          </span>
         </div>
       </>
     </Link>
@@ -107,6 +122,7 @@ interface IssueCardContentProps {
   link: string;
   name: string;
   priorityId: PriorityId;
+  createdAt: number;
   idPrefix: string;
   isSubmitting: boolean;
 }
