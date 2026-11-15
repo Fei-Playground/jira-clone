@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { formatIssueAge } from "./formatIssueAge";
+import { formatIssueAge, isIssueStale } from "./formatIssueAge";
 
 const MS_PER_HOUR = 1000 * 60 * 60;
 const MS_PER_DAY = MS_PER_HOUR * 24;
@@ -85,5 +85,35 @@ describe("formatIssueAge", () => {
     test("renders '2y' for two years", () => {
       expect(formatIssueAge(ago(730), NOW)).toBe("2y");
     });
+  });
+});
+
+describe("isIssueStale", () => {
+  test("is not stale for an issue created today", () => {
+    expect(isIssueStale(NOW, NOW)).toBe(false);
+  });
+
+  test("is not stale on the last day before six months", () => {
+    expect(isIssueStale(ago(182), NOW)).toBe(false);
+  });
+
+  test("is stale at six months", () => {
+    expect(isIssueStale(ago(183), NOW)).toBe(true);
+  });
+
+  test("is stale for an issue a year old", () => {
+    expect(isIssueStale(ago(365), NOW)).toBe(true);
+  });
+
+  test("is not stale for a timestamp in the future", () => {
+    expect(isIssueStale(NOW + MS_PER_DAY, NOW)).toBe(false);
+  });
+
+  test("turns stale exactly when the label reaches six months", () => {
+    expect(formatIssueAge(ago(182), NOW)).toBe("5mo");
+    expect(isIssueStale(ago(182), NOW)).toBe(false);
+
+    expect(formatIssueAge(ago(183), NOW)).toBe("6mo");
+    expect(isIssueStale(ago(183), NOW)).toBe(true);
   });
 });

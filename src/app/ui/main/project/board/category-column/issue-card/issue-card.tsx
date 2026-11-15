@@ -8,7 +8,7 @@ import { PriorityId } from "@domain/priority";
 import { TaskIcon } from "@app/components/icons";
 import { PriorityIcon } from "@app/components/priority-icon";
 import { useSortBy } from "@app/hooks/useSortBy";
-import { formatIssueAge } from "@utils/formatIssueAge";
+import { formatIssueAge, isIssueStale } from "@utils/formatIssueAge";
 
 export interface DropItem {
   issueId: IssueId;
@@ -100,7 +100,14 @@ export const IssueCardContent = ({
             </span>
           </span>
           <span className="flex items-center">
-            <span className="mr-1.5 text-2xs text-font-subtlest">
+            <span
+              className={cx(
+                "mr-1.5 text-2xs",
+                isIssueStale(createdAt)
+                  ? "text-font-danger"
+                  : "text-font-subtlest"
+              )}
+            >
               {formatIssueAge(createdAt)}
             </span>
             <PriorityIcon priority={priorityId} />

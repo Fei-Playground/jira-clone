@@ -4,12 +4,19 @@ const WEEKS_BEFORE_MONTHS = 8;
 const DAYS_PER_YEAR = 365;
 const MONTHS_PER_YEAR = 12;
 const DAYS_PER_MONTH = DAYS_PER_YEAR / MONTHS_PER_YEAR;
+const MONTHS_BEFORE_STALE = 6;
+
+const getAgeInDays = (createdAt: number, now: number): number =>
+  Math.floor((now - createdAt) / MS_PER_DAY);
+
+const getAgeInMonths = (ageInDays: number): number =>
+  Math.floor(ageInDays / DAYS_PER_MONTH);
 
 export const formatIssueAge = (
   createdAt: number,
   now: number = Date.now()
 ): string => {
-  const ageInDays = Math.floor((now - createdAt) / MS_PER_DAY);
+  const ageInDays = getAgeInDays(createdAt, now);
 
   if (ageInDays < 1) {
     return "today";
@@ -24,8 +31,13 @@ export const formatIssueAge = (
   }
 
   if (ageInDays < DAYS_PER_YEAR) {
-    return `${Math.floor(ageInDays / DAYS_PER_MONTH)}mo`;
+    return `${getAgeInMonths(ageInDays)}mo`;
   }
 
   return `${Math.floor(ageInDays / DAYS_PER_YEAR)}y`;
 };
+
+export const isIssueStale = (
+  createdAt: number,
+  now: number = Date.now()
+): boolean => getAgeInMonths(getAgeInDays(createdAt, now)) >= MONTHS_BEFORE_STALE;
