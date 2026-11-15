@@ -1,5 +1,9 @@
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 const DAYS_PER_WEEK = 7;
+const WEEKS_BEFORE_MONTHS = 8;
+const DAYS_PER_YEAR = 365;
+const MONTHS_PER_YEAR = 12;
+const DAYS_PER_MONTH = DAYS_PER_YEAR / MONTHS_PER_YEAR;
 
 export const formatIssueAge = (
   createdAt: number,
@@ -15,5 +19,13 @@ export const formatIssueAge = (
     return `${ageInDays}d`;
   }
 
-  return `${Math.floor(ageInDays / DAYS_PER_WEEK)}w`;
+  if (ageInDays < WEEKS_BEFORE_MONTHS * DAYS_PER_WEEK) {
+    return `${Math.floor(ageInDays / DAYS_PER_WEEK)}w`;
+  }
+
+  if (ageInDays < DAYS_PER_YEAR) {
+    return `${Math.floor(ageInDays / DAYS_PER_MONTH)}mo`;
+  }
+
+  return `${Math.floor(ageInDays / DAYS_PER_YEAR)}y`;
 };

@@ -65,17 +65,19 @@ type Story = StoryObj<typeof IssueCardContent>;
 export const Default: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      {[Standard, LongName, Submitting].map(({ args }, index) => (
-        <IssueCardContent
-          key={index}
-          link={args?.link || "https://google.com"}
-          name={args?.name || "Issue name"}
-          priorityId={args?.priorityId || "low"}
-          createdAt={args?.createdAt || daysAgo(0)}
-          idPrefix={args?.idPrefix || "1234"}
-          isSubmitting={args?.isSubmitting || false}
-        />
-      ))}
+      {[Standard, LongName, Months, Years, Submitting].map(
+        ({ args }, index) => (
+          <IssueCardContent
+            key={index}
+            link={args?.link || "https://google.com"}
+            name={args?.name || "Issue name"}
+            priorityId={args?.priorityId || "low"}
+            createdAt={args?.createdAt || daysAgo(0)}
+            idPrefix={args?.idPrefix || "1234"}
+            isSubmitting={args?.isSubmitting || false}
+          />
+        )
+      )}
     </div>
   ),
 };
@@ -97,6 +99,28 @@ export const LongName: Story = {
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
     createdAt: daysAgo(14),
+    idPrefix: "1234",
+    isSubmitting: false,
+  },
+};
+
+export const Months: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Issue 2",
+    priorityId: "medium",
+    createdAt: daysAgo(200),
+    idPrefix: "1234",
+    isSubmitting: false,
+  },
+};
+
+export const Years: Story = {
+  args: {
+    link: "https://google.com",
+    name: "Issue 3",
+    priorityId: "low",
+    createdAt: daysAgo(800),
     idPrefix: "1234",
     isSubmitting: false,
   },

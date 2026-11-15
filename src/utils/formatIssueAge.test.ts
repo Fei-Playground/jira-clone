@@ -57,5 +57,33 @@ describe("formatIssueAge", () => {
     test("renders '3w' for three weeks", () => {
       expect(formatIssueAge(ago(21), NOW)).toBe("3w");
     });
+
+    test("renders '7w' on the last day of the weeks tier", () => {
+      expect(formatIssueAge(ago(55), NOW)).toBe("7w");
+    });
+  });
+
+  describe("months", () => {
+    test("renders '1mo' at exactly eight weeks", () => {
+      expect(formatIssueAge(ago(56), NOW)).toBe("1mo");
+    });
+
+    test("renders '3mo' once three months have passed", () => {
+      expect(formatIssueAge(ago(92), NOW)).toBe("3mo");
+    });
+
+    test("renders '11mo' on the last day of the months tier", () => {
+      expect(formatIssueAge(ago(364), NOW)).toBe("11mo");
+    });
+  });
+
+  describe("years", () => {
+    test("renders '1y' at exactly one year", () => {
+      expect(formatIssueAge(ago(365), NOW)).toBe("1y");
+    });
+
+    test("renders '2y' for two years", () => {
+      expect(formatIssueAge(ago(730), NOW)).toBe("2y");
+    });
   });
 });
