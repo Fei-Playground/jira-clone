@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
 const sectionTitles: Record<string, string> = {
-  board: "Board — Build V1",
+  board: "Board — Build V2",
   analytics: "Analytics",
   backlog: "Backlog",
 };
