@@ -10,6 +10,8 @@ For pragmatic purposes, many features are not included. Others have been modifie
 
 Install the dependencies with `npm install`, then start the app with `npm run dev`.
 
+The app runs on http://localhost:5173 by default.
+
 ## Table of Contents
 
 1. [Setup](#setup)
