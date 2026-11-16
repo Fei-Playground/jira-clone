@@ -6,6 +6,10 @@ For pragmatic purposes, many features are not included. Others have been modifie
 
 [LIVE DEMO](https://jira-clone.fly.dev)
 
+## Local development
+
+Install the dependencies with `npm install`, then start the app with `npm run dev`.
+
 ## Table of Contents
 
 1. [Setup](#setup)
