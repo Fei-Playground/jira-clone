@@ -1,8 +1,13 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
+const buildTitleSuffix = " — Build V1";
+
+const withBuildTitle = (title: string): string =>
+  `${title.replace(/ — Build V\d+$/, "")}${buildTitleSuffix}`;
+
 const sectionTitles: Record<string, string> = {
-  board: "Board",
+  board: withBuildTitle("Board"),
   analytics: "Analytics",
   backlog: "Backlog",
 };
