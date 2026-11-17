@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Sidebar } from "@app/ui/main/project/sidebar";
 
-const buildTitleSuffix = " — Build V1";
+const buildTitleSuffix = " — Build V2";
 
 const withBuildTitle = (title: string): string =>
   `${title.replace(/ — Build V\d+$/, "")}${buildTitleSuffix}`;
