@@ -24,6 +24,7 @@ import { getThemeSession } from "./session-storage/theme-storage.server";
 import { Toast } from "./components/toast";
 import { Error404 } from "./components/error-404";
 import { Error500 } from "./components/error-500";
+import { SaltSplash } from "./saltlike/SaltSplash";
 import styles from "./styles/app-compiled.css?url";
 import fonts from "./styles/fonts.css?url";
 import fuck from "react-toastify/dist/ReactToastify.css?url";
@@ -127,6 +128,7 @@ const App = (): JSX.Element => {
       </head>
       <body className="h-full bg-elevation-surface font-primary text-font">
         <Outlet />
+        <SaltSplash />
         <ScrollRestoration />
         <Scripts />
         <Toast theme={theme || Theme.LIGHT} />
