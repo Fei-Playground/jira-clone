@@ -38,6 +38,8 @@ export const links = () => {
 };
 
 export const meta: MetaFunction = () => {
+  // The app title. The browser tab title is set in each route's own meta
+  // (a bare `{ title }` in its return, e.g. routes/login.tsx), not here.
   const title = "Jira Clone Board";
   const description =
     "Task manager application inspired in Jira. Side project made with Remix, React, Tailwind, TypeScript and more.";
