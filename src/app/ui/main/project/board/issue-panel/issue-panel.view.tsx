@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { CategoryType } from "@domain/category";
 import { Issue, defaultIssuesIds } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
+import { formatDate } from "@utils/formatDate";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
 import { UserAvatar } from "@app/components/user-avatar";
@@ -159,6 +160,12 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                           error={actionData?.errors?.name}
                         />
                       </Dialog.Title>
+                      {issue?.createdAt ? (
+                        // ml-3 cancels the parent's -ml-3 so the date lines up with the title
+                        <p className="ml-3 text-xs leading-5 text-font-subtlest">
+                          Created {formatDate(issue.createdAt)}
+                        </p>
+                      ) : null}
                     </div>
                     <p className="font-primary-black text-font">Description</p>
                     <div className="-ml-3 mb-6">
