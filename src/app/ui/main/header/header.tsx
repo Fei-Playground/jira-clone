@@ -18,7 +18,7 @@ export const Header = (): JSX.Element => {
           className="flex cursor-pointer items-center rounded px-3 py-2 text-font hover:bg-background-brand-subtlest hover:text-font-brand"
         >
           <img src="/images/logo.png" width={24} height={24} alt="Logo" />
-          <span className="ml-2 font-primary-bold italic">
+          <span className="ml-2 font-primary-bold italic underline">
             Jira Clone Board
           </span>
         </Link>
