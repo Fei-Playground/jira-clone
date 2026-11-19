@@ -16,6 +16,7 @@ module.exports = {
         danger: "var(--color-font-danger)",
         subtle: "var(--color-font-subtle)",
         subtlest: "var(--color-font-subtlest)",
+        faint: "var(--color-font-faint)",
         selected: "var(--color-font-selected)",
         inverse: "var(--color-font-inverse)",
         disabled: "var(--color-font-disabled)",
