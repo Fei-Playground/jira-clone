@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { NavLink } from "react-router";
 import { HiOutlineViewBoards } from "react-icons/hi";
 import cx from "classix";
@@ -6,10 +6,14 @@ import { RiArrowDropLeftLine } from "react-icons/ri";
 import { ImStatsDots } from "react-icons/im";
 import { BsListNested, BsCloudSlash } from "react-icons/bs";
 import { TbError404 } from "react-icons/tb";
+import { Tooltip } from "@app/components/tooltip";
+import { useIsTruncated } from "@app/hooks/useIsTruncated";
 
 export const Sidebar = (props: Props): JSX.Element => {
   const { projectName, projectDescription, projectImage } = props;
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const projectNameRef = useRef<HTMLParagraphElement>(null);
+  const isProjectNameTruncated = useIsTruncated(projectNameRef, projectName);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -31,8 +35,19 @@ export const Sidebar = (props: Props): JSX.Element => {
             alt="project"
             className="rounded-[3px]"
           />
-          <div className="ml-4 w-full text-font">
-            <p className="font-primary-bold text-lg leading-4">{projectName}</p>
+          <div className="ml-4 min-w-0 flex-1 text-font">
+            <Tooltip
+              title={projectName}
+              show={isProjectNameTruncated}
+              wrapperClassName="w-full"
+            >
+              <p
+                ref={projectNameRef}
+                className="truncate font-primary-bold text-lg leading-4"
+              >
+                {projectName}
+              </p>
+            </Tooltip>
             <p className="mt-2 line-clamp-2 whitespace-normal font-primary-light text-sm leading-4">
               {projectDescription}
             </p>
