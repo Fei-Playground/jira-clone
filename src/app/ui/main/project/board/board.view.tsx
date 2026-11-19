@@ -15,9 +15,17 @@ import { ProjectContextProvider } from "../project.store";
 import { EVENTS } from "@app/events";
 
 export const BoardView = ({ project }: Props): JSX.Element => {
+  const issuesCount = project.categories.reduce(
+    (total, category) => total + category.issues.length,
+    0
+  );
+
   return (
     <ProjectContextProvider project={project}>
       <div className="box-border flex h-full flex-col">
+        <p className="-mt-3 mb-5 font-primary-light text-xs text-font-subtlest">
+          {issuesCount} {issuesCount === 1 ? "issue" : "issues"}
+        </p>
         <section className="flex items-center">
           <Search />
           <div className="mx-4 my-0 inline">
