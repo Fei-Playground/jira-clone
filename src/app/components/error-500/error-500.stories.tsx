@@ -28,6 +28,7 @@ type Story = StoryObj<typeof Error500>;
 export const Default: Story = {};
 
 export const Message: Story = {
+  name: "Custom message",
   args: {
     message: "This is the error message",
   },

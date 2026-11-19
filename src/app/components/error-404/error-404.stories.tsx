@@ -28,12 +28,14 @@ type Story = StoryObj<typeof Error404>;
 export const Default: Story = {};
 
 export const Message: Story = {
+  name: "Custom message",
   args: {
     message: "This is the error message",
   },
 };
 
 export const Link: Story = {
+  name: "With link",
   args: {
     href: "/link-to-safe-place",
   },
