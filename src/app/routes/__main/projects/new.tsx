@@ -12,7 +12,7 @@ import { createProject } from "@infrastructure/db/project";
 import { CreateProjectPanelView } from "@app/ui/main/projects/create-project-panel/create-project-panel.view";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { getRandomProjectImage } from "@utils/random-project-image";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
   const title = "Jira clone - Create project";
@@ -48,7 +48,7 @@ export const meta: MetaFunction = () => {
     "og:image": image,
   };
 
-  return [...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {

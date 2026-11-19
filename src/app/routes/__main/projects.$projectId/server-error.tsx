@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import type { MetaFunction } from "react-router";
 import { toast } from "react-toastify";
 import { Error500 } from "@app/components/error-500";
-import { formatTags } from "@utils/meta";
+import { APP_TITLE, formatTags } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
   const title = "Jira clone - Error";
@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => {
     description: description,
   };
 
-  return [{ title }, ...formatTags(tags)];
+  return [{ title: APP_TITLE }, ...formatTags(tags)];
 };
 
 export const loader = async () => {
