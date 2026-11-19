@@ -5,7 +5,7 @@ import { Project, ProjectId } from "@domain/project";
 import { getProject } from "@infrastructure/db/project";
 import { AnalyticsView } from "@app/ui/main/project/analytics";
 import { Error500 } from "@app/components/error-500";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
@@ -43,7 +43,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     "og:image": image,
   };
 
-  return [{ title }, ...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {

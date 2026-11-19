@@ -16,7 +16,7 @@ import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
@@ -54,7 +54,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     "og:image": image,
   };
 
-  return [...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {

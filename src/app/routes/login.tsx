@@ -9,7 +9,7 @@ import { User } from "@domain/user";
 import { getUsers } from "@infrastructure/db/user";
 import { getUserSession } from "@app/session-storage";
 import { LoginView } from "@app/ui/login";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
   const title = "Jira clone - Login";
@@ -45,7 +45,7 @@ export const meta: MetaFunction = () => {
     "og:image": image,
   };
 
-  return [{ title }, ...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {

@@ -1,3 +1,6 @@
+// Browser tab title, shared by every page of the app.
+export const APP_TITLE = "Jira Clone Board";
+
 export const formatTags = (tags: Record<string, string>) => {
   return Object.entries(tags).map(([key, value]) => ({
     name: key,

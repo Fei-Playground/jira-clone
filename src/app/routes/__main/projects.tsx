@@ -9,7 +9,7 @@ import { ProjectId, ProjectSummary } from "@domain/project";
 import { getProjectsSummary, deleteProject } from "@infrastructure/db/project";
 import { getUserSession } from "@app/session-storage";
 import { ProjectsView } from "@app/ui/main/projects";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {
   const title = "Jira clone - Projects";
@@ -45,7 +45,7 @@ export const meta: MetaFunction = () => {
     "og:image": image,
   };
 
-  return [{ title }, ...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {

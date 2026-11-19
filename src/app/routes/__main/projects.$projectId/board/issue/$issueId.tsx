@@ -27,7 +27,7 @@ import { Error404 } from "@app/components/error-404";
 import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
-import { formatTags, formatProperties } from "@utils/meta";
+import { APP_TITLE, formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data) return [];
@@ -65,7 +65,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     "og:image": image,
   };
 
-  return [...formatTags(tags), ...formatProperties(properties)];
+  return [{ title: APP_TITLE }, ...formatTags(tags), ...formatProperties(properties)];
 };
 
 type LoaderData = {
