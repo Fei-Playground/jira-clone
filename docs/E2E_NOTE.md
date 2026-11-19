@@ -1,0 +1,1 @@
+Release note: the board shows the total issue count.
