@@ -35,6 +35,7 @@ export const Message: Story = {
 };
 
 export const Link: Story = {
+  name: "With link",
   args: {
     href: "/link-to-safe-place",
   },
