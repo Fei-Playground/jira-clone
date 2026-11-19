@@ -1,1 +1,1 @@
-Release note: the board shows the total issue count under its title.
+Release note: the board now shows the total issue count under its title.
