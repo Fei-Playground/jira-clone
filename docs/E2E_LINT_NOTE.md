@@ -1,0 +1,1 @@
+The useIsTruncated lint finding was fixed upstream by a teammate.
