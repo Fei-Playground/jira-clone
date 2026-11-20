@@ -114,10 +114,11 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
         </span>
         <Link
           to={issueLink}
-          className="text-font-subtlest/60 flex cursor-pointer rounded border-none p-1 hover:bg-background-neutral"
-          aria-label={`Add new ${category.name} issue`}
+          className="text-font-subtlest/60 flex cursor-pointer items-center gap-1 rounded border-none p-1 hover:bg-background-neutral"
+          aria-label={`New issue in ${category.name}`}
         >
           <AiOutlinePlus size={24} />
+          <span>New issue</span>
         </Link>
       </div>
       {/* Column body items */}
