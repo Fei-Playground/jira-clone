@@ -20,15 +20,25 @@ export const ProjectsView = ({
           </Button>
         </Link>
       </div>
-      <div className="mt-4 grid grid-cols-[repeat(auto-fit,_400px)] gap-8">
-        {projectsSummary.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
+      {projectsSummary.length === 0 ? (
+        <EmptyProjects />
+      ) : (
+        <div className="mt-4 grid grid-cols-[repeat(auto-fit,_400px)] gap-8">
+          {projectsSummary.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      )}
       <Outlet />
     </div>
   );
 };
+
+const EmptyProjects = (): JSX.Element => (
+  <p className="mt-4 font-primary-light text-sm text-font-subtlest">
+    No projects yet. Create one to get started.
+  </p>
+);
 
 interface ProjectsViewProps {
   projectsSummary: ProjectSummary[];
