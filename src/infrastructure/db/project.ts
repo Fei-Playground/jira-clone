@@ -4,9 +4,15 @@ import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
 import { Priority } from "@domain/priority";
-import { Sort } from "@domain/filter";
+import { Issue } from "@domain/issue";
+import { Sort, compareTitles } from "@domain/filter";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
+
+// SQLite orders text by byte value, so the A to Z title sort that ignores letter
+// case is applied in memory instead of in the query.
+const sortByTitle = (issues: Issue[]): Issue[] =>
+  [...issues].sort((a, b) => compareTitles(a.name, b.name));
 
 export const getProject = async (
   projectId: ProjectId,
@@ -24,10 +30,10 @@ export const getProject = async (
     },
   };
 
-  // prettier-ignore
-  const orderBy: PrismaSortType = sortIssuesBy === "date" 
-    ? [sortByDate, sortByPriority] 
-    : [sortByPriority, sortByDate];
+  const orderBy: PrismaSortType =
+    sortIssuesBy === "priority"
+      ? [sortByPriority, sortByDate]
+      : [sortByDate, sortByPriority];
 
   const projectDb = await db.project.findUnique({
     where: {
@@ -67,12 +73,8 @@ export const getProject = async (
     name: projectDb.name,
     description: projectDb.description || "",
     image: projectDb.image,
-    categories: projectDb.categories.map((category) => ({
-      id: category.id,
-      name: category.name,
-      type: category.type as CategoryType,
-      order: category.order,
-      issues: category.issues.map((issue) => ({
+    categories: projectDb.categories.map((category) => {
+      const issues: Issue[] = category.issues.map((issue) => ({
         id: issue.id,
         name: issue.name,
         priority: issue.priority as Priority,
@@ -81,8 +83,16 @@ export const getProject = async (
         comments: [],
         createdAt: issue.createdAt.getDate(),
         updatedAt: issue.createdAt.getDate(),
-      })),
-    })),
+      }));
+
+      return {
+        id: category.id,
+        name: category.name,
+        type: category.type as CategoryType,
+        order: category.order,
+        issues: sortIssuesBy === "title" ? sortByTitle(issues) : issues,
+      };
+    }),
     createdAt: projectDb.createdAt.getDate(),
     updatedAt: projectDb.updatedAt.getDate(),
   };

@@ -57,6 +57,9 @@ describe("board sortBy in the UI", () => {
     expect(sortLabel("?sortBy=date")).toBe("Sort by date");
     expect(sortLabel("?sortBy=Date")).toBe("Sort by date");
     expect(sortLabel("?sortBy=DATE")).toBe("Sort by date");
+    expect(sortLabel("?sortBy=title")).toBe("Sort by title");
+    expect(sortLabel("?sortBy=Title")).toBe("Sort by title");
+    expect(sortLabel("?sortBy=TITLE")).toBe("Sort by title");
   });
 
   it("reads the date label for a sort it does not know", () => {
@@ -76,6 +79,11 @@ describe("board sortBy in the UI", () => {
 
     expect(dateLinks).toContain(`/issue/${todoIssue.id}?sortBy=date`);
     expect(dateLinks).toContain("/issue/new?category=TODO&sortBy=date");
+
+    const titleLinks = boardLinks("?sortBy=TITLE");
+
+    expect(titleLinks).toContain(`/issue/${todoIssue.id}?sortBy=title`);
+    expect(titleLinks).toContain("/issue/new?category=TODO&sortBy=title");
   });
 
   it("drops a sort it does not know from the issue links", () => {

@@ -41,6 +41,12 @@ describe("board loader sortBy", () => {
     expect(await sortIssuesByFor("?sortBy=DATE")).toBe("date");
   });
 
+  it("sorts by title for ?sortBy=title, ?sortBy=Title and ?sortBy=TITLE", async () => {
+    expect(await sortIssuesByFor("?sortBy=title")).toBe("title");
+    expect(await sortIssuesByFor("?sortBy=Title")).toBe("title");
+    expect(await sortIssuesByFor("?sortBy=TITLE")).toBe("title");
+  });
+
   it("ignores a sort that is not known, in any case", async () => {
     expect(await sortIssuesByFor("?sortBy=createdAt")).toBe("date");
     expect(await sortIssuesByFor("?sortBy=PRIORITIES")).toBe("date");

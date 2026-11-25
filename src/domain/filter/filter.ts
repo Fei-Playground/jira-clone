@@ -1,4 +1,4 @@
-export const sorts = ["date", "priority"] as const;
+export const sorts = ["date", "priority", "title"] as const;
 export const DEFAULT_SORT: Sort = "date";
 
 export type Sort = (typeof sorts)[number];
@@ -12,6 +12,7 @@ export type SortList = SortItem[];
 export const sortDict: SortDict = {
   date: "Date",
   priority: "Priority",
+  title: "Title",
 };
 
 export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][]).map(
@@ -32,3 +33,10 @@ export const parseSort = (sort: string | null): Sort | null => {
 
   return isValidSort(normalizedSort) ? normalizedSort : null;
 };
+
+/**
+ * Compares two issue titles A to Z, ignoring letter case. SQLite orders text by
+ * byte value, so the title sort is applied in memory instead of in the query.
+ */
+export const compareTitles = (a: string, b: string): number =>
+  a.toLowerCase().localeCompare(b.toLowerCase());
