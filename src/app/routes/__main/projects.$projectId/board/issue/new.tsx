@@ -8,7 +8,7 @@ import invariant from "tiny-invariant";
 import { UserId } from "@domain/user";
 import { ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
-import { Comment } from "@domain/comment";
+import { Comment, normalizeComments } from "@domain/comment";
 import { PriorityId } from "@domain/priority";
 import { isValidSort } from "@domain/filter";
 import { createIssue, CreateIssueInputData } from "@infrastructure/db/issue";
@@ -92,9 +92,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     const priority = formData.get("priority") as PriorityId;
     const asigneeId = formData.get("asignee") as UserId;
     const reporterId = formData.get("reporter") as UserId;
-    const comments = JSON.parse(
-      formData.get("comments") as string
-    ) as Comment[];
+    const comments = normalizeComments(
+      JSON.parse(formData.get("comments") as string) as Comment[]
+    );
     const issueInputData: CreateIssueInputData = {
       name,
       description,
