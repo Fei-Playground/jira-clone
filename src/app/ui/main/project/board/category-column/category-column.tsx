@@ -61,9 +61,12 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
     [category.id]
   );
 
+  // Leading and trailing whitespace is ignored, so "  login  " matches "login"
+  const searchTerm = search.trim();
+
   const filteredIssues = (): Issue[] =>
     category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
+      return issue.name.toLowerCase().includes(searchTerm);
     });
 
   useEffect(() => {
