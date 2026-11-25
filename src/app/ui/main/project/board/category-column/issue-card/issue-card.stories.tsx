@@ -27,6 +27,12 @@ const meta: Meta<typeof IssueCardContent> = {
         type: "text",
       },
     },
+    priorityLabel: {
+      defaultValue: "Priority: High",
+      control: {
+        type: "text",
+      },
+    },
     idPrefix: {
       defaultValue: "1234",
       control: {
@@ -62,6 +68,7 @@ export const Default: Story = {
           link={args?.link || "https://google.com"}
           name={args?.name || "Issue name"}
           priorityId={args?.priorityId || "low"}
+          priorityLabel={args?.priorityLabel || "Priority: Low"}
           idPrefix={args?.idPrefix || "1234"}
           isSubmitting={args?.isSubmitting || false}
         />
@@ -75,6 +82,7 @@ export const Standard: Story = {
     link: "https://google.com",
     name: "Issue 1",
     priorityId: "high",
+    priorityLabel: "Priority: High",
     idPrefix: "1234",
     isSubmitting: false,
   },
@@ -85,6 +93,7 @@ export const LongName: Story = {
     link: "https://google.com",
     name: "This is a very long issue name that should be truncated",
     priorityId: "high",
+    priorityLabel: "Priority: High",
     idPrefix: "1234",
     isSubmitting: false,
   },
@@ -95,6 +104,7 @@ export const Submitting: Story = {
     link: "https://google.com",
     name: "Submitting issue",
     priorityId: "low",
+    priorityLabel: "Priority: Low",
     idPrefix: "1234",
     isSubmitting: true,
   },

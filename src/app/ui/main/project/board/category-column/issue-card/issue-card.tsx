@@ -58,6 +58,7 @@ export const IssueCard = ({
         link={issueLink}
         name={issue.name}
         priorityId={issue.priority.id}
+        priorityLabel={`Priority: ${issue.priority.name}`}
         idPrefix={issueIdPrefix}
         isSubmitting={isSubmitting}
       />
@@ -76,6 +77,7 @@ export const IssueCardContent = ({
   link,
   name,
   priorityId,
+  priorityLabel,
   idPrefix,
   isSubmitting,
 }: IssueCardContentProps): JSX.Element => (
@@ -96,7 +98,7 @@ export const IssueCardContent = ({
               {idPrefix}
             </span>
           </span>
-          <PriorityIcon priority={priorityId} />
+          <PriorityIcon priority={priorityId} label={priorityLabel} />
         </div>
       </>
     </Link>
@@ -107,6 +109,7 @@ interface IssueCardContentProps {
   link: string;
   name: string;
   priorityId: PriorityId;
+  priorityLabel: string;
   idPrefix: string;
   isSubmitting: boolean;
 }
