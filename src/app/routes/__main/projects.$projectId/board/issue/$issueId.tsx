@@ -24,7 +24,6 @@ import {
 import { deleteComment } from "@infrastructure/db/comment";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
-import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
@@ -109,7 +108,15 @@ export const action: ActionFunction = async ({ request, params }) => {
   const previousUrl = `/projects/${projectId}/board${sortBySeachParam}`;
 
   if (_action === "update") {
-    const name = formData.get("title") as string;
+    const issue = await getIssue(id);
+
+    if (!issue) {
+      throw new Response("Not Found", {
+        status: 404,
+      });
+    }
+
+    const name = (formData.get("title") as string | null)?.trim() ?? "";
     const description = formData.get("description") as string;
     const categoryId = formData.get("status") as CategoryId;
     const priority = formData.get("priority") as PriorityId;
@@ -120,7 +127,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     ) as Comment[];
     const issueInputData: UpdateIssueInputData = {
       id,
-      name,
+      // A title that is empty or only spaces is not accepted: the issue keeps
+      // the title it already had.
+      name: name || issue.name,
       description,
       categoryId,
       priority,
@@ -128,13 +137,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       reporterId,
       comments,
     };
-
-    if (!name || textAreOnlySpaces(name)) {
-      return json<ActionData>(
-        { errors: { name: "Title is required" } },
-        { status: 400 }
-      );
-    }
 
     await updateIssue(issueInputData);
     emitter.emit(EVENTS.ISSUE_CHANGED, Date.now());
