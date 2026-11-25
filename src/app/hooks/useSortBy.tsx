@@ -1,10 +1,9 @@
 import { useSearchParams } from "react-router";
-import { isValidSort } from "@domain/filter";
+import { parseSort, Sort } from "@domain/filter";
 
-export const useSortBy = (): string | null => {
+export const useSortBy = (): Sort | null => {
   const [searchParams] = useSearchParams();
-  const sortByParam = searchParams.get("sortBy") as string;
-  const sortBy = isValidSort(sortByParam) ? sortByParam : null;
+  const sortBy = parseSort(searchParams.get("sortBy"));
 
   return sortBy;
 };
