@@ -24,7 +24,6 @@ import {
 import { deleteComment } from "@infrastructure/db/comment";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { Error404 } from "@app/components/error-404";
-import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
@@ -109,7 +108,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const previousUrl = `/projects/${projectId}/board${sortBySeachParam}`;
 
   if (_action === "update") {
-    const name = formData.get("title") as string;
+    const name = (formData.get("title") as string)?.trim() || "";
     const description = formData.get("description") as string;
     const categoryId = formData.get("status") as CategoryId;
     const priority = formData.get("priority") as PriorityId;
@@ -129,7 +128,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       comments,
     };
 
-    if (!name || textAreOnlySpaces(name)) {
+    if (!name) {
       return json<ActionData>(
         { errors: { name: "Title is required" } },
         { status: 400 }

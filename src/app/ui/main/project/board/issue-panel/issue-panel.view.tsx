@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Form,
-  useActionData,
   useSearchParams,
   useNavigation,
   useFetcher,
@@ -38,8 +37,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const { user } = useUserStore();
   const reporter = issue ? issue.reporter : user;
   const formRef = useRef<HTMLFormElement>(null);
-  const actionData = useActionData() as IssueActionData;
   const fetcher = useFetcher();
+  // The panel submits through a fetcher, so the action's validation errors
+  // arrive on fetcher.data rather than on useActionData().
+  const actionData = fetcher.data as IssueActionData | undefined;
   const params = useSearchParams();
   const transition = useNavigation();
   const location = useLocation();
