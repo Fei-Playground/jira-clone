@@ -24,6 +24,8 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
   const fetcher = useFetcher();
   const sortBy = useSortBy();
   const { search } = useProjectStore();
+  // Spaces around the query are ignored, so "  login  " filters like "login"
+  const searchTerm = search.trim();
   const emptyCategory = category.issues.length === 0;
   const issueLink = sortBy
     ? `issue/new?category=${category.type}&sortBy=${sortBy}`
@@ -63,7 +65,7 @@ export const CategoryColumn = (props: CategoryColumnProps): JSX.Element => {
 
   const filteredIssues = (): Issue[] =>
     category.issues.filter((issue) => {
-      return issue.name.toLowerCase().includes(search);
+      return issue.name.toLowerCase().includes(searchTerm);
     });
 
   useEffect(() => {
