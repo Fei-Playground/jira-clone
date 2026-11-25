@@ -14,7 +14,7 @@ import { CategoryId } from "@domain/category";
 import { Issue, IssueId } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { PriorityId } from "@domain/priority";
-import { isValidSort } from "@domain/filter";
+import { normalizeSort } from "@domain/filter";
 import {
   getIssue,
   updateIssue,
@@ -102,10 +102,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
   const url = new URL(request.url);
-  const sortByParam = url.searchParams.get("sortBy") as string;
-  const sortBySeachParam = isValidSort(sortByParam)
-    ? `?sortBy=${sortByParam}`
-    : "";
+  const sortBy = normalizeSort(url.searchParams.get("sortBy"));
+  const sortBySeachParam = sortBy ? `?sortBy=${sortBy}` : "";
   const previousUrl = `/projects/${projectId}/board${sortBySeachParam}`;
 
   if (_action === "update") {
