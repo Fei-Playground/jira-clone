@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { usersMock } from "@domain/user";
+import { usersMock } from "@domain/user/user.mock";
 import { UserAvatarList } from "./avatar-list";
 
 const meta: Meta<typeof UserAvatarList> = {

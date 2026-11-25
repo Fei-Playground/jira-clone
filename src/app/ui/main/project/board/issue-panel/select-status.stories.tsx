@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { projectMock1 } from "@domain/project";
-import { CategoryType } from "@domain/category";
-import { ProjectContextProvider } from "@app/ui/main/project";
+import { projectMock1 } from "@domain/project/project.mock";
+import { CategoryType } from "@domain/category/category";
+import { ProjectContextProvider } from "@app/ui/main/project/project.store";
 import { SelectStatus } from "./select-status";
 
 const meta: Meta<typeof SelectStatus> = {

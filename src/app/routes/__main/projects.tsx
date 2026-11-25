@@ -5,10 +5,10 @@ import type {
 } from "react-router";
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
-import { ProjectId, ProjectSummary } from "@domain/project";
+import { ProjectId, ProjectSummary } from "@domain/project/project";
 import { getProjectsSummary, deleteProject } from "@infrastructure/db/project";
-import { getUserSession } from "@app/session-storage";
-import { ProjectsView } from "@app/ui/main/projects";
+import { getUserSession } from "@app/session-storage/user-storage.server";
+import { ProjectsView } from "@app/ui/main/projects/projects.view";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction = () => {

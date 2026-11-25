@@ -6,18 +6,18 @@ import type {
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
-import { Project, ProjectId } from "@domain/project";
-import { CategoryId } from "@domain/category";
-import { IssueId } from "@domain/issue";
-import { isValidSort, DEFAULT_SORT } from "@domain/filter";
+import { Project, ProjectId } from "@domain/project/project";
+import { CategoryId } from "@domain/category/category";
+import { IssueId } from "@domain/issue/issue";
+import { isValidSort, DEFAULT_SORT } from "@domain/filter/filter";
 import { getProject } from "@infrastructure/db/project";
 import {
   updateIssueCategory,
   UpdateIssueCategoryData,
 } from "@infrastructure/db/issue";
-import { Error500 } from "@app/components/error-500";
-import { BoardView } from "@app/ui/main/project/board";
-import { EVENTS } from "@app/events";
+import { Error500 } from "@app/components/error-500/error-500";
+import { BoardView } from "@app/ui/main/project/board/board.view";
+import { EVENTS } from "@app/events/events";
 import { emitter } from "@app/events/emitter.server";
 import { formatTags, formatProperties } from "@utils/meta";
 

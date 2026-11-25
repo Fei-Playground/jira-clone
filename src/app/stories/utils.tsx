@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { createRoutesStub } from "react-router";
-import { userMock1 } from "@domain/user";
+import { userMock1 } from "@domain/user/user.mock";
 import { UserContextProvider } from "@app/store/user.store";
 import { ThemeProvider, Theme, Preference } from "@app/store/theme.store";
 

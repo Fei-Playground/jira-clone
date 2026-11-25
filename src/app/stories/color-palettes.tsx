@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import cx from "classix";
-import { Tooltip } from "@app/components/tooltip";
+import { Tooltip } from "@app/components/tooltip/tooltip";
 
 type Palettes = Record<string, string[]>;
 

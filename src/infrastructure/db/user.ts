@@ -1,4 +1,4 @@
-import { User, UserId } from "@domain/user";
+import { User, UserId } from "@domain/user/user";
 import { dnull } from "src/utils/dnull";
 import { db } from "./db.server";
 

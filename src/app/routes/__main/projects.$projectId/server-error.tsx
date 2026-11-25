@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { MetaFunction } from "react-router";
 import { toast } from "react-toastify";
-import { Error500 } from "@app/components/error-500";
+import { Error500 } from "@app/components/error-500/error-500";
 import { formatTags } from "@utils/meta";
 
 export const meta: MetaFunction = () => {

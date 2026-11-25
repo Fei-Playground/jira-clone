@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
-import { userMock1 } from "@domain/user";
+import { userMock1 } from "@domain/user/user.mock";
 import { MainLayout } from "./main.layout";
 
 const meta: Meta<typeof MainLayout> = {

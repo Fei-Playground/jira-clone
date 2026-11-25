@@ -1,7 +1,10 @@
-import { User } from "@domain/user";
-import { Category } from "@domain/category";
+import { User } from "@domain/user/user";
+import { Category } from "@domain/category/category";
 
 export type ProjectId = string;
+
+// Seeded demo projects. They cannot be deleted from the UI.
+export const defaultProjectIds: ProjectId[] = ["jira-clone", "second-project"];
 export interface Project {
   id: ProjectId;
   name: string;

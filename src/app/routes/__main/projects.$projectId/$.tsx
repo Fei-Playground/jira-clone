@@ -2,8 +2,8 @@ import type { LoaderFunction } from "react-router";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
-import { ProjectId } from "@domain/project";
-import { Error404 } from "@app/components/error-404";
+import { ProjectId } from "@domain/project/project";
+import { Error404 } from "@app/components/error-404/error-404";
 
 export const loader: LoaderFunction = async () => {
   throw new Response("Not Found", {

@@ -2,11 +2,11 @@ import type { LoaderFunction, MetaFunction } from "react-router";
 import { data as json, redirect } from "react-router";
 import { useLoaderData } from "react-router";
 import invariant from "tiny-invariant";
-import { ProjectSummary, ProjectId } from "@domain/project";
+import { ProjectSummary, ProjectId } from "@domain/project/project";
 import { getProjectSummary } from "@infrastructure/db/project";
-import { Error404 } from "@app/components/error-404";
-import { Error500 } from "@app/components/error-500";
-import { ProjectView } from "@app/ui/main/project";
+import { Error404 } from "@app/components/error-404/error-404";
+import { Error500 } from "@app/components/error-500/error-500";
+import { ProjectView } from "@app/ui/main/project/project.view";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
