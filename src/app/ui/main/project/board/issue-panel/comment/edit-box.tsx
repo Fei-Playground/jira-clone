@@ -2,7 +2,6 @@ import { useState } from "react";
 import cx from "classix";
 import { TextareaAutosize } from "@app/components/textarea-autosize";
 import { Button } from "@app/components/button";
-import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 
 export const EditBox = ({
   defaultMessage,
@@ -11,26 +10,22 @@ export const EditBox = ({
   cancel,
 }: EditBoxProps): JSX.Element => {
   const [message, setMessage] = useState<string>(defaultMessage);
-  const [initError, setInitError] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const messageIsValid = (): boolean => {
-    return message.length > 0 && !textAreOnlySpaces(message);
-  };
+  // A comment is only valid when it holds something other than whitespace
+  const trimmedMessage = message.trim();
+  const messageIsValid = trimmedMessage.length > 0;
 
   const resetValues = () => {
     setMessage(defaultMessage);
-    setInitError(false);
     setIsEditing(false);
   };
 
   const onSave = () => {
-    if (messageIsValid()) {
-      save(message);
-      resetValues();
-    } else {
-      setInitError(true);
-    }
+    if (!messageIsValid) return;
+
+    save(trimmedMessage);
+    resetValues();
   };
 
   const onCancel = () => {
@@ -39,25 +34,16 @@ export const EditBox = ({
   };
   const onFocus = () => setIsEditing(true);
 
-  const isError = initError && !messageIsValid();
-  const placeholder = isError
-    ? "Message cannot be empty"
-    : "Add your comment...";
-
   return (
     <div className="w-full">
       <TextareaAutosize
         name="comment"
         value={message}
         setValue={setMessage}
-        placeholder={placeholder}
+        placeholder="Add your comment..."
         onFocus={onFocus}
         autofocus={autofocus}
-        textareaClassName={cx(
-          "min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand",
-          isError &&
-            "!outline-2 !outline-border-danger placeholder:text-font-danger placeholder:text-opacity-70"
-        )}
+        textareaClassName="min-h-[80px] bg-background-input font-primary-light leading-6 outline outline-2 outline-border-input focus:outline-border-brand"
       />
       <div
         className={cx(
@@ -69,6 +55,7 @@ export const EditBox = ({
           type="button"
           className="px-4 py-2.5"
           onClick={onSave}
+          disabled={!messageIsValid}
           aria-label="Save comment"
         >
           Save
