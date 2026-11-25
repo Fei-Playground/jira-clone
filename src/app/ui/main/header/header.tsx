@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import cx from "classix";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import { AiFillGithub } from "react-icons/ai";
 import { Tooltip } from "@app/components/tooltip";
@@ -23,13 +22,13 @@ export const Header = (): JSX.Element => {
       </section>
       <section className="flex items-center gap-4">
         <Tooltip title="About">
-          <button
+          <Link
+            to="/about"
             aria-label="About this website"
-            disabled
-            className={cx(iconBaseClass, "cursor-not-allowed")}
+            className={iconBaseClass}
           >
             <HiQuestionMarkCircle size={24} />
-          </button>
+          </Link>
         </Tooltip>
         <Tooltip title="Github">
           <a
