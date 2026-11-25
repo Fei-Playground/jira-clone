@@ -9,6 +9,7 @@ import { UserId } from "@domain/user";
 import { ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
 import { Comment } from "@domain/comment";
+import { parseLabels } from "@domain/issue";
 import { PriorityId } from "@domain/priority";
 import { isValidSort } from "@domain/filter";
 import { createIssue, CreateIssueInputData } from "@infrastructure/db/issue";
@@ -95,6 +96,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
+    const labels = parseLabels(formData.get("labels"));
     const issueInputData: CreateIssueInputData = {
       name,
       description,
@@ -103,6 +105,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      labels,
     };
 
     if (!name || textAreOnlySpaces(name)) {

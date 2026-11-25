@@ -11,6 +11,7 @@ import { Category, CategoryId } from "@domain/category";
 import { Issue } from "@domain/issue";
 import { Priority, prioritiesMock } from "@domain/priority";
 import { db } from "./db.server";
+import { serializeLabels } from "./issue";
 
 // Leaving the update empty will not update the record if it already exists
 const createUserIfNotExists = async (user: User): Promise<UserDB> => {
@@ -82,6 +83,7 @@ const createIssueIfNotExists = async (issue: Issue, categoryId: CategoryId): Pro
       asignee: { connect: { id: issue.asignee.id } },
       reporter: { connect: { id: issue.reporter.id } },
       priority: { connect: { id: issue.priority.id } },
+      labels: serializeLabels(issue.labels),
       comments: {
         create: issue.comments.map((comment) => ({
           id: comment.id,

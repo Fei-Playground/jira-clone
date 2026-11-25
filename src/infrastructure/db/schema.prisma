@@ -53,6 +53,7 @@ model Issue {
   asignee     User      @relation("issue_assignee", fields: [asigneeId], references: [id])
   asigneeId   String
   comments    Comment[]
+  labels      String    @default("[]") // JSON array of label names (SQLite has no scalar list type)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   priority    Priority  @relation(fields: [priorityId], references: [id])

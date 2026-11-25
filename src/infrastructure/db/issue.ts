@@ -1,11 +1,17 @@
 import { Prisma } from "@prisma/client";
 import { UserId } from "@domain/user";
 import { CategoryType, CategoryId } from "@domain/category";
-import { IssueId, Issue } from "@domain/issue";
+import { IssueId, Issue, parseLabels } from "@domain/issue";
 import { Priority, PriorityId } from "@domain/priority";
 import { Comment } from "@domain/comment";
 import { dnull } from "src/utils/dnull";
 import { db } from "./db.server";
+
+/**
+ * Labels live in a single column as a JSON array of names, because SQLite has
+ * no scalar list type.
+ */
+export const serializeLabels = (labels: string[]): string => JSON.stringify(labels);
 
 export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
   const issueDb = await db.issue.findUnique({
@@ -40,6 +46,7 @@ export const getIssue = async (issueId: IssueId): Promise<Issue | null> => {
     priority: issueDb.priority as Priority,
     asignee: dnull(issueDb.asignee),
     reporter: dnull(issueDb.reporter),
+    labels: parseLabels(issueDb.labels),
     comments: issueDb.comments.map((comment) => ({
       ...comment,
       createdAt: comment.createdAt.getTime(),
@@ -65,6 +72,7 @@ export type CreateIssueInputData = {
   asigneeId: UserId;
   reporterId: UserId;
   comments: Comment[];
+  labels: string[];
 };
 export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId> => {
   const newIssue = await db.issue.create({
@@ -72,6 +80,7 @@ export const createIssue = async (issue: CreateIssueInputData): Promise<IssueId>
       ...issue,
       priority: undefined,
       priorityId: issue.priority,
+      labels: serializeLabels(issue.labels),
       comments: {
         create: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
@@ -102,6 +111,7 @@ export const updateIssue = async (issue: UpdateIssueInputData) => {
       ...issue,
       priority: undefined,
       priorityId: issue.priority,
+      labels: serializeLabels(issue.labels),
       comments: {
         upsert: issue.comments.map((comment) => {
           const commentInput: Omit<Prisma.CommentCreateInput, "issue"> = {
