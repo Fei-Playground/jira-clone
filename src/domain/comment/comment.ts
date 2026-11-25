@@ -1,4 +1,4 @@
-import { User } from "../user";
+import { User } from "../user/user";
 
 export type CommentId = string;
 export interface Comment {

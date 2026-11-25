@@ -1,6 +1,6 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { twix } from "tailwindcss-radix-ui";
-import { Button, Props as ButtonProps } from "../button";
+import { Button, Props as ButtonProps } from "../button/button";
 
 export const Root = AlertDialog.Root;
 export const Trigger = AlertDialog.Trigger;

@@ -1,9 +1,9 @@
-import { Project } from "./project";
-import { usersMock } from "@domain/user";
-import { categoriesMock1, categoriesMock2 } from "@domain/category";
+import { Project, defaultProjectIds } from "./project";
+import { usersMock } from "@domain/user/user.mock";
+import { categoriesMock1, categoriesMock2 } from "@domain/category/category.mock";
 
 export const projectMock1: Project = {
-  id: "jira-clone",
+  id: defaultProjectIds[0],
   name: "JIRA Clone",
   description: "Software project",
   users: usersMock,
@@ -14,7 +14,7 @@ export const projectMock1: Project = {
 };
 
 export const projectMock2: Project = {
-  id: "second-project",
+  id: defaultProjectIds[1],
   name: "Second project",
   description:
     "Super long description to test how it clamps on project card in the projects page and in the project sidebar",

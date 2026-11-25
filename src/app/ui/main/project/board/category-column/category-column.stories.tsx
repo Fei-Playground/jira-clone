@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { withMainContext, withRemixStub } from "@app/stories/utils";
-import { projectMock1 } from "@domain/project";
-import { ProjectContextProvider } from "@app/ui/main/project";
+import { projectMock1 } from "@domain/project/project.mock";
+import { ProjectContextProvider } from "@app/ui/main/project/project.store";
 import { CategoryColumn } from "./category-column";
 
 const meta: Meta<typeof CategoryColumn> = {

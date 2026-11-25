@@ -8,18 +8,19 @@ import {
   useLocation,
   useNavigate,
 } from "react-router";
-import * as Dialog from "@app/components/dialog";
+import * as Dialog from "@app/components/dialog/dialog";
 import { toast } from "react-toastify";
-import { CategoryType } from "@domain/category";
-import { Issue, defaultIssuesIds } from "@domain/issue";
-import { Comment, CommentId } from "@domain/comment";
+import { CategoryType } from "@domain/category/category";
+import { Issue } from "@domain/issue/issue";
+import { defaultIssuesIds } from "@domain/issue/issue.mock";
+import { Comment, CommentId } from "@domain/comment/comment";
 import { useUserStore } from "@app/store/user.store";
 import { ActionData as IssueActionData } from "@app/routes/__main/projects.$projectId/board/issue/$issueId";
-import { UserAvatar } from "@app/components/user-avatar";
-import { Button } from "@app/components/button";
-import { Title } from "@app/components/title";
-import { Description } from "@app/components/description";
-import { Kbd } from "@app/components/kbd-placeholder";
+import { UserAvatar } from "@app/components/user-avatar/user-avatar";
+import { Button } from "@app/components/button/button";
+import { Title } from "@app/components/title/title";
+import { Description } from "@app/components/description/description";
+import { Kbd } from "@app/components/kbd-placeholder/kbd-placeholder";
 import { PanelHeaderIssue } from "./panel-header-issue";
 import { CreateComment } from "./comment/create-comment";
 import { ViewComment } from "./comment/view-comment";

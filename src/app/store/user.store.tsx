@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { User } from "@domain/user";
+import { User } from "@domain/user/user";
 
 interface UserStore {
   user: User;

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { PriorityId, prioritiesMock } from "@domain/priority";
-import { PriorityIcon } from "@app/components/priority-icon";
-import * as Select from "@app/components/select";
+import { PriorityId } from "@domain/priority/priority";
+import { prioritiesMock } from "@domain/priority/priority.mock";
+import { PriorityIcon } from "@app/components/priority-icon/priority-icon";
+import * as Select from "@app/components/select/select";
 
 export const SelectPriority = ({ initPriority }: Props): JSX.Element => {
   const [selectValue, setSelectValue] = useState<PriorityId>(initPriority);

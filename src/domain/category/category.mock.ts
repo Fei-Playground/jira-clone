@@ -1,4 +1,4 @@
-import { Category, categoryTypes, categoryTypeDict } from "@domain/category";
+import { Category, categoryTypes, categoryTypeDict } from "@domain/category/category";
 import {
   todoIssuesMock1,
   inProgressIssuesMock1,
@@ -6,7 +6,7 @@ import {
   todoIssuesMock2,
   inProgressIssuesMock2,
   doneIssuesMock2,
-} from "@domain/issue";
+} from "@domain/issue/issue.mock";
 
 const createdAt = new Date("2022-01-01").valueOf();
 const updatedAt = new Date("2022-01-01").valueOf();
