@@ -22,3 +22,15 @@ export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][])
 );
 
 export const isValidSort = (sort: string): sort is Sort => sorts.includes(sort as Sort);
+
+/**
+ * Resolves a raw `sortBy` value to a known sort, ignoring letter case.
+ * Anything that is not a known sort in any case resolves to `null`.
+ */
+export const normalizeSort = (sort: string | null): Sort | null => {
+  if (sort === null) return null;
+
+  const normalizedSort = sort.toLowerCase();
+
+  return isValidSort(normalizedSort) ? normalizedSort : null;
+};
