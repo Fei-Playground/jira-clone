@@ -21,4 +21,16 @@ export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][])
   })
 );
 
-export const isValidSort = (sort: string): sort is Sort => sorts.includes(sort as Sort);
+/**
+ * The canonical sort for a raw `sortBy` value coming from the URL. The value is
+ * matched case-insensitively ("Priority" and "PRIORITY" both mean "priority"),
+ * so links and hand-typed URLs sort the same. Anything that is not a known sort
+ * is ignored, returning null.
+ */
+export const parseSort = (sort: string | null): Sort | null => {
+  if (!sort) return null;
+
+  const normalizedSort = sort.toLowerCase();
+
+  return sorts.find((knownSort) => knownSort === normalizedSort) ?? null;
+};
