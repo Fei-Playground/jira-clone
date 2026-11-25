@@ -1,7 +1,6 @@
 import { useState } from "react";
 import cx from "classix";
 import { TextareaAutosize } from "@app/components/textarea-autosize";
-import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 
 const DEFAULT_MAX_LENGTH = 80;
 
@@ -16,8 +15,7 @@ export const Title = ({
   const [isFocus, setIsFocus] = useState<boolean>(true);
 
   const isMaxLength = title.length >= maxLength;
-  const requireError =
-    error && (title.length === 0 || textAreOnlySpaces(title));
+  const requireError = Boolean(error) && title.trim().length === 0;
 
   const onFocus = () => {
     if (!readOnly) setIsFocus(true);
