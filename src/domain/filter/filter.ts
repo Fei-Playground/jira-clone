@@ -22,3 +22,13 @@ export const sortList: SortList = (Object.entries(sortDict) as [Sort, string][])
 );
 
 export const isValidSort = (sort: string): sort is Sort => sorts.includes(sort as Sort);
+
+export const parseSort = (sort: string | null): Sort | null => {
+  if (sort === null) {
+    return null;
+  }
+
+  const normalizedSort = sort.toLowerCase();
+
+  return isValidSort(normalizedSort) ? normalizedSort : null;
+};

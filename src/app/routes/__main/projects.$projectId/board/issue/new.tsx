@@ -10,7 +10,7 @@ import { ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
 import { Comment } from "@domain/comment";
 import { PriorityId } from "@domain/priority";
-import { isValidSort } from "@domain/filter";
+import { parseSort } from "@domain/filter";
 import { createIssue, CreateIssueInputData } from "@infrastructure/db/issue";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { EVENTS } from "@app/events";
@@ -79,10 +79,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const _action = formData.get("_action") as string;
   const url = new URL(request.url);
-  const sortByParam = url.searchParams.get("sortBy") as string;
-  const sortBySeachParam = isValidSort(sortByParam)
-    ? `?sortBy=${sortByParam}`
-    : "";
+  const sortBy = parseSort(url.searchParams.get("sortBy"));
+  const sortBySeachParam = sortBy ? `?sortBy=${sortBy}` : "";
   const previousUrl = `/projects/${projectId}/board${sortBySeachParam}`;
 
   if (_action === "create") {
