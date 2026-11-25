@@ -15,7 +15,6 @@ import { createIssue, CreateIssueInputData } from "@infrastructure/db/issue";
 import { IssuePanel } from "@app/ui/main/project/board/issue-panel";
 import { EVENTS } from "@app/events";
 import { emitter } from "@app/events/emitter.server";
-import { textAreOnlySpaces } from "@utils/text-are-only-spaces";
 import { formatTags, formatProperties } from "@utils/meta";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -86,7 +85,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const previousUrl = `/projects/${projectId}/board${sortBySeachParam}`;
 
   if (_action === "create") {
-    const name = formData.get("title") as string;
+    const name = (formData.get("title") as string)?.trim() || "";
     const description = formData.get("description") as string;
     const categoryId = formData.get("status") as CategoryId;
     const priority = formData.get("priority") as PriorityId;
@@ -105,7 +104,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       comments,
     };
 
-    if (!name || textAreOnlySpaces(name)) {
+    if (!name) {
       return json<ActionData>(
         { errors: { name: "Title is required" } },
         { status: 400 }
