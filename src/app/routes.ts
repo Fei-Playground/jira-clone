@@ -10,6 +10,7 @@ export default [
     route("projects", "routes/__main/projects.tsx", [
       route("new", "routes/__main/projects/new.tsx"),
     ]),
+    route("about", "routes/__main/about.tsx"),
     route("projects/:projectId", "routes/__main/projects.$projectId.tsx", [
       route("analytics", "routes/__main/projects.$projectId/analytics.tsx"),
       route("board", "routes/__main/projects.$projectId/board.tsx", [
