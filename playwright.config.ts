@@ -11,6 +11,9 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./src/app",
+  /* Vitest owns every spec under src/app except the routes ones (see vite.config.ts),
+     so the route specs are the only ones Playwright collects. */
+  testMatch: ["**/routes/**/*.spec.ts"],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
