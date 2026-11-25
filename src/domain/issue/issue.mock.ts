@@ -21,6 +21,7 @@ export const todoIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [commentMock4, commentMock5],
+    labels: ["error-handling", "hint"],
     priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
@@ -37,6 +38,7 @@ export const inProgressIssuesMock1: Issue[] = [
     reporter: userMock1, // Daniel Serrano
     asignee: userMock2, // Woody
     comments: [],
+    labels: ["real-time"],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
@@ -50,6 +52,7 @@ export const inProgressIssuesMock1: Issue[] = [
     reporter: userMock2, // Woody
     asignee: usersMock[2], // Buzz Lightyear
     comments: [commentMock1, commentMock2],
+    labels: [],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,
@@ -66,6 +69,7 @@ export const doneIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
+    labels: ["routing"],
     priority: priorityLow,
     categoryType: "DONE",
     createdAt,
@@ -79,6 +83,7 @@ export const doneIssuesMock1: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [commentMock3],
+    labels: ["shortcuts"],
     priority: priorityMedium,
     categoryType: "DONE",
     createdAt,
@@ -96,6 +101,7 @@ export const todoIssuesMock2: Issue[] = [
     reporter: userMock1,
     asignee: userMock2,
     comments: [],
+    labels: [],
     priority: priorityMedium,
     categoryType: "TODO",
     createdAt,
@@ -109,6 +115,7 @@ export const todoIssuesMock2: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
+    labels: ["projects"],
     priority: priorityLow,
     categoryType: "TODO",
     createdAt,
@@ -124,6 +131,7 @@ export const inProgressIssuesMock2: Issue[] = [
     reporter: userMock1,
     asignee: userMock1,
     comments: [],
+    labels: ["themes"],
     priority: priorityHigh,
     categoryType: "IN_PROGRESS",
     createdAt,

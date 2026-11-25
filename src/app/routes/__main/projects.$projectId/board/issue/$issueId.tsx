@@ -11,7 +11,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { UserId } from "@domain/user";
 import { ProjectId } from "@domain/project";
 import { CategoryId } from "@domain/category";
-import { Issue, IssueId } from "@domain/issue";
+import { Issue, IssueId, parseLabels } from "@domain/issue";
 import { Comment, CommentId } from "@domain/comment";
 import { PriorityId } from "@domain/priority";
 import { isValidSort } from "@domain/filter";
@@ -118,6 +118,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const comments = JSON.parse(
       formData.get("comments") as string
     ) as Comment[];
+    const labels = parseLabels(formData.get("labels"));
     const issueInputData: UpdateIssueInputData = {
       id,
       name,
@@ -127,6 +128,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       asigneeId,
       reporterId,
       comments,
+      labels,
     };
 
     if (!name || textAreOnlySpaces(name)) {

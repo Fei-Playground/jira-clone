@@ -4,6 +4,7 @@ import { UserId } from "@domain/user";
 import { Project, ProjectSummary, ProjectId } from "@domain/project";
 import { Category, CategoryType } from "@domain/category";
 import { Priority } from "@domain/priority";
+import { parseLabels } from "@domain/issue";
 import { Sort } from "@domain/filter";
 import { db } from "./db.server";
 import { dnull } from "src/utils/dnull";
@@ -45,6 +46,7 @@ export const getProject = async (
             select: {
               id: true,
               name: true,
+              labels: true,
               priority: true,
               createdAt: true,
               reporter: true,
@@ -75,6 +77,7 @@ export const getProject = async (
       issues: category.issues.map((issue) => ({
         id: issue.id,
         name: issue.name,
+        labels: parseLabels(issue.labels),
         priority: issue.priority as Priority,
         reporter: dnull(issue.reporter),
         asignee: dnull(issue.asignee),
