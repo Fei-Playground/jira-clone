@@ -46,10 +46,10 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
   const userIsNotReporter = user.id !== reporter.id;
+  const isExistingIssue = Boolean(issue?.id);
 
   const postData = useCallback(
     (formTarget: HTMLFormElement) => {
-      const isExistingIssue = Boolean(issue?.id);
       const formData = new FormData(formTarget);
       const action = isExistingIssue ? "update" : "create";
       formData.set("comments", JSON.stringify(comments));
@@ -59,7 +59,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
         method: "post",
       });
     },
-    [comments, fetcher, issue?.id]
+    [comments, fetcher, isExistingIssue]
   );
 
   const handleProgrammaticSubmit = useCallback((): void => {
@@ -228,15 +228,19 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       size="lg"
                       className="w-fit"
                       disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
+                      aria-label={
+                        isExistingIssue ? "Accept changes" : "Create issue"
+                      }
                     >
                       {transition.state !== "idle" ? (
                         <>
                           Submmiting
                           <Spinner />
                         </>
-                      ) : (
+                      ) : isExistingIssue ? (
                         "Accept"
+                      ) : (
+                        "Create issue"
                       )}
                     </Button>
                   </div>
