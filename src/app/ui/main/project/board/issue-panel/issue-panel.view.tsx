@@ -46,10 +46,14 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
   const navigate = useNavigate();
   const initStatus = (params[0].get("category") as CategoryType) || "TODO";
   const userIsNotReporter = user.id !== reporter.id;
+  const isExistingIssue = Boolean(issue?.id);
+  // The panel serves both the create and the edit route, so the submit button
+  // names what pressing it does in each case.
+  const submitLabel = isExistingIssue ? "Accept" : "Create issue";
+  const submitAriaLabel = isExistingIssue ? "Accept changes" : submitLabel;
 
   const postData = useCallback(
     (formTarget: HTMLFormElement) => {
-      const isExistingIssue = Boolean(issue?.id);
       const formData = new FormData(formTarget);
       const action = isExistingIssue ? "update" : "create";
       formData.set("comments", JSON.stringify(comments));
@@ -59,7 +63,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
         method: "post",
       });
     },
-    [comments, fetcher, issue?.id]
+    [comments, fetcher, isExistingIssue]
   );
 
   const handleProgrammaticSubmit = useCallback((): void => {
@@ -228,7 +232,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                       size="lg"
                       className="w-fit"
                       disabled={transition.state !== "idle"}
-                      aria-label="Accept changes"
+                      aria-label={submitAriaLabel}
                     >
                       {transition.state !== "idle" ? (
                         <>
@@ -236,7 +240,7 @@ export const IssuePanel = ({ issue }: Props): JSX.Element => {
                           <Spinner />
                         </>
                       ) : (
-                        "Accept"
+                        submitLabel
                       )}
                     </Button>
                   </div>
